@@ -1,24 +1,22 @@
-# AI Learning Gems
+# AI Research Workflow
 
-Textbook-style chapters on technical/mathematical topics, generated using LLM agents and rendered with Quarto.
+An agentic research workflow for generating high-quality, structured markdown content from complex technical papers and webpages using Claude Code.
 
 ## How It Works
 
-This project uses **agentic LLM prompts** to generate high-quality educational content. The prompts are designed for:
+This project uses **agentic LLM prompts** to orchestrate deep research workflows. Instead of producing an entire document in one shot, the workflow divides the task into:
+1. Source extraction and parsing.
+2. Section-by-section research via Claude Code sub-process/agentss.
+3. Rigorous verification and markdown generation.
 
-- **Cursor** (prompts in `.cursor/commands/`)
-- **Windsurf** (prompts in `.agent/workflows/`)
-
-**Recommended model:** Claude Opus 4.5 — works well for generating both prose and D2 diagrams.
+**Recommended model:** Claude 3.5 Sonnet / Claude Opus — for generating high-fidelity markdown and architecture diagrams.
 
 ## Project Structure
 
 ```
-AI-Learning-Gems/
-├── _quarto.yml                  # Global config (kernel, format)
-├── _extensions/pandoc-ext/      # D2 diagram filter
-├── .cursor/commands/            # Cursor agent prompts
-├── .agent/workflows/            # Windsurf agent prompts
+AI-Research-Workflow/
+├── .cursor/commands/            # Claude Code agent prompts
+├── .claude/agents/            # Claude Code agent prompts
 ├── scripts/                     # Source extraction tools
 │   ├── authenticated_extract.py # Login-gated / JS-heavy pages → MD + images
 │   ├── setup_browser_profile.py # One-time login to create browser profiles
@@ -26,7 +24,7 @@ AI-Learning-Gems/
 │   ├── mistral_ocr.py           # PDF → MD + images (via Mistral API)
 │   └── .browser-profiles/       # Saved browser sessions (gitignored)
 ├── sources/                     # Downloaded sources (gitignored)
-├── Topic-1/                     # Each topic is a folder with .qmd chapters
+├── Topic-1/                     # Each topic is a folder with .md documents
 ├── Topic-2/
 └── ...
 ```
@@ -34,34 +32,6 @@ AI-Learning-Gems/
 ---
 
 ## Setup
-
-### Prerequisites (Homebrew — one-time global install)
-
-These tools cannot be installed inside conda and must be installed system-wide:
-
-```bash
-brew install --cask quarto    # Document rendering (.qmd → HTML/PDF)
-brew install d2               # Diagram generation
-brew install pandoc            # Document conversion
-brew install imagemagick       # PDF figure → PNG conversion
-brew install ghostscript       # Required by ImageMagick for PDF rasterization
-
-# Pin versions to prevent brew auto-upgrading them
-brew pin d2 pandoc imagemagick ghostscript
-```
-
-Verify versions (must match at least the same minor version):
-```bash
-quarto --version    # 1.7.x (tested with 1.7.31)
-d2 --version        # 0.7.x (tested with 0.7.1)
-pandoc --version    # 3.8.x (tested with 3.8.3)
-magick --version    # 7.1.x (tested with 7.1.2)
-gs --version        # 10.x  (tested with 10.06)
-```
-
-> **Note**: Homebrew does not support installing specific versions (`brew install d2@0.7.1` won't work).
-> If `brew install` gives you a newer version than listed above, it will likely work.
-> The `brew pin` commands prevent `brew upgrade` from bumping these during routine updates.
 
 ### Python Environment (conda + uv)
 
@@ -77,20 +47,8 @@ conda activate ai-learning-gems
 pip install uv 2>/dev/null || true
 
 # Install all Python dependencies
-cd /path/to/AI-Learning-Gems
+cd /path/to/AI-Research-Workflow
 uv pip install -r requirements.txt
-
-# Register as Jupyter kernel (used by Quarto for .qmd code execution)
-python -m ipykernel install --user --name=ai-learning-gems --display-name="Python (ai-learning-gems)"
-```
-
-Verify:
-```bash
-conda activate ai-learning-gems
-python --version                                    # 3.13.x
-python -c "import numpy, pandas, matplotlib, scipy, crawl4ai; print('OK')"
-jupyter kernelspec list | grep ai-learning-gems     # Should show the kernel
-quarto check jupyter                                # Should show ai-learning-gems in kernel list
 ```
 
 ### Crawl4AI Browser Setup (for authenticated web extraction)
@@ -105,7 +63,7 @@ crawl4ai-setup    # Downloads Chromium (~90MB, one-time)
 Then create browser profiles for login-gated sites (one-time per site):
 
 ```bash
-cd /path/to/AI-Learning-Gems
+cd /path/to/AI-Research-Workflow
 
 # Substack
 python scripts/setup_browser_profile.py "https://substack.com/sign-in" substack
@@ -119,26 +77,11 @@ python scripts/setup_browser_profile.py "https://medium.com/m/signin" medium
 Profiles are saved to `scripts/.browser-profiles/` (gitignored — they contain session cookies).
 Re-run if sessions expire or you get empty output.
 
-### Quarto Extension (D2 Diagrams)
-
-The `pandoc-ext/diagram` extension is already committed in `_extensions/`. To reinstall:
-
-```bash
-cd /path/to/AI-Learning-Gems
-quarto add pandoc-ext/diagram
-```
-
-### VS Code / Cursor Extensions
-
-Install:
-- **Quarto** (`quarto.quarto`)
-- **Python** (`ms-python.python`)
-
 ---
 
 ## Source Extraction Tools
 
-The `scripts/` folder contains tools for downloading web sources as clean Markdown with local images. See `.cursor/rules/web-source-fetching.md` for the full decision tree.
+The `scripts/` folder contains tools for downloading web sources as clean Markdown with local images. See `.claude/rules/web-source-fetching.md` for the full decision tree.
 
 ### Authenticated / JS-Heavy Pages → Markdown + Images
 
@@ -181,64 +124,3 @@ mkdir -p sources/arxiv-2010.11929 && cd sources/arxiv-2010.11929
 curl -sL "https://arxiv.org/src/2010.11929" -o source.tar.gz && tar -xzf source.tar.gz
 ```
 
-### PDF Figure → PNG Conversion
-
-```bash
-# Single figure (400 DPI, auto-trimmed)
-magick -density 400 figure.pdf -trim +repage figure.png
-
-# Batch convert all PDF figures in an arXiv source
-find "sources/arxiv-{ID}/" \( -name '*.pdf' \) \( -path '*/images/*' -o -path '*/figs/*' -o -path '*/figures/*' \) | while read f; do
-  outfile="${f%.pdf}.png"
-  [ ! -f "$outfile" ] && magick -density 400 "$f" -trim +repage "$outfile" && echo "Converted: $f"
-done
-```
-
----
-
-## Rendering
-
-### From Cursor/VS Code
-
-1. Open a `.qmd` index file
-2. Click **Preview** (Quarto extension) or use Command Palette: `Quarto: Preview`
-
-### From Terminal
-
-```bash
-conda activate ai-learning-gems
-cd /path/to/AI-Learning-Gems
-
-# Preview with live reload
-quarto preview Statistics/Your-Chapter.qmd
-
-# One-time render
-quarto render Statistics/Your-Chapter.qmd --to html
-```
-
----
-
-## Troubleshooting
-
-| Issue | Fix |
-|-------|-----|
-| D2 diagrams show as plain text | Check the `.qmd` has `filters:` in YAML header |
-| Wrong Jupyter kernel | Run `python -m ipykernel install --user --name=ai-learning-gems --display-name="Python (ai-learning-gems)"` |
-| Extension not found | Run `quarto render` from the project root, not a subdirectory |
-| Authenticated extraction returns login page | Re-run `setup_browser_profile.py` — session may have expired |
-| `crawl4ai-setup` hangs | It downloads ~90MB Chromium; wait or check network |
-| Quarto can't find kernel | Run `conda activate ai-learning-gems && jupyter kernelspec list` to verify |
-| D2 command not found | `brew install d2` (cannot be installed via pip/conda) |
-| PyMC installation fails | `conda install -c conda-forge pymc arviz` |
-
----
-
-## Environment Reference
-
-Developed and tested with:
-- **Python** 3.13.12 (via conda)
-- **Quarto** 1.7.31 (via Homebrew)
-- **Pandoc** 3.8.3 (via Homebrew)
-- **D2** 0.7.1 (via Homebrew)
-- **ImageMagick** 7.1.2 + **Ghostscript** 10.06 (via Homebrew)
-- **macOS** arm64 (Apple Silicon)
