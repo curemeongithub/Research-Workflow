@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "model": "sonnet",
+  "env": {
+    "MAX_THINKING_TOKENS": "10000",
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "50"
+  },
+  "enabledPlugins": {
+    "skill-creator@claude-plugins-official": false
+  },
+  "permissions": {
+    "allow": [
+      "Bash(wc:*)",
+      "Bash(ls -d /Users/abhinavmallick/Github.nosync/Research-Workflow/*/)",
+      "Bash(grep -v -E '\\(scripts|sources\\)$')",
+      "Bash(ls:*)",
+      "Bash(xargs sed:*)",
+      "Bash(sed -i '' 's/conda activate ai-learning-gems/# Use .venv\\\\/bin\\\\/python \\(no conda needed\\)/g' .claude/rules/high-quality-blogs.md)",
+      "Bash(sed -i '' 's/^python scripts\\\\/authenticated_extract\\\\.py/.venv\\\\/bin\\\\/python scripts\\\\/authenticated_extract.py/g' .claude/rules/high-quality-blogs.md)"
+    ]
+  }
+}

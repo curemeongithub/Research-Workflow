@@ -1,11 +1,65 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "model": "sonnet",
+  "model": "claude-sonnet-4-5",
   "env": {
     "MAX_THINKING_TOKENS": "10000",
-    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "50"
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "70"
   },
-  "enabledPlugins": {
-    "skill-creator@claude-plugins-official": false
+  "hooks": {
+    "SubagentStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c '\"${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/pipeline-logger.sh\" SubagentStart'"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c '\"${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/pipeline-logger.sh\" SubagentStop'"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c '\"${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/pipeline-logger.sh\" PostToolUse'"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c '\"${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/pipeline-logger.sh\" PreCompact'"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'PROJECT_ROOT=\"${CLAUDE_PROJECT_DIR:-.}\"; if [ -f \"$PROJECT_ROOT/pipeline-state.yaml\" ]; then echo \"=== PIPELINE STATE (post-compact re-inject) ===\"; cat \"$PROJECT_ROOT/pipeline-state.yaml\"; fi'"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -1,13 +1,109 @@
-# Research Workflow — Claude Code Instructions
-
+# Research Workflow — Orchestrator Instructions
 
 ## Core Rules (Apply to All Tasks)
 - Always provide verification (tests, scripts, screenshots). If you can't verify it, don't ship it.
 - Scope investigations narrowly or use subagents so the exploration doesn't consume your main context.
+- Python: always use `.venv/bin/python` — never bare `python`.
+- Read `.claude/rules/portable-env.md` before any terminal commands.
 
 ---
 
-## The One-Command Workflow
+## Which Workflow to Use?
+
+| User says... | Use |
+|-------------|-----|
+| "Research [topic] for me" (one-command) | **Research Pipeline** — 9-phase sequential subagent chain |
+| "Write a textbook chapter on [topic]" | **Textbook Chapter** — legacy slash-command workflow |
+| "Analyze sources in [folder]" | **Textbook Chapter** — `/analyze-sources` agent |
+
+---
+
+# PART A: Research Pipeline (New — 9-Phase, Conference-Grade)
+
+The research pipeline produces a conference-grade research document: literature map, gap analysis, hypotheses, experimental methodology, and full assembled document. Fully autonomous on first pass; human decision required before reiteration.
+
+## Quick Start
+
+> "Research [topic] for me"
+
+Orchestrator steps (run without confirmation):
+1. Initialize `pipeline-state.yaml`
+2. Spawn Phase 1-9 subagents sequentially
+3. Surface Phase 9 critique to user
+4. Wait for user decision on reiteration
+
+## Pipeline Orchestration
+
+### Step 1 — Initialize State
+
+Create `pipeline-state.yaml` if it does not exist:
+
+```bash
+if [ ! -f pipeline-state.yaml ]; then
+cat > pipeline-state.yaml << 'EOF'
+topic: "{TOPIC}"
+started: "{TIMESTAMP}"
+current_phase: 1
+reiteration: 0
+phases: {}
+EOF
+fi
+```
+
+Also create required directories:
+```bash
+mkdir -p analysis/ synthesis/ reiteration/ diagnostics/ user-sources/
+```
+
+### Step 2 — Sequential Phase Execution
+
+Run each phase by spawning the corresponding subagent. The orchestrator ONLY reads `pipeline-state.yaml` between phases — never reads research content.
+
+```
+Phase 1 → source-acquisition     (sources/manifest.yaml)
+Phase 2 → source-extraction      (sources/*/content.md)
+Phase 3 → literature-comprehension (analysis/literature-map.md)
+Phase 4 → gap-analysis           (analysis/gap-analysis.md)        [Opus]
+Phase 5 → sanity-check           (analysis/review-notes.md)        [advisory]
+Phase 6 → hypothesis-formation   (synthesis/hypotheses.md)
+Phase 7 → methodology-design     (synthesis/methodology.md)
+Phase 8 → document-assembly      (synthesis/final-document.md)
+Phase 9 → critique               (reiteration/critique.md + reiteration-plan.md)  [Opus]
+```
+
+After each phase, verify `current_phase` incremented in `pipeline-state.yaml` before spawning the next.
+
+### Step 3 — Reiteration (Human-Gated)
+
+After Phase 9 completes:
+1. Surface `reiteration/critique.md` to user
+2. Surface `reiteration/reiteration-plan.md` to user
+3. **STOP and wait for user decision**
+
+If user approves re-run:
+```bash
+git -C "${CLAUDE_PROJECT_DIR:-.}" checkout -b reiteration-1
+# Update pipeline-state.yaml to point to the weakest phase
+# Spawn agents from that phase forward
+```
+
+One reiteration maximum. If second pass still has issues, note for manual review.
+
+## Resume from Checkpoint
+
+If a run was interrupted, check `pipeline-state.yaml` and resume:
+```bash
+cat pipeline-state.yaml
+# current_phase tells you where to resume
+```
+
+Do NOT re-run completed phases (their git commits exist). Start from `current_phase`.
+
+---
+
+# PART B: Textbook Chapter Workflow (Legacy — Slash Commands)
+
+## The One-Command Workflow (Textbook Chapters)
 
 **Give Claude a topic and it does everything automatically.** Example:
 
@@ -82,16 +178,18 @@ All agents re-read these rules from disk at the start of each task. They are not
 
 | File | What It Governs |
 |---|---|
-| `source-integrity.md` | Zero World Knowledge principle — every specific claim requires a downloaded source |
-| `writing-style.md` | Sentence rhythm, given-new contract, AI tell avoidance, emphasis hierarchy, inline citations |
-| `markdown-conventions.md` | Folder structure, section file naming, LaTeX formatting, per-section source headers |
-| `visualization-standards.md` | Image priority order (source images > D2 > hvplot > web > generate_image) |
-| `source-management.md` | Centralized `sources/` storage, folder naming conventions, PDF figure conversion |
-| `web-source-fetching.md` | Site-specific fetch strategies (arXiv, blogs, d2l.ai, Substack, PDFs) |
-| `high-quality-blogs.md` | Curated registry of 30+ textbook-quality technical blogs — searched first during research |
-| `semantic-coloring.md` | WCAG AA color palette, concept color-coding rules for equations and prose |
-| `python-env.md` | Always use `.venv/bin/python` — never bare `python` or system Python |
-| `force_verbosity.md` | Default section length: 1,500-2,000 words. Length from depth, never repetition. |
+| `.claude/skills/source-integrity/SKILL.md` | Zero World Knowledge principle — every specific claim requires a downloaded source |
+| `.claude/skills/writing-style/SKILL.md` | Sentence rhythm, given-new contract, AI tell avoidance, emphasis hierarchy, inline citations |
+| `.claude/skills/markdown-conventions/SKILL.md` | Folder structure, section file naming, LaTeX formatting, per-section source headers |
+| `.claude/skills/web-source-fetching/SKILL.md` | Site-specific fetch strategies (arXiv, blogs, d2l.ai, Substack, PDFs) |
+| `.claude/skills/source-management/SKILL.md` | Centralized `sources/` storage, folder naming conventions, PDF figure conversion |
+| `.claude/skills/source-lookup/SKILL.md` | Grep-first controlled access to raw sources (Phases 4-9) |
+| `.claude/skills/literature-analysis/SKILL.md` | MECE theme organization, cross-paper synthesis |
+| `.claude/skills/gap-scoring-rubric/SKILL.md` | Tiered gap scoring criteria, validation protocol |
+| `.claude/skills/methodology-standards/SKILL.md` | DOE best practices, experimental design templates |
+| `content/maybe-rules/visualization-standards.md` | Image priority order (source images > D2 > hvplot > web > generate_image) |
+| `content/maybe-rules/semantic-coloring.md` | WCAG AA color palette, concept color-coding rules for equations and prose |
+| `content/maybe-rules/force_verbosity.md` | Default section length: 1,500-2,000 words. Length from depth, never repetition. |
 
 ---
 
@@ -109,20 +207,32 @@ An `N/A` in the Local Path column of the Source Processing Log is **always a fai
 
 ```
 Research-Workflow/
-├── sources/                          ← Centralized, shared across all chapters
-│   ├── arxiv-{PAPER_ID}/             ← arXiv papers (LaTeX source)
-│   └── {domain}/{path}/              ← All other sources
-├── {Subject Area}/
-│   ├── {Topic Name}.md               ← Index file (links to sections)
-│   └── {Topic Name}/
-│       ├── TEXTBOOK-PLAN.md          ← Research plan (do not edit manually)
-│       ├── _01-introduction.md
-│       ├── _02-...md
-│       └── _99-closing.md
 ├── .claude/
-│   ├── agents/                       ← Slash command agents
-│   └── rules/                        ← Rules files (auto-read by agents)
-└── scripts/                          ← Python extraction scripts
+│   ├── agents/           ← 9-phase research pipeline agents
+│   ├── skills/           ← 9 skill directories (SKILL.md per skill)
+│   ├── hooks/
+│   │   └── pipeline-logger.sh
+│   ├── rules/
+│   │   └── portable-env.md
+│   └── settings.json     ← Hook configurations
+├── sources/              ← Centralized, shared across all chapters and runs
+│   ├── arxiv-{PAPER_ID}/ ← arXiv papers (LaTeX source)
+│   └── {domain}/{path}/  ← All other sources
+├── analysis/             ← Phase 3-5 output (per-run)
+├── synthesis/            ← Phase 6-8 output (per-run)
+├── reiteration/          ← Phase 9 output (per-run)
+├── diagnostics/          ← Hook output (per-run)
+├── user-sources/         ← Drop user PDFs here before running
+├── pipeline-state.yaml   ← Created per-run (tracks progress)
+├── {Subject Area}/       ← Textbook chapter output (legacy workflow)
+│   ├── {Topic Name}.md   ← Index file (links to sections)
+│   └── {Topic Name}/
+│       ├── TEXTBOOK-PLAN.md
+│       ├── _01-introduction.md
+│       └── _99-closing.md
+├── content/
+│   └── agents/           ← Textbook chapter slash-command agents (legacy)
+└── scripts/              ← Python extraction scripts
 ```
 
 ---
