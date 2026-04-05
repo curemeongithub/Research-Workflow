@@ -1,12 +1,9 @@
 ---
 phase: 6
-status: complete_reiteration_1
-timestamp: 2026-04-06T04:30:00Z
+status: complete
+timestamp: 2026-04-06T00:15:00Z
 depends_on: [analysis/gap-analysis.md, analysis/review-notes.md]
-token_estimate: 3400
-hypotheses_count: 6
-hypotheses_revised: [H-1, H-3, H-4, H-6]
-hypotheses_preserved: [H-2, H-5]
+token_estimate: 3200
 ---
 
 # Hypotheses: Dual Convex Optimization in ReLU Neural Networks
@@ -15,46 +12,42 @@ hypotheses_preserved: [H-2, H-5]
 
 Six testable hypotheses were formulated from the gap analysis, covering all three Tier 1 gaps and three selected Tier 2 gaps. Gaps 2.2 (continual learning) and 2.5 (SGD convergence) were excluded per sanity check advisory as they stretch beyond the core convex optimization mandate. The hypothesis set prioritizes full-rank tractability (Gap 1.2, highest composite score 7.8) while addressing the foundational recurrent architecture gap (1.1) and the duality gap characterization problem (1.3). The Tier 2 hypotheses target practical deployment constraints: adversarial robustness (2.1), multi-head attention (2.4), and weight quantization (2.3). All hypotheses specify measurable outcomes, falsification criteria, and build on established results from Pilanci-Ergen (2020), Bach (2017), and the parallel network bidual construction of Wang et al. (2023).
 
-**Reiteration 1 changes:** H-1, H-3, H-4, and H-6 have been revised to address measurability, tractability, and overclaim issues identified in Phase 9 critique. H-2 and H-5 are preserved exactly as originally formulated.
-
 ---
 
 ## Primary Hypotheses (from Tier 1 gaps)
 
-### H-1: Polynomial-Time Certified Approximation for Full-Rank Data [REVISED - Reiteration 1]
+### H-1: Polynomial-Time Certified Approximation for Full-Rank Data
 
 **Source gap:** Gap 1.2 (Full-Rank Tractability — Closing the Exponential-in-Rank Barrier with Optimality Certificates)
 
 **Sanity check status:** LOW concern (composite score 7.8, highest priority)
 
 **Hypothesis:**
-> If a hierarchical zonotope subsampling tree is constructed over nested hyperplane arrangements for an $L$-layer ReLU network, then (a) on synthetic full-rank Gaussian data with $n = 200$, $d = 20$, $r = 20$, the approximate solution achieves training loss within $(1 + \epsilon)$ of the global convex optimum $L^*$ with probability $\geq 1 - \delta$ when the sampling budget per layer is $B_\ell = C \cdot d^2 \log(1/\delta)$ for constant $C$, as measured by the approximation ratio $\rho = L_{\text{approx}} / L^*$ where $L^*$ is computed via exact convex solver with full enumeration and verified duality gap $< 10^{-5}$; and (b) on CIFAR-10, the hierarchical subsampling method achieves test accuracy within 1% of the CRONOS baseline under a wall-clock time budget $\leq 10 \times$ the CRONOS runtime.
+> If a hierarchical zonotope subsampling tree is constructed over nested hyperplane arrangements for an $L$-layer ReLU network trained on rank-$r$ data with $r = \min(n,d)$ (full-rank), and the sampling budget per layer is $B_\ell = C \cdot d^2 \log(1/\delta)$ for constant $C$, then the resulting approximate solution achieves training loss within $(1 + \epsilon)$ of the global convex optimum $L^*$ with probability $\geq 1 - \delta$, as measured by the ratio $L_{\text{approx}} / L^*$ on CIFAR-10 (rank-2688), under a wall-clock time budget $\leq 10 \times$ the CRONOS runtime.
 
 **Rationale:** The two-layer zonotope approximation result of Sahiner et al. [2312.12657] proves a dimension-free approximation ratio exists when sampling is sufficiently dense. Extending this to deep networks requires nested sampling: at layer $\ell$, the output region is the Minkowski sum of all previous layers' arrangement patterns. By constructing a sampling tree where each node represents a realized activation pattern and children represent refinements at the next layer, and sampling uniformly within each node's zonotope, the joint distribution over all layers can be controlled via conditional independence. The Carathéodory theorem guarantees that $m^* \leq (r+1)d$ active patterns suffice for optimality; hierarchical sampling with budget $O(d^2 \log(1/\delta))$ per layer ensures coverage of high-probability regions with approximation ratio bounded by the total variation distance between the sampled and exact hyperplane arrangement distributions.
 
-**Null hypothesis:** On synthetic full-rank Gaussian data with $n = 200$, $d = 20$, $r = 20$, the approximate solution achieves training loss $> (1 + \epsilon) L^*$ with probability $> \delta$, indicating the hierarchical sampling fails to capture critical activation patterns, or the sampling budget scales exponentially in depth $L$ rather than polynomially.
+**Null hypothesis:** The approximate solution achieves training loss $> (1 + \epsilon) L^*$ with probability $> \delta$, indicating the hierarchical sampling fails to capture critical activation patterns, or the sampling budget scales exponentially in depth $L$ rather than polynomially.
 
 **Success criteria:**
-- **Primary (synthetic data):** For $\epsilon = 0.1$, $\delta = 0.05$: $\rho = L_{\text{approx}} / L^* \leq 1.1$ holds on $\geq 95\%$ of random data instantiations (10 random seeds).
-- **Primary (synthetic data):** Ground truth $L^*$ computed via exact convex solver with verified duality gap $< 10^{-5}$.
-- **Primary (synthetic data):** Sampling budget per layer $B_\ell \leq 10^5$ (tractable on single GPU); test at $B_\ell \in \{10^2, 10^3, 10^4\}$.
-- **Secondary (CIFAR-10):** Test accuracy within 1% of CRONOS baseline (NO optimality ratio claim on CIFAR-10).
-- **Secondary (CIFAR-10):** Total runtime $\leq 10 \times$ CRONOS baseline.
+- For $\epsilon = 0.1$, $\delta = 0.05$: $L_{\text{approx}} / L^* \leq 1.1$ holds on $\geq 95\%$ of random train/test splits of CIFAR-10.
+- Sampling budget per layer $B_\ell \leq 10^5$ (tractable on single GPU).
+- Total runtime $\leq 10 \times$ CRONOS baseline (which lacks approximation certificate).
 
 **Potential confounds:**
-1. Optimizer convergence for exact solver on synthetic data: The convex solver may not reach optimum within iteration budget — control by running to duality gap $< 10^{-5}$.
+1. Optimizer convergence: The convex solver may not reach optimum within iteration budget — control by running to duality gap $< 10^{-4}$.
 2. Hyperplane degeneracy: Parallel arrangements reduce effective dimensionality — measure via condition number of the zonotope generator matrix.
-3. Data preprocessing: Whitening or normalization affects rank — report both raw and whitened data results for CIFAR-10.
+3. Data preprocessing: Whitening or normalization affects rank — report both raw and whitened data results.
 
 **FATS check:**
-- **Falsifiable:** Yes — the ratio $\rho = L_{\text{approx}} / L^*$ is directly measurable on synthetic data where $L^*$ is computable via exact convex solver; if it exceeds $1.1$ on $> 5\%$ of trials, H-1 is rejected.
-- **Actionable:** Yes — hierarchical zonotope sampling is implementable via randomized projection trees (existing code in scipy.spatial); exact solver for $n = 200$, $d = 20$, $r = 20$ is feasible (polynomial-time parallel program).
-- **Testable:** Yes — synthetic Gaussian data with controlled rank allows verification of approximation ratio; CIFAR-10 is a standard benchmark for secondary test accuracy comparison.
-- **Scoped:** Yes — specifies data regime (full-rank synthetic with $n = 200$, $d = 20$, $r = 20$), approximation bound ($1 + \epsilon$ on synthetic), probability threshold ($1 - \delta$), and runtime constraint ($10\times$ CRONOS) on CIFAR-10 secondary test; explicitly excludes optimality ratio claims on CIFAR-10.
+- **Falsifiable:** Yes — the ratio $L_{\text{approx}} / L^*$ is directly measurable; if it exceeds $1.1$ on $> 5\%$ of trials, H-1 is rejected.
+- **Actionable:** Yes — hierarchical zonotope sampling is implementable via randomized projection trees (existing code in scipy.spatial).
+- **Testable:** Yes — CIFAR-10 is a standard benchmark; running the exact convex solver on a small subset to compute $L^*$ provides ground truth.
+- **Specific:** Yes — specifies data regime (full-rank), approximation bound ($1 + \epsilon$), probability threshold ($1 - \delta$), and runtime constraint ($10\times$ CRONOS).
 
 ---
 
-### H-2: Convex Reformulation for Unrolled Recurrent Networks via Temporal Hyperplane Coupling [PRESERVED]
+### H-2: Convex Reformulation for Unrolled Recurrent Networks via Temporal Hyperplane Coupling
 
 **Source gap:** Gap 1.1 (Convex Reformulation for Recurrent and State-Space Architectures)
 
@@ -85,88 +78,71 @@ Six testable hypotheses were formulated from the gap analysis, covering all thre
 
 ---
 
-### H-3: Width-Dependent Duality Gap Decay for Serial Deep Networks via Bidual Sandwiching [REVISED - Reiteration 1]
+### H-3: Width-Dependent Duality Gap Bound for Serial Deep Networks via Bidual Sandwiching
 
 **Source gap:** Gap 1.3 (Tight Upper Bounds on Duality Gap for Standard Serial Deep Networks)
 
 **Sanity check status:** MEDIUM concern (composite score 7.2; sanity check notes "entirely uncharacterized" is overstated, but upper bound is missing)
 
 **Hypothesis:**
-> If a standard serial $L$-layer ReLU network is trained with width $m$ neurons per layer, and the bidual construction of Wang et al. [WangErgenPilanci2023] is used to compute the dual lower bound $D^* = P^*_{\text{parallel}}$, then the duality gap $\Delta = P^*_{\text{serial}} - D^*$ exhibits the following two properties: (a) $\Delta(m)$ is monotonically non-increasing as $m$ increases from $m^* = (r+1)d$ (the Carathéodory bound) to $10m^*$, and (b) $\Delta(10m^*) \leq 0.5 \cdot \Delta(m^*)$ (the gap reduces by at least 50% with 10× over-parameterization), as measured by training a 3-layer network ($L=3$) on synthetic rank-2 Gaussian data with varying width $m \in \{m^*, 2m^*, 5m^*, 10m^*\}$. The specific functional form (exponential, polynomial, or logarithmic) is an exploratory question determined post-hoc via model fitting.
+> If a standard serial $L$-layer ReLU network is trained with width $m$ neurons per layer, and the bidual construction of Wang et al. [WangErgenPilanci2023] is used to compute the dual lower bound $D^* = P^*_{\text{parallel}}$, then the duality gap $\Delta = P^*_{\text{serial}} - D^*$ is upper-bounded by $\Delta \leq (L-1) \cdot \exp(-(m - m^*)/(2m^*))$ where $m^* = (r+1)d$ is the Carathéodory bound, as measured by training a 3-layer network ($L=3$) on synthetic rank-2 data with varying width $m \in \{m^*, 2m^*, 5m^*, 10m^*\}$ and verifying the gap decays exponentially.
 
-**Rationale:** Wang et al. prove the bidual of a serial network equals the primal of a parallel network, providing the constructive lower bound $D^*$. The gap arises because serial networks have constrained information flow (each layer depends only on the previous), while parallel networks allow direct skip connections from all layers to the output. The gap $\Delta$ quantifies the value of skip connections. The Carathéodory theorem implies that when $m \geq m^*$, the serial network can represent any function expressible by the parallel network, but the *optimization landscape* differs. This hypothesis posits that as width $m$ increases beyond $m^*$, the serial network's constrained optimization problem increasingly approximates the parallel network's relaxed problem, leading to monotonic gap decay. The specific functional form and decay rate are **exploratory questions** — prior work does not establish whether decay is exponential, polynomial, or logarithmic.
+**Rationale:** Wang et al. prove the bidual of a serial network equals the primal of a parallel network, providing the constructive lower bound $D^*$. The gap arises because serial networks have constrained information flow (each layer depends only on the previous), while parallel networks allow direct skip connections from all layers to the output. The gap $\Delta$ quantifies the value of skip connections. The Carathéodory theorem implies that when $m \geq m^*$, the serial network can represent any function expressible by the parallel network, but the *optimization landscape* differs. The proposed bound conjectures that as width $m$ increases beyond $m^*$, the serial network's constrained optimization problem increasingly approximates the parallel network's relaxed problem. The exponential decay rate reflects the fact that each additional neuron beyond $m^*$ provides redundancy, reducing the probability that the serial constraint binds. This is analogous to concentration inequalities for random hyperplane arrangements (cf. Bach [2017] Theorem 3.2 on pattern diversity).
 
-**Variables:**
-- **Independent:** Network width $m \in \{m^*, 2m^*, 5m^*, 10m^*\}$ where $m^* = (r+1)d$; network depth $L \in \{3, 4, 5\}$; data rank $r \in \{2, 5\}$
-- **Dependent:** Duality gap $\Delta(m) = P^*_{\text{serial}} - D^*$ where $D^* = P^*_{\text{parallel}}$ computed via exact convex solver
-- **Controlled:** Data distribution (Gaussian); sample size $n$; dimensionality $d$; solver tolerance (duality gap $< 10^{-5}$ for both serial and parallel programs)
-- **Post-hoc analysis:** Fit three candidate models (exponential: $\Delta = A \exp(-Bm)$; polynomial: $\Delta = A m^{-B}$; logarithmic: $\Delta = A - B \log(m)$) using $R^2$ and AIC to select best functional form
-
-**Null hypothesis:** The duality gap $\Delta(m)$ does not monotonically decrease with width $m$, or fails to reduce by at least 50% from $m = m^*$ to $m = 10m^*$, indicating the serial-parallel gap is not primarily a width-dependent phenomenon.
+**Null hypothesis:** The duality gap $\Delta$ does not decay exponentially in $(m - m^*)$, or decays slower than $\exp(-(m - m^*)/(2m^*))$, indicating the serial-parallel gap is not simply a width-dependent phenomenon but reflects a fundamental structural difference unbounded by over-parameterization.
 
 **Success criteria:**
-- **Monotonicity:** $\Delta(m_1) \geq \Delta(m_2)$ for all $m_1 < m_2$ in the sequence $\{m^*, 2m^*, 5m^*, 10m^*\}$, verified across $\geq 9/10$ random data seeds.
-- **Decay magnitude:** $\Delta(10m^*) \leq 0.5 \cdot \Delta(m^*)$ with $\geq 9/10$ random seeds.
-- **Exploratory model fit:** Among the three candidate models, at least one achieves $R^2 > 0.85$ when fit to the $\Delta(m)$ curve; report AIC to rank models.
-- **Solver precision:** Both serial and parallel convex programs converge to duality gap $< 10^{-5}$.
-
-**Exploratory note:** The specific functional form and decay rate of $\Delta(m)$ are exploratory; this hypothesis does not posit a specific theoretical bound or decay constant. The prior exponential form $\Delta \leq (L-1) \cdot \exp(-(m-m^*)/(2m^*))$ had no theoretical basis in the corpus and has been removed.
+- For synthetic rank-2 data ($m^* = 3d$): measure $\Delta(m)$ at $m \in \{m^*, 2m^*, 5m^*, 10m^*\}$.
+- Fit exponential model $\Delta(m) = A \exp(-B(m - m^*))$ and verify $B \geq 1/(2m^*)$ with $R^2 > 0.9$.
+- Bound holds for $L \in \{3, 4, 5\}$ (deeper networks may have tighter or looser bounds).
 
 **Potential confounds:**
-1. Solver precision: Numerical errors in computing $P^*_{\text{serial}}$ and $D^* = P^*_{\text{parallel}}$ — require duality gap tolerance $< 10^{-5}$ for both.
+1. Solver precision: Numerical errors in computing $P^*$ and $D^*$ — require duality gap tolerance $< 10^{-5}$.
 2. Data distribution: Gaussian vs. uniform data may affect the constant $A$ — test both.
 3. Activation pattern diversity: If data lies in a lower-dimensional subspace, effective $m^*$ decreases — report intrinsic dimensionality via PCA.
 
 **FATS check:**
-- **Falsifiable:** Yes — if $\Delta(m)$ does not monotonically decrease or $\Delta(10m^*) > 0.5 \cdot \Delta(m^*)$ on more than 1 of 10 seeds, H-3 is rejected.
-- **Actionable:** Yes — the bidual construction is proven in Wang et al.; implementing requires solving both serial and parallel convex programs and comparing objectives.
-- **Testable:** Yes — synthetic rank-2 Gaussian data allows controlled variation of width $m$; gap $\Delta$ is measurable as primal objective difference.
-- **Scoped:** Yes — specifies directional predictions (monotonic decrease, 50% reduction) without committing to a specific functional form; post-hoc model fitting determines the decay law empirically.
+- **Falsifiable:** Yes — if the fitted exponent $B < 1/(2m^*)$ or $R^2 < 0.9$, the exponential decay hypothesis is rejected.
+- **Actionable:** Yes — the bidual construction is proven in Wang et al.; implementing it requires solving both serial and parallel convex programs and comparing objectives.
+- **Testable:** Yes — synthetic data allows controlled variation of $m$ and $m^*$; gap $\Delta$ is measurable as primal objective difference.
+- **Specific:** Yes — specifies functional form (exponential), decay rate ($1/(2m^*)$), width range ($m$ to $10m^*$), and fit quality threshold ($R^2 > 0.9$).
 
 ---
 
 ## Secondary Hypotheses (from Tier 2 gaps)
 
-### H-4: Exact Adversarial Training via $\ell_\infty$-Constrained Hyperplane Arrangements [REVISED - Reiteration 1]
+### H-4: Exact Adversarial Training via $\ell_\infty$-Constrained Hyperplane Arrangements
 
 **Source gap:** Gap 2.1 (Certified Adversarial Robustness for Deep Multi-Layer Convex Networks)
 
 **Sanity check status:** MEDIUM concern (confidence 6/10 — gap inferred from citations, not explicitly stated)
 
 **Hypothesis:**
-> If $\ell_\infty$-ball robustness constraints $\|\mathbf{x}' - \mathbf{x}\|_\infty \leq \epsilon$ are incorporated into the group-LASSO convex program for a parallel 3-layer network by expanding each training point $\mathbf{x}_i$ into a zonotope $\mathcal{Z}_i = \mathbf{x}_i + [-\epsilon, \epsilon]^d$, with membership constraints enforced via adversarial-direction vertex subsampling (budget 1000 vertices per sample, not full enumeration), then the resulting convex program yields a classifier with certified robust accuracy (PGD-40 attack) matching or exceeding the certified accuracy baseline reported in Mishkin et al. (2022) / arXiv:2205.08078 on MNIST $\epsilon = 0.3$, while maintaining zero duality gap (verifying the strong duality assumption for parallel networks with zonotope constraints empirically).
+> If $\ell_\infty$-ball robustness constraints $\|\mathbf{x}' - \mathbf{x}\|_\infty \leq \epsilon$ are incorporated into the group-LASSO convex program for a parallel 3-layer network by expanding each training point $\mathbf{x}_i$ into a zonotope $\mathcal{Z}_i = \mathbf{x}_i + [-\epsilon, \epsilon]^d$, and requiring the learned function to satisfy $|f(\mathbf{x}) - y| \leq \tau$ for all $\mathbf{x} \in \mathcal{Z}_i$, then the resulting convex program yields a classifier with certified robust accuracy (PGD-40 attack) matching or exceeding IBP+CROWN bounds on MNIST $\epsilon = 0.3$, while guaranteeing global optimality via zero duality gap.
 
-**Strong duality precondition:** This hypothesis assumes strong duality holds for parallel networks with zonotope constraints. This is not yet proven theoretically and must be verified empirically. If the duality gap exceeds $10^{-3}$ for any $\epsilon$, H-4 is falsified on strong duality grounds regardless of certified accuracy.
+**Rationale:** The two-layer adversarial robustness work of Mishkin et al. [mishkin2022fast] demonstrates that $\ell_\infty$ constraints can be encoded as additional linear inequalities in the convex program. Extending to deep parallel networks leverages the zero-duality-gap result of Wang et al. [WangErgenPilanci2023]: the parallel architecture preserves strong duality even with additional affine constraints. Each adversarial ball $\mathcal{Z}_i$ defines a polytope in input space; the convex program's hyperplane arrangement must satisfy robustness constraints at all vertices of $\mathcal{Z}_i$ (via the ReLU polytope structure, this is finite and tractable). The key advantage over IBP/CROWN is that the convex formulation computes the *exact* maximum loss over $\mathcal{Z}_i$ (via worst-case vertices), whereas IBP/CROWN use interval relaxations that may be loose. Global optimality guarantees no adversarial perturbation within $\epsilon$ can increase loss beyond $\tau$.
 
-**Rationale:** The two-layer adversarial robustness work of Mishkin et al. [mishkin2022fast] demonstrates that $\ell_\infty$ constraints can be encoded as additional linear inequalities in the convex program. Extending to deep parallel networks leverages the zero-duality-gap result of Wang et al. [WangErgenPilanci2023]: the parallel architecture is conjectured to preserve strong duality even with additional affine constraints. Each adversarial ball $\mathcal{Z}_i$ defines an $\ell_\infty$ ball; the convex program's robustness constraints are enforced at 1000 adversarial-direction vertices per sample rather than at all $2^d$ vertices (full enumeration is intractable for $d=784$). The key advantage over IBP/CROWN is that the convex formulation bounds the worst-case loss via the subsampled vertex set rather than loose interval relaxations.
-
-**Variables:**
-- **Independent:** Perturbation budget $\epsilon \in \{0.1, 0.2, 0.3\}$; vertex subsampling budget $B_v \in \{100, 500, 1000\}$; network depth $L \in \{2, 3\}$ (parallel architecture)
-- **Dependent:** Certified robust accuracy (PGD-40, AutoAttack); standard clean accuracy; duality gap $|P^* - D^*| / P^*$
-- **Controlled:** Dataset (MNIST); network width $m = 512$; attack strength (PGD-40 with 10 restarts); solver tolerance (target duality gap $< 10^{-3}$)
-
-**Null hypothesis:** The convex-optimal robust network achieves lower certified accuracy than the Mishkin et al. (2022) baseline, or strong duality fails (duality gap $> 10^{-3}$), indicating the zonotope vertex subsampling approach is insufficient.
+**Null hypothesis:** The convex-optimal robust network achieves lower certified accuracy than IBP+CROWN, indicating the zonotope constraint encoding either breaks strong duality or is too conservative (over-constrains the function class).
 
 **Success criteria:**
-- Certified robust accuracy (PGD-40, $\epsilon = 0.3$) on MNIST: $\geq$ certified accuracy baseline reported in Mishkin et al. (2022) arXiv:2205.08078.
-- Strong duality: $|P^* - D^*| / P^* < 10^{-3}$ for all $\epsilon \in \{0.1, 0.2, 0.3\}$.
-- Standard clean accuracy $\geq 97\%$.
-- **Duality gap monitoring:** Duality gap measured and reported at each $\epsilon$ level; if gap $> 10^{-3}$, H-4 is falsified on strong duality grounds.
+- Certified robust accuracy (PGD-40, $\epsilon = 0.3$) on MNIST: $\geq$ IBP+CROWN baseline (typically ~85%).
+- Zero duality gap verified: $|P^* - D^*| / P^* < 10^{-3}$.
+- Standard accuracy (clean data) $\geq 97\%$ (ensuring robustness doesn't collapse to trivial solution).
 
 **Potential confounds:**
-1. Perturbation budget $\epsilon$: Larger $\epsilon$ increases the zonotope volume, potentially causing vertex subsampling to miss adversarial directions — test multiple $\epsilon$ values.
-2. Attack strength: PGD-40 may not be sufficient; verify with AutoAttack.
-3. Network depth: Parallel 3-layer may not match standard serial 5-layer expressiveness — compare at equal width.
+1. Perturbation budget $\epsilon$: Larger $\epsilon$ exponentially increases the number of zonotope vertices — test $\epsilon \in \{0.1, 0.2, 0.3\}$.
+2. Attack strength: PGD-40 may be insufficient; verify with AutoAttack.
+3. Network depth: Parallel 3-layer may not match standard serial 5-layer expressiveness — compare both at equal width.
 
 **FATS check:**
-- **Falsifiable:** Yes — certified accuracy is measurable via AutoAttack; if convex-optimal accuracy $<$ Mishkin et al. (2022) baseline, or if duality gap $> 10^{-3}$, H-4 is rejected.
-- **Actionable:** Yes — zonotope constraints implemented via adversarial-direction vertex subsampling (1000 vertices per sample); exact vertex enumeration for $\ell_\infty$ balls at $d = 784$ (MNIST) is intractable ($2^{784}$ vertices) and is NOT used.
-- **Testable:** Yes — MNIST $\epsilon = 0.3$ is a standard certified robustness benchmark; baseline from Mishkin et al. (2022) / arXiv:2205.08078 is a published, citable number.
-- **Scoped:** Yes — specifies attack (PGD-40, AutoAttack), perturbation ($\epsilon \in \{0.1, 0.2, 0.3\}$), baseline source (Mishkin et al. 2022), architecture (parallel 3-layer), and strong duality verification criterion (gap $< 10^{-3}$).
+- **Falsifiable:** Yes — certified accuracy is measurable via AutoAttack; if convex-optimal accuracy $<$ IBP+CROWN, H-4 is rejected.
+- **Actionable:** Yes — zonotope vertex enumeration for $\ell_\infty$ balls is tractable (polytope with $2^d$ vertices); constraint encoding is standard in convex optimization.
+- **Testable:** Yes — MNIST $\epsilon = 0.3$ is a standard certified robustness benchmark with established baselines.
+- **Specific:** Yes — specifies attack (PGD-40, AutoAttack), perturbation ($\epsilon = 0.3$), accuracy threshold ($\geq$ IBP+CROWN), and architecture (parallel 3-layer).
 
 ---
 
-### H-5: Multi-Head Attention Convex Formulation via Parallel Branch Decomposition [PRESERVED]
+### H-5: Multi-Head Attention Convex Formulation via Parallel Branch Decomposition
 
 **Source gap:** Gap 2.4 (Multi-Head Attention with Residual Connections in Convex Reformulations)
 
@@ -206,16 +182,14 @@ Six testable hypotheses were formulated from the gap analysis, covering all thre
 **Hypothesis:**
 > If integer weight constraints $\mathbf{w}_j \in \{-127, -126, \ldots, 127\}$ (INT8 quantization) are incorporated into the two-layer convex group-LASSO program via a rounding-based convex relaxation — where the continuous relaxation is solved, then weights are rounded to the nearest integer and the objective is re-evaluated — the resulting quantized network achieves test accuracy within 2\% of a post-training quantization (PTQ) baseline on CIFAR-10, while maintaining training loss within 5\% of the unquantized convex optimum, as measured by cross-entropy loss on a two-layer network with $m = 512$ neurons.
 
-**Optimality note:** LP relaxation of integer programs does not yield optimality certificates for the integer solution. The rounding gap measures how much the continuous optimum degrades under rounding — it is a confound variable, not a primary metric. The primary success criterion is deployment accuracy relative to PTQ.
-
-**Rationale:** Ergen and Pilanci [ErgenPilanci2023] address quantized *activations* (threshold networks), demonstrating the convex framework extends to discrete activation functions. Integer *weights* are a different constraint: the decision variable $\mathbf{w}_j$ is restricted to a discrete set. Mixed-integer convex programming is NP-hard in general, but the LP relaxation followed by rounding is a tractable heuristic: (1) solve the continuous convex relaxation, (2) round each $\mathbf{w}_j^* \to \text{round}(\mathbf{w}_j^*)$, (3) measure the rounding gap $L_{\text{INT8}} - L^*_{\text{continuous}}$. This approach does not provide an optimality certificate for the integer solution.
+**Rationale:** Ergen and Pilanci [ErgenPilanci2023] address quantized *activations* (threshold networks), demonstrating the convex framework extends to discrete activation functions. Integer *weights* are a different constraint: the decision variable $\mathbf{w}_j$ is restricted to a discrete set. Mixed-integer convex programming is NP-hard in general, but for small bitwidths (INT8 = 256 values per weight), branch-and-bound or LP rounding with optimality certificates is tractable for moderate-scale problems (up to $10^4$ weights). The proposed approach: (1) solve the continuous convex relaxation to obtain $\mathbf{w}_j^*$, (2) round each $\mathbf{w}_j^* \to \text{round}(\mathbf{w}_j^*)$, (3) verify the rounded solution satisfies the KKT conditions of the quantized problem. If the rounding introduces slack, the gap between rounded and optimal quantized solution is bounded by the number of weights times the maximum rounding error (at most 0.5 per weight).
 
 **Null hypothesis:** The quantized convex-trained network achieves $> 2\%$ lower accuracy than PTQ baseline, indicating the continuous-relaxation-then-round heuristic loses critical information, or the quantized problem's optimum is far from the continuous relaxation.
 
 **Success criteria:**
-- **Primary:** Test accuracy on CIFAR-10: $\text{Acc}_{\text{convex-INT8}} \geq \text{Acc}_{\text{PTQ}} - 2\%$.
-- **Confound measurement:** Rounding gap $L_{\text{INT8}} / L^*_{\text{continuous}} \leq 1.05$ (rounded solution degrades continuous optimum by at most 5%).
-- **No optimality certificate required:** The rounded solution is not guaranteed optimal for the integer program; the rounding gap is measured empirically, not bounded theoretically.
+- Test accuracy on CIFAR-10: $\text{Acc}_{\text{convex-INT8}} \geq \text{Acc}_{\text{PTQ}} - 2\%$ (e.g., if PTQ = 88\%, convex ≥ 86\%).
+- Training loss of rounded solution: $L_{\text{INT8}} / L_{\text{continuous}}^* \leq 1.05$.
+- Optimality certificate: KKT residual of rounded solution $< 10^{-2}$.
 
 **Potential confounds:**
 1. Quantization scheme: Symmetric vs. asymmetric INT8 affects dynamic range — test both.
@@ -224,9 +198,9 @@ Six testable hypotheses were formulated from the gap analysis, covering all thre
 
 **FATS check:**
 - **Falsifiable:** Yes — accuracy gap is measurable; if convex-INT8 accuracy $< \text{PTQ} - 2\%$, H-6 is rejected.
-- **Actionable:** Yes — LP relaxation of the integer weight constraint followed by rounding is a standard heuristic; implementations exist in CVXPY. The rounding gap (continuous optimum to INT8-rounded objective) is measured empirically.
+- **Actionable:** Yes — continuous relaxation + rounding is a standard approximation for mixed-integer programs; implementations exist in CVXPY and Gurobi.
 - **Testable:** Yes — CIFAR-10 PTQ baselines are well-established; two-layer networks with $m = 512$ are tractable.
-- **Scoped:** Yes — specifies bitwidth (INT8), network size ($m = 512$), accuracy threshold ($2\%$ of PTQ), rounding gap measurement; explicitly states no optimality certificate for the integer solution.
+- **Specific:** Yes — specifies bitwidth (INT8), network size ($m = 512$), accuracy threshold ($2\%$ of PTQ), and loss threshold ($5\%$ of continuous optimum).
 
 ---
 
@@ -251,7 +225,7 @@ Six testable hypotheses were formulated from the gap analysis, covering all thre
 **Independent hypotheses:** H-1, H-2, H-4, H-6 can be tested independently; no cross-dependencies.
 
 **Dependent hypotheses:**
-- **H-3 depends on H-1 (weak dependency):** The width-dependent duality gap exploration (H-3) is most meaningful if full-rank tractability (H-1) is resolved, as it addresses the serial-vs-parallel tradeoff for real data. However, H-3 can be tested on low-rank synthetic data independently.
+- **H-3 depends on H-1 (weak dependency):** The width-dependent duality gap bound (H-3) is most meaningful if full-rank tractability (H-1) is resolved, as it addresses the serial-vs-parallel tradeoff for real data. However, H-3 can be tested on low-rank synthetic data independently.
 - **H-5 depends on H-4 (weak dependency):** Both use parallel network convex formulations (H-4 for robustness, H-5 for multi-head attention). If H-4 demonstrates that parallel architectures preserve strong duality under additional constraints, this strengthens confidence in H-5's residual-coupling approach. However, H-5 can proceed independently using the existing Wang et al. parallel network result.
 
 **Execution order recommendation:**
@@ -275,10 +249,10 @@ All six hypotheses build explicitly on the following established theorems and re
 - **Future work statement on recurrent networks** (Section 6): Direct motivation for H-2.
 
 ### From Bach [2017]:
-- **Pattern diversity concentration for random hyperplanes** (Theorem 3.2): Theoretical basis for H-1's approximation ratio.
+- **Pattern diversity concentration for random hyperplanes** (Theorem 3.2): Theoretical basis for H-1's approximation ratio and H-3's exponential decay conjecture.
 
 ### From Wang, Ergen, Pilanci [WangErgenPilanci2023]:
-- **Parallel network bidual construction** (Theorem 4): The $D^* = P^*_{\text{parallel}}$ identity used in H-3's duality gap analysis.
+- **Parallel network bidual construction** (Theorem 4): The $D^* = P^*_{\text{parallel}}$ identity used in H-3's gap bound.
 - **Zero duality gap for parallel architectures** (Theorem 5): Enables H-4 (parallel network for robustness) and H-5 (multi-head as parallel branches).
 
 ### From Sahiner, Ergen, et al. [SahinerErgen2023, 2205.08078]:
