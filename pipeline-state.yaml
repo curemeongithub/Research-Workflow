@@ -1,6 +1,6 @@
 topic: Dual Convex Optimization in ReLU Neural Networks
 started: '2026-04-06T00:00:00Z'
-current_phase: 7
+current_phase: 8
 reiteration: 1
 phases:
   1:
@@ -59,11 +59,19 @@ phases:
     - H-2
     - H-5
   7:
-    status: pending_reiteration
+    status: complete_reiteration_1
     output: synthesis/methodology.md
     hypotheses_covered: 6
     source_lookups_used: 3
-    timestamp: '2026-04-05T21:08:47.673955Z'
+    timestamp: '2026-04-05T22:01:13Z'
+    experiments_revised:
+    - E1
+    - E3
+    - E4
+    experiments_preserved:
+    - E2
+    - E5
+    - E6
   8:
     status: pending_reiteration
     output: synthesis/final-document.md
