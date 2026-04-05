@@ -1,7 +1,7 @@
 ---
 name: source-extraction
 description: Phase 2 — Extracts content from all downloaded sources into normalized content.md files. Handles arXiv LaTeX, PDFs via Mistral OCR, and web pages via authenticated_extract. Validates math, figures, and citations were extracted correctly.
-model: sonnet
+<!-- model: sonnet -->
 tools: Bash, Read, Write, Glob
 permissionMode: acceptEdits
 color: blue

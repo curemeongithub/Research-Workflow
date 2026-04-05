@@ -181,7 +181,7 @@ All agents re-read these rules from disk at the start of each task. They are not
 | `.claude/skills/source-integrity/SKILL.md` | Zero World Knowledge principle — every specific claim requires a downloaded source |
 | `.claude/skills/writing-style/SKILL.md` | Sentence rhythm, given-new contract, AI tell avoidance, emphasis hierarchy, inline citations |
 | `.claude/skills/markdown-conventions/SKILL.md` | Folder structure, section file naming, LaTeX formatting, per-section source headers |
-| `.claude/skills/web-source-fetching/SKILL.md` | Site-specific fetch strategies (arXiv, blogs, d2l.ai, Substack, PDFs) |
+| `.claude/skills/web-source-fetching/SKILL.md` | Site-specific fetch strategies (arXiv, PDFs) |
 | `.claude/skills/source-management/SKILL.md` | Centralized `sources/` storage, folder naming conventions, PDF figure conversion |
 | `.claude/skills/source-lookup/SKILL.md` | Grep-first controlled access to raw sources (Phases 4-9) |
 | `.claude/skills/literature-analysis/SKILL.md` | MECE theme organization, cross-paper synthesis |

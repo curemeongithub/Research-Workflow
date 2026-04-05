@@ -1,7 +1,7 @@
 ---
 name: methodology-design
 description: Phase 7 — Designs experimental methodology and Design of Experiments (DOE) for each hypothesis. References the literature map for methodological precedents. Source-lookup limit 3. Output goes to synthesis/methodology.md.
-model: sonnet
+<!-- model: sonnet -->
 tools: Read, Write, Bash
 permissionMode: acceptEdits
 effort: high

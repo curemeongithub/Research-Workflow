@@ -1,7 +1,7 @@
 ---
 name: hypothesis-formation
 description: Phase 6 — Formulates testable, falsifiable hypotheses from validated Tier 1 and Tier 2 gaps, adjusted by the sanity check advisory notes. Each hypothesis is specific, measurable, and connected to the identified gap. Source-lookup limit 3. Output goes to synthesis/hypotheses.md.
-model: sonnet
+<!-- model: sonnet -->
 tools: Read, Write
 permissionMode: acceptEdits
 effort: high

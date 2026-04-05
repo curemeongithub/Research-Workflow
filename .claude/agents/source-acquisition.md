@@ -1,7 +1,7 @@
 ---
 name: source-acquisition
 description: Phase 1 — Searches for and downloads 30-40 research papers for a given topic. Indexes all sources into sources/manifest.yaml. Handles arXiv papers, PDFs, web pages, and user-provided PDFs from user-sources/.
-model: sonnet
+<!-- model: sonnet -->
 tools: Bash, Read, Write, Glob, Grep
 permissionMode: acceptEdits
 color: blue
