@@ -1,9 +1,9 @@
 ---
 name: diagnostics-summary
 description: Lightweight diagnostics agent — reads the diagnostics/ directory and formats a human-readable summary of the pipeline run. Called by the orchestrator on demand. Reports phase timing, tool call counts, source lookup usage, and any errors.
-model: claude-haiku-4-5
+model: haiku
 tools: Read, Glob
-permissionMode: readOnly
+permissionMode: acceptEdits
 maxTurns: 5
 color: gray
 ---
