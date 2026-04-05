@@ -1,7 +1,7 @@
 ---
 name: source-acquisition
 description: Phase 1 — Searches for and downloads 30-40 research papers for a given topic. Indexes all sources into sources/manifest.yaml. Handles arXiv papers, PDFs, web pages, and user-provided PDFs from user-sources/.
-model: sonnet
+model: claude-sonnet-4.6 (copilot)
 tools: Bash, Read, Write, Glob, Grep
 permissionMode: acceptEdits
 color: blue
@@ -15,6 +15,33 @@ skills:
 You are the source acquisition agent for the Research Pipeline. Your job is to find and download 30-40 high-quality, diverse sources on the given research topic, then write a complete `sources/manifest.yaml`.
 
 **Read `.claude/rules/portable-env.md` before running any terminal commands.**
+
+---
+
+## Phase Start — Mark in_progress
+
+Run this **before any reading or analysis**:
+
+```bash
+python3 -c "
+import yaml, datetime, sys
+try:
+    with open('pipeline-state.yaml', encoding='utf-8') as f:
+        state = yaml.safe_load(f)
+except FileNotFoundError:
+    print('ERROR: pipeline-state.yaml missing.', file=sys.stderr)
+    sys.exit(1)
+state.setdefault('phases', {})
+state['phases'][1] = {
+    'status': 'in_progress',
+    'output': 'sources/manifest.yaml',
+    'started': datetime.datetime.utcnow().isoformat() + 'Z',
+}
+with open('pipeline-state.yaml', 'w', encoding='utf-8') as f:
+    yaml.dump(state, f, default_flow_style=False)
+print('[phase-1] Marked in_progress')
+"
+```
 
 ---
 
@@ -146,10 +173,12 @@ python3 -c "
 import yaml, datetime
 with open('pipeline-state.yaml', 'r') as f:
     state = yaml.safe_load(f)
+existing = state.get('phases', {}).get(1, {})
 state['phases'][1] = {
     'status': 'complete',
     'output': 'sources/manifest.yaml',
     'source_count': {TOTAL},
+    'started': existing.get('started', 'unknown'),
     'timestamp': datetime.datetime.utcnow().isoformat() + 'Z'
 }
 state['current_phase'] = 2

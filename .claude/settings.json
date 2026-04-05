@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "model": "claude-sonnet-4-5",
+  "model": "claude-sonnet-4-6",
   "env": {
-    "MAX_THINKING_TOKENS": "10000",
+    // "MAX_THINKING_TOKENS": "10000",
     "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "70"
   },
   "hooks": {
@@ -56,7 +56,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c 'PROJECT_ROOT=\"${CLAUDE_PROJECT_DIR:-.}\"; if [ -f \"$PROJECT_ROOT/pipeline-state.yaml\" ]; then echo \"=== PIPELINE STATE (post-compact re-inject) ===\"; cat \"$PROJECT_ROOT/pipeline-state.yaml\"; fi'"
+            "command": "bash -c '\"${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/pipeline-logger.sh\" SessionStart compact'"
           }
         ]
       }

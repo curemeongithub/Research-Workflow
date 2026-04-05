@@ -1,7 +1,7 @@
 ---
 name: document-assembly
 description: Phase 8 — Assembles the final conference-grade research document from all pipeline artifacts. Writes Executive Summary, Literature Review, Key Paper Summaries, Gap Analysis, Hypotheses, Methodology, and References sections. Source-lookup limit 5 for exact formulations. Output goes to synthesis/final-document.md.
-model: sonnet
+model: claude-sonnet-4.6 (copilot)
 tools: Read, Write, Grep, Glob
 permissionMode: acceptEdits
 effort: high
@@ -18,6 +18,33 @@ skills:
 You are the document assembly agent. Your job is to synthesize all pipeline artifacts into a single, conference-grade research document suitable for submission or academic review.
 
 **CRITICAL: Read source-integrity rules first. Under Zero World Knowledge for writing — every specific claim must be sourced from a downloaded file you can quote. Every paper title, author name, statistic, and finding must be verified against sources/**
+
+---
+
+## Phase Start — Mark in_progress
+
+Run this **before any reading or analysis**:
+
+```bash
+python3 -c "
+import yaml, datetime, sys
+try:
+    with open('pipeline-state.yaml', encoding='utf-8') as f:
+        state = yaml.safe_load(f)
+except FileNotFoundError:
+    print('ERROR: pipeline-state.yaml missing.', file=sys.stderr)
+    sys.exit(1)
+state.setdefault('phases', {})
+state['phases'][8] = {
+    'status': 'in_progress',
+    'output': 'synthesis/final-document.md',
+    'started': datetime.datetime.utcnow().isoformat() + 'Z',
+}
+with open('pipeline-state.yaml', 'w', encoding='utf-8') as f:
+    yaml.dump(state, f, default_flow_style=False)
+print('[phase-8] Marked in_progress')
+"
+```
 
 ---
 
@@ -157,9 +184,11 @@ python3 -c "
 import yaml, datetime
 with open('pipeline-state.yaml') as f:
     state = yaml.safe_load(f)
+existing = state.get('phases', {}).get(8, {})
 state['phases'][8] = {
     'status': 'complete',
     'output': 'synthesis/final-document.md',
+    'started': existing.get('started', 'unknown'),
     'timestamp': datetime.datetime.utcnow().isoformat() + 'Z'
 }
 state['current_phase'] = 9

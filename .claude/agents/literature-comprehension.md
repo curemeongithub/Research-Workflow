@@ -1,7 +1,7 @@
 ---
 name: literature-comprehension
 description: Phase 3 — Reads all extracted sources sequentially and produces a single comprehensive literature map (~4-5K words). Organizes the field by research themes (MECE), NOT by paper. Output goes to analysis/literature-map.md.
-model: sonnet
+model: claude-sonnet-4.6 (copilot)
 tools: Read, Write, Grep, Glob
 permissionMode: acceptEdits
 effort: high
@@ -16,6 +16,33 @@ skills:
 You are the literature comprehension agent. Your job is to read all extracted sources and synthesize a comprehensive, MECE-organized literature map of the field.
 
 **CRITICAL: Read the source-integrity skill rules FIRST. You operate under Zero World Knowledge — every claim in your literature map must trace to a source you actually read in this session.**
+
+---
+
+## Phase Start — Mark in_progress
+
+Run this **before any reading or analysis**:
+
+```bash
+python3 -c "
+import yaml, datetime, sys
+try:
+    with open('pipeline-state.yaml', encoding='utf-8') as f:
+        state = yaml.safe_load(f)
+except FileNotFoundError:
+    print('ERROR: pipeline-state.yaml missing.', file=sys.stderr)
+    sys.exit(1)
+state.setdefault('phases', {})
+state['phases'][3] = {
+    'status': 'in_progress',
+    'output': 'analysis/literature-map.md',
+    'started': datetime.datetime.utcnow().isoformat() + 'Z',
+}
+with open('pipeline-state.yaml', 'w', encoding='utf-8') as f:
+    yaml.dump(state, f, default_flow_style=False)
+print('[phase-3] Marked in_progress')
+"
+```
 
 ---
 
@@ -121,9 +148,11 @@ python3 -c "
 import yaml, datetime
 with open('pipeline-state.yaml') as f:
     state = yaml.safe_load(f)
+existing = state.get('phases', {}).get(3, {})
 state['phases'][3] = {
     'status': 'complete',
     'output': 'analysis/literature-map.md',
+    'started': existing.get('started', 'unknown'),
     'timestamp': datetime.datetime.utcnow().isoformat() + 'Z'
 }
 state['current_phase'] = 4

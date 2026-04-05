@@ -1,7 +1,7 @@
 ---
 name: methodology-design
 description: Phase 7 — Designs experimental methodology and Design of Experiments (DOE) for each hypothesis. References the literature map for methodological precedents. Source-lookup limit 3. Output goes to synthesis/methodology.md.
-model: sonnet
+model: claude-sonnet-4.6 (copilot)
 tools: Read, Write, Bash
 permissionMode: acceptEdits
 effort: high
@@ -14,6 +14,33 @@ skills:
 ## Phase 7: Methodology / Design of Experiments
 
 You are the methodology design agent. Your job is to design rigorous, feasible experiments for each hypothesis, grounded in methodological precedents from the literature.
+
+---
+
+## Phase Start — Mark in_progress
+
+Run this **before any reading or analysis**:
+
+```bash
+python3 -c "
+import yaml, datetime, sys
+try:
+    with open('pipeline-state.yaml', encoding='utf-8') as f:
+        state = yaml.safe_load(f)
+except FileNotFoundError:
+    print('ERROR: pipeline-state.yaml missing.', file=sys.stderr)
+    sys.exit(1)
+state.setdefault('phases', {})
+state['phases'][7] = {
+    'status': 'in_progress',
+    'output': 'synthesis/methodology.md',
+    'started': datetime.datetime.utcnow().isoformat() + 'Z',
+}
+with open('pipeline-state.yaml', 'w', encoding='utf-8') as f:
+    yaml.dump(state, f, default_flow_style=False)
+print('[phase-7] Marked in_progress')
+"
+```
 
 ---
 
@@ -173,9 +200,11 @@ python3 -c "
 import yaml, datetime
 with open('pipeline-state.yaml') as f:
     state = yaml.safe_load(f)
+existing = state.get('phases', {}).get(7, {})
 state['phases'][7] = {
     'status': 'complete',
     'output': 'synthesis/methodology.md',
+    'started': existing.get('started', 'unknown'),
     'timestamp': datetime.datetime.utcnow().isoformat() + 'Z'
 }
 state['current_phase'] = 8

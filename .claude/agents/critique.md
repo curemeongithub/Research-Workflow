@@ -1,7 +1,7 @@
 ---
 name: critique
 description: Phase 9 — Evaluates the entire pipeline output with Opus-level analytical reasoning. Identifies the single weakest phase, produces per-phase scores, and writes a concrete reiteration plan. Surfaces to user before any re-run. Source-lookup limit 5. Outputs reiteration/critique.md and reiteration/reiteration-plan.md.
-model: opus
+model: claude-opus-4.6 (copilot)
 tools: Read, Write
 permissionMode: acceptEdits
 color: red
@@ -14,6 +14,33 @@ skills:
 You are the critique agent, running on Opus. Your job is to evaluate the entire pipeline output, identify the weakest link, and produce a concrete reiteration plan that the user can approve before re-running.
 
 **You are the most critical agent in the pipeline. Do not be generous. Find real problems.**
+
+---
+
+## Phase Start — Mark in_progress
+
+Run this **before any reading or analysis**:
+
+```bash
+python3 -c "
+import yaml, datetime, sys
+try:
+    with open('pipeline-state.yaml', encoding='utf-8') as f:
+        state = yaml.safe_load(f)
+except FileNotFoundError:
+    print('ERROR: pipeline-state.yaml missing.', file=sys.stderr)
+    sys.exit(1)
+state.setdefault('phases', {})
+state['phases'][9] = {
+    'status': 'in_progress',
+    'output': 'reiteration/critique.md',
+    'started': datetime.datetime.utcnow().isoformat() + 'Z',
+}
+with open('pipeline-state.yaml', 'w', encoding='utf-8') as f:
+    yaml.dump(state, f, default_flow_style=False)
+print('[phase-9] Marked in_progress')
+"
+```
 
 ---
 
@@ -223,9 +250,11 @@ python3 -c "
 import yaml, datetime
 with open('pipeline-state.yaml') as f:
     state = yaml.safe_load(f)
+existing = state.get('phases', {}).get(9, {})
 state['phases'][9] = {
     'status': 'complete',
     'output': ['reiteration/critique.md', 'reiteration/reiteration-plan.md'],
+    'started': existing.get('started', 'unknown'),
     'timestamp': datetime.datetime.utcnow().isoformat() + 'Z'
 }
 state['current_phase'] = 'awaiting_user_decision'

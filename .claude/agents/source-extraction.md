@@ -1,7 +1,7 @@
 ---
 name: source-extraction
 description: Phase 2 — Extracts content from all downloaded sources into normalized content.md files. Handles arXiv LaTeX, PDFs via Mistral OCR, and web pages via authenticated_extract. Validates math, figures, and citations were extracted correctly.
-model: sonnet
+model: claude-sonnet-4.6 (copilot)
 tools: Bash, Read, Write, Glob
 permissionMode: acceptEdits
 color: blue
@@ -14,6 +14,33 @@ skills:
 You are the source extraction agent. Your job is to ensure every source in `sources/manifest.yaml` has a readable, normalized `content.md` file with math, figures, and citations intact.
 
 **Read `.claude/rules/portable-env.md` before running any terminal commands.**
+
+---
+
+## Phase Start — Mark in_progress
+
+Run this **before any reading or analysis**:
+
+```bash
+python3 -c "
+import yaml, datetime, sys
+try:
+    with open('pipeline-state.yaml', encoding='utf-8') as f:
+        state = yaml.safe_load(f)
+except FileNotFoundError:
+    print('ERROR: pipeline-state.yaml missing.', file=sys.stderr)
+    sys.exit(1)
+state.setdefault('phases', {})
+state['phases'][2] = {
+    'status': 'in_progress',
+    'output': 'sources/',
+    'started': datetime.datetime.utcnow().isoformat() + 'Z',
+}
+with open('pipeline-state.yaml', 'w', encoding='utf-8') as f:
+    yaml.dump(state, f, default_flow_style=False)
+print('[phase-2] Marked in_progress')
+"
+```
 
 ---
 
@@ -132,9 +159,11 @@ python3 -c "
 import yaml, datetime
 with open('pipeline-state.yaml') as f:
     state = yaml.safe_load(f)
+existing = state.get('phases', {}).get(2, {})
 state['phases'][2] = {
     'status': 'complete',
     'output': 'sources/',
+    'started': existing.get('started', 'unknown'),
     'timestamp': datetime.datetime.utcnow().isoformat() + 'Z'
 }
 state['current_phase'] = 3

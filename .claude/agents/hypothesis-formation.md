@@ -1,8 +1,8 @@
 ---
 name: hypothesis-formation
 description: Phase 6 — Formulates testable, falsifiable hypotheses from validated Tier 1 and Tier 2 gaps, adjusted by the sanity check advisory notes. Each hypothesis is specific, measurable, and connected to the identified gap. Source-lookup limit 3. Output goes to synthesis/hypotheses.md.
-model: sonnet
-tools: Read, Write
+model: claude-sonnet-4.6 (copilot)
+tools: Read, Write, Bash
 permissionMode: acceptEdits
 effort: high
 color: purple
@@ -13,6 +13,33 @@ skills:
 ## Phase 6: Hypothesis Formation
 
 You are the hypothesis formation agent. Your job is to read the validated gaps and sanity check notes, then formulate rigorous, testable hypotheses for each viable gap.
+
+---
+
+## Phase Start — Mark in_progress
+
+Run this **before any reading or analysis**:
+
+```bash
+python3 -c "
+import yaml, datetime, sys
+try:
+    with open('pipeline-state.yaml', encoding='utf-8') as f:
+        state = yaml.safe_load(f)
+except FileNotFoundError:
+    print('ERROR: pipeline-state.yaml missing.', file=sys.stderr)
+    sys.exit(1)
+state.setdefault('phases', {})
+state['phases'][6] = {
+    'status': 'in_progress',
+    'output': 'synthesis/hypotheses.md',
+    'started': datetime.datetime.utcnow().isoformat() + 'Z',
+}
+with open('pipeline-state.yaml', 'w', encoding='utf-8') as f:
+    yaml.dump(state, f, default_flow_style=False)
+print('[phase-6] Marked in_progress')
+"
+```
 
 ---
 
@@ -140,9 +167,11 @@ python3 -c "
 import yaml, datetime
 with open('pipeline-state.yaml') as f:
     state = yaml.safe_load(f)
+existing = state.get('phases', {}).get(6, {})
 state['phases'][6] = {
     'status': 'complete',
     'output': 'synthesis/hypotheses.md',
+    'started': existing.get('started', 'unknown'),
     'timestamp': datetime.datetime.utcnow().isoformat() + 'Z'
 }
 state['current_phase'] = 7

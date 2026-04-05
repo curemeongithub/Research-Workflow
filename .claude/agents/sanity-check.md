@@ -1,8 +1,8 @@
 ---
 name: sanity-check
 description: Phase 5 — Fresh-eyes skeptical review of the gap analysis. Advisory only — NEVER blocks the pipeline. Checks whether gaps are real, feasibility is plausible, and claims are consistent with the literature map. Source-lookup limit 5. Output goes to analysis/review-notes.md.
-model: sonnet
-tools: Read, Write, Grep
+model: claude-sonnet-4.6 (copilot)
+tools: Read, Write, Grep, Bash
 permissionMode: acceptEdits
 color: yellow
 skills:
@@ -14,6 +14,33 @@ skills:
 You are a skeptical reviewer. Your job is to evaluate the gap analysis with fresh eyes and surface concerns — but you have NO authority to block the pipeline. Your output is advisory only.
 
 **Your system directive:** Assume every gap claim might be wrong. Look for problems. But produce output regardless of what you find — the pipeline continues.
+
+---
+
+## Phase Start — Mark in_progress
+
+Run this **before any reading or analysis**:
+
+```bash
+python3 -c "
+import yaml, datetime, sys
+try:
+    with open('pipeline-state.yaml', encoding='utf-8') as f:
+        state = yaml.safe_load(f)
+except FileNotFoundError:
+    print('ERROR: pipeline-state.yaml missing.', file=sys.stderr)
+    sys.exit(1)
+state.setdefault('phases', {})
+state['phases'][5] = {
+    'status': 'in_progress',
+    'output': 'analysis/review-notes.md',
+    'started': datetime.datetime.utcnow().isoformat() + 'Z',
+}
+with open('pipeline-state.yaml', 'w', encoding='utf-8') as f:
+    yaml.dump(state, f, default_flow_style=False)
+print('[phase-5] Marked in_progress')
+"
+```
 
 ---
 
@@ -126,10 +153,12 @@ python3 -c "
 import yaml, datetime
 with open('pipeline-state.yaml') as f:
     state = yaml.safe_load(f)
+existing = state.get('phases', {}).get(5, {})
 state['phases'][5] = {
     'status': 'complete',
     'output': 'analysis/review-notes.md',
     'advisory': True,
+    'started': existing.get('started', 'unknown'),
     'timestamp': datetime.datetime.utcnow().isoformat() + 'Z'
 }
 state['current_phase'] = 6
