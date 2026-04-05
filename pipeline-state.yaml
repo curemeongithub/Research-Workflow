@@ -1,0 +1,14 @@
+topic: Dual Convex Optimization in ReLU Neural Networks
+started: '2026-04-06T00:00:00Z'
+current_phase: 2
+reiteration: 0
+phases:
+  1:
+    status: complete
+    output: sources/manifest.yaml
+    source_count: 34
+    breakdown:
+      user_pdfs: 6
+      arxiv_papers: 21
+      web_sources: 7
+    timestamp: '2026-04-05T20:23:53.824141Z'
