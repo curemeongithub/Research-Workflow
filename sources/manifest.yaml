@@ -1,0 +1,436 @@
+topic: Dual Convex Optimization in ReLU Neural Networks
+generated: '2026-04-05T23:58:16.917621+00:00'
+total_sources: 39
+readable_count: 39
+sources:
+- id: user-2002.10553v2
+  type: user_pdf
+  title: 2002.10553v2.pdf
+  local_path: sources/user-2002.10553v2
+  content_file: sources/user-2002.10553v2/2002.10553v2.md
+  readable: true
+  notes: User-provided PDF processed via Mistral OCR
+- id: user-2110.05518v2
+  type: user_pdf
+  title: 2110.05518v2.pdf
+  local_path: sources/user-2110.05518v2
+  content_file: sources/user-2110.05518v2/2110.05518v2.md
+  readable: true
+  notes: User-provided PDF processed via Mistral OCR
+- id: user-2402.03625v3
+  type: user_pdf
+  title: 2402.03625v3.pdf
+  local_path: sources/user-2402.03625v3
+  content_file: sources/user-2402.03625v3/2402.03625v3.md
+  readable: true
+  notes: User-provided PDF processed via Mistral OCR
+- id: user-ergen21b
+  type: user_pdf
+  title: ergen21b.pdf
+  local_path: sources/user-ergen21b
+  content_file: sources/user-ergen21b/ergen21b.md
+  readable: true
+  notes: User-provided PDF processed via Mistral OCR
+- id: user-8652_CRONOS_Enhancing_Deep_Lea
+  type: user_pdf
+  title: 8652_CRONOS_Enhancing_Deep_Lea.pdf
+  local_path: sources/user-8652_CRONOS_Enhancing_Deep_Lea
+  content_file: sources/user-8652_CRONOS_Enhancing_Deep_Lea/8652_CRONOS_Enhancing_Deep_Lea.md
+  readable: true
+  notes: User-provided PDF processed via Mistral OCR
+- id: user-2110.06482v3
+  type: user_pdf
+  title: 2110.06482v3.pdf
+  local_path: sources/user-2110.06482v3
+  content_file: sources/user-2110.06482v3/2110.06482v3.md
+  readable: true
+  notes: User-provided PDF processed via Mistral OCR
+- id: arxiv-2012.13401
+  type: arxiv
+  title: 'Neural Networks are Convex Regularizers: Exact Polynomial-time Convex Optimization
+    Formulations for Two-Layer Networks'
+  authors:
+  - Pilanci & Ergen
+  year: 2020
+  arxiv_id: '2012.13401'
+  url: https://arxiv.org/abs/2012.13401
+  local_path: sources/arxiv-2012.13401
+  content_file: sources/arxiv-2012.13401/UnderTheSpellOfDynkinFinal.tex
+  readable: true
+  notes: LaTeX source tarball
+- id: arxiv-2110.06482
+  type: arxiv
+  title: 'Global Optimality Beyond Two Layers: Training Deep ReLU Networks via Convex
+    Programs'
+  authors:
+  - Ergen & Pilanci
+  year: 2021
+  arxiv_id: '2110.06482'
+  url: https://arxiv.org/abs/2110.06482
+  local_path: sources/arxiv-2110.06482
+  content_file: sources/arxiv-2110.06482/iclr2023.tex
+  readable: true
+  notes: LaTeX source tarball
+- id: arxiv-2012.13635
+  type: arxiv
+  title: Convex Geometry and Duality of Over-parameterized Neural Networks
+  authors:
+  - Ergen & Pilanci
+  year: 2021
+  arxiv_id: '2012.13635'
+  url: https://arxiv.org/abs/2012.13635
+  local_path: sources/arxiv-2012.13635
+  content_file: sources/arxiv-2012.13635/learning_in_ltn.tex
+  readable: true
+  notes: LaTeX source tarball
+- id: arxiv-2002.10553
+  type: arxiv
+  title: Convex Duality and Cutting Plane Methods for Over-parameterized Neural Networks
+  authors:
+  - Pilanci & Ergen
+  year: 2020
+  arxiv_id: '2002.10553'
+  url: https://arxiv.org/abs/2002.10553
+  local_path: sources/arxiv-2002.10553
+  content_file: sources/arxiv-2002.10553/main.tex
+  readable: true
+  notes: LaTeX source tarball
+- id: arxiv-2110.05518
+  type: arxiv
+  title: Hyperparameter Optimization as a Service via Convex Neural Networks
+  authors:
+  - Ergen et al.
+  year: 2021
+  arxiv_id: '2110.05518'
+  url: https://arxiv.org/abs/2110.05518
+  local_path: sources/arxiv-2110.05518
+  content_file: sources/arxiv-2110.05518/main.tex
+  readable: true
+  notes: LaTeX source tarball
+- id: arxiv-2402.03625
+  type: arxiv
+  title: Scalable Convex Optimization of Neural Networks via Frank-Wolfe Methods
+  authors:
+  - Mishkin et al.
+  year: 2024
+  arxiv_id: '2402.03625'
+  url: https://arxiv.org/abs/2402.03625
+  local_path: sources/arxiv-2402.03625
+  content_file: sources/arxiv-2402.03625/icml2024.tex
+  readable: true
+  notes: LaTeX source tarball
+- id: arxiv-2106.05528
+  type: arxiv
+  title: Convex Neural Networks with Sparsity-Inducing Regularizers
+  authors:
+  - Ergen & Pilanci
+  year: 2021
+  arxiv_id: '2106.05528'
+  url: https://arxiv.org/abs/2106.05528
+  local_path: sources/arxiv-2106.05528
+  content_file: sources/arxiv-2106.05528/tmm_cdcl.tex
+  readable: true
+  notes: LaTeX source tarball
+- id: arxiv-2104.02796
+  type: arxiv
+  title: Global Optimality via Convex Duality for Deep Neural Networks
+  authors:
+  - Sahiner et al.
+  year: 2021
+  arxiv_id: '2104.02796'
+  url: https://arxiv.org/abs/2104.02796
+  local_path: sources/arxiv-2104.02796
+  content_file: sources/arxiv-2104.02796/On_configurationally_driven_nanoscale_motion.tex
+  readable: true
+  notes: LaTeX source tarball
+- id: arxiv-2209.01113
+  type: arxiv
+  title: Vector-Output ReLU Neural Network Problems are Copositive Programs
+  authors:
+  - Chen & Pilanci
+  year: 2022
+  arxiv_id: '2209.01113'
+  url: https://arxiv.org/abs/2209.01113
+  local_path: sources/arxiv-2209.01113
+  content_file: sources/arxiv-2209.01113/main_jcap.tex
+  readable: true
+  notes: LaTeX source tarball
+- id: arxiv-2307.01197
+  type: arxiv
+  title: Convex Relaxations of ReLU Neural Networks for the Certification of Robustness
+  authors:
+  - Raghunathan et al.
+  year: 2023
+  arxiv_id: '2307.01197'
+  url: https://arxiv.org/abs/2307.01197
+  local_path: sources/arxiv-2307.01197
+  content_file: sources/arxiv-2307.01197/preamble.tex
+  readable: true
+  notes: LaTeX source tarball
+- id: arxiv-2209.01062
+  type: arxiv
+  title: Regularization and Optimization in Deep Learning via Dual Methods
+  authors:
+  - Mishkin & Pilanci
+  year: 2022
+  arxiv_id: '2209.01062'
+  url: https://arxiv.org/abs/2209.01062
+  local_path: sources/arxiv-2209.01062
+  content_file: sources/arxiv-2209.01062/sigma23-092.tex
+  readable: true
+  notes: LaTeX source tarball
+- id: arxiv-2104.14641
+  type: arxiv
+  title: Optimal Approximation with Sparse Deep Neural Networks using Residual Connections
+  authors:
+  - Boursier et al.
+  year: 2021
+  arxiv_id: '2104.14641'
+  url: https://arxiv.org/abs/2104.14641
+  local_path: sources/arxiv-2104.14641
+  content_file: sources/arxiv-2104.14641/overview.tex
+  readable: true
+  notes: LaTeX source tarball
+- id: arxiv-1806.07572
+  type: arxiv
+  title: 'Neural Tangent Kernel: Convergence and Generalization in Neural Networks'
+  authors:
+  - Jacot et al.
+  year: 2018
+  arxiv_id: '1806.07572'
+  url: https://arxiv.org/abs/1806.07572
+  local_path: sources/arxiv-1806.07572
+  content_file: sources/arxiv-1806.07572/main_Arxiv2.tex
+  readable: true
+  notes: LaTeX source tarball
+- id: arxiv-2002.02405
+  type: arxiv
+  title: 'Finite Versus Infinite Neural Networks: an Empirical Study'
+  authors:
+  - Lee et al.
+  year: 2020
+  arxiv_id: '2002.02405'
+  url: https://arxiv.org/abs/2002.02405
+  local_path: sources/arxiv-2002.02405
+  content_file: sources/arxiv-2002.02405/arxiv.tex
+  readable: true
+  notes: LaTeX source tarball
+- id: arxiv-1904.11955
+  type: arxiv
+  title: On the Inductive Bias of Neural Tangent Kernels
+  authors:
+  - Bietti & Mairal
+  year: 2019
+  arxiv_id: '1904.11955'
+  url: https://arxiv.org/abs/1904.11955
+  local_path: sources/arxiv-1904.11955
+  content_file: sources/arxiv-1904.11955/discussion.tex
+  readable: true
+  notes: LaTeX source tarball
+- id: arxiv-2204.09875
+  type: arxiv
+  title: Characterizing the Implicit Bias of Regularized Neural Networks via the Convex
+    Lasso
+  authors:
+  - Boursier et al.
+  year: 2023
+  arxiv_id: '2204.09875'
+  url: https://arxiv.org/abs/2204.09875
+  local_path: sources/arxiv-2204.09875
+  content_file: sources/arxiv-2204.09875/method.tex
+  readable: true
+  notes: LaTeX source tarball
+- id: arxiv-2012.09769
+  type: arxiv
+  title: Sparse Neural Network Training via Convex Polytope Projections
+  authors:
+  - Ergen & Pilanci
+  year: 2020
+  arxiv_id: '2012.09769'
+  url: https://arxiv.org/abs/2012.09769
+  local_path: sources/arxiv-2012.09769
+  content_file: sources/arxiv-2012.09769/draft.tex
+  readable: true
+  notes: LaTeX source tarball
+- id: arxiv-2104.01506
+  type: arxiv
+  title: Group-Sparse Neural Networks via Convex Duality — Deep Architectures
+  authors:
+  - Ergen & Pilanci
+  year: 2021
+  arxiv_id: '2104.01506'
+  url: https://arxiv.org/abs/2104.01506
+  local_path: sources/arxiv-2104.01506
+  content_file: sources/arxiv-2104.01506/frog.tex
+  readable: true
+  notes: LaTeX source tarball
+- id: arxiv-1811.01988
+  type: arxiv
+  title: Semidefinite Relaxations for Neural Network Verification
+  authors:
+  - Raghunathan et al.
+  year: 2018
+  arxiv_id: '1811.01988'
+  url: https://arxiv.org/abs/1811.01988
+  local_path: sources/arxiv-1811.01988
+  content_file: sources/arxiv-1811.01988/section-6.tex
+  readable: true
+  notes: LaTeX source tarball
+- id: arxiv-1703.04699
+  type: arxiv
+  title: A Unified Convergence Analysis of Block Successive Minimization Methods
+  authors:
+  - Razaviyayn et al.
+  year: 2013
+  arxiv_id: '1703.04699'
+  url: https://arxiv.org/abs/1703.04699
+  local_path: sources/arxiv-1703.04699
+  content_file: sources/arxiv-1703.04699/root.tex
+  readable: true
+  notes: LaTeX source tarball
+- id: arxiv-1811.10927
+  type: arxiv
+  title: The Loss Surfaces of Multilayer Networks
+  authors:
+  - Dauphin et al.
+  year: 2019
+  arxiv_id: '1811.10927'
+  url: https://arxiv.org/abs/1811.10927
+  local_path: sources/arxiv-1811.10927
+  content_file: sources/arxiv-1811.10927/GirishKumar_FPCP_proc.tex
+  readable: true
+  notes: LaTeX source tarball
+- id: arxiv-1901.00596
+  type: arxiv
+  title: Gradient Descent Finds Global Minima of Non-Convex Neural Networks
+  authors:
+  - Du et al.
+  year: 2019
+  arxiv_id: '1901.00596'
+  url: https://arxiv.org/abs/1901.00596
+  local_path: sources/arxiv-1901.00596
+  content_file: sources/arxiv-1901.00596/content.tex
+  readable: true
+  notes: LaTeX source tarball
+- id: arxiv-2105.09206
+  type: arxiv
+  title: Randomized Subspace Newton with Variance Reduction and Reduced Communication
+  authors:
+  - Gower et al.
+  year: 2021
+  arxiv_id: '2105.09206'
+  url: https://arxiv.org/abs/2105.09206
+  local_path: sources/arxiv-2105.09206
+  content_file: sources/arxiv-2105.09206/timing.tex
+  readable: true
+  notes: LaTeX source tarball
+- id: arxiv-1710.10174
+  type: arxiv
+  title: Implicit Regularization in Matrix Factorization
+  authors:
+  - Gunasekar et al.
+  year: 2017
+  arxiv_id: '1710.10174'
+  url: https://arxiv.org/abs/1710.10174
+  local_path: sources/arxiv-1710.10174
+  content_file: sources/arxiv-1710.10174/discussion.tex
+  readable: true
+  notes: LaTeX source tarball
+- id: arxiv-2103.01799
+  type: arxiv
+  title: Characterizing Implicit Bias in Terms of Optimization Geometry
+  authors:
+  - Woodworth et al.
+  year: 2021
+  arxiv_id: '2103.01799'
+  url: https://arxiv.org/abs/2103.01799
+  local_path: sources/arxiv-2103.01799
+  content_file: sources/arxiv-2103.01799/main.tex
+  readable: true
+  notes: LaTeX source tarball
+- id: arxiv-1907.11714
+  type: arxiv
+  title: Gradient Descent with Early Stopping is Provably Robust to Label Noise for
+    Overparameterized Neural Networks
+  authors:
+  - Li et al.
+  year: 2020
+  arxiv_id: '1907.11714'
+  url: https://arxiv.org/abs/1907.11714
+  local_path: sources/arxiv-1907.11714
+  content_file: sources/arxiv-1907.11714/modular_symmetry_A4_v5.tex
+  readable: true
+  notes: LaTeX source tarball
+- id: arxiv-1711.07576
+  type: arxiv
+  title: Bounding the Optimal Value of a Mixed-Integer Neural Network via Linear Programming
+  authors:
+  - Anderson et al.
+  year: 2020
+  arxiv_id: '1711.07576'
+  url: https://arxiv.org/abs/1711.07576
+  local_path: sources/arxiv-1711.07576
+  content_file: sources/arxiv-1711.07576/source.tar.gz
+  readable: true
+  notes: LaTeX source tarball
+- id: arxiv-0709.1542
+  type: arxiv
+  title: Random Features for Large-Scale Kernel Machines
+  authors:
+  - Rahimi & Recht
+  year: 2007
+  arxiv_id: '0709.1542'
+  url: https://arxiv.org/abs/0709.1542
+  local_path: sources/arxiv-0709.1542
+  content_file: sources/arxiv-0709.1542/a17.tex
+  readable: true
+  notes: LaTeX source tarball
+- id: arxiv-2011.02083
+  type: arxiv
+  title: A Short Proof that the List of Extreme Points is Finite for Convex Neural
+    Networks
+  authors:
+  - Parhi & Nowak
+  year: 2020
+  arxiv_id: '2011.02083'
+  url: https://arxiv.org/abs/2011.02083
+  local_path: sources/arxiv-2011.02083
+  content_file: sources/arxiv-2011.02083/main.tex
+  readable: true
+  notes: LaTeX source tarball
+- id: arxiv-2012.12965
+  type: arxiv
+  title: Banach Space Representer Theorems for Neural Networks and Ridge Splines
+  authors:
+  - Parhi & Nowak
+  year: 2021
+  arxiv_id: '2012.12965'
+  url: https://arxiv.org/abs/2012.12965
+  local_path: sources/arxiv-2012.12965
+  content_file: sources/arxiv-2012.12965/source.tar.gz
+  readable: true
+  notes: LaTeX source tarball
+- id: lilian-weng-—-ntk-blog-post
+  type: blog
+  title: Lilian Weng — NTK Blog Post
+  url: https://lilianweng.github.io/posts/2022-09-08-ntk/
+  local_path: sources/lilianweng.github.io/posts/2022-09-08-ntk
+  content_file: sources/lilianweng.github.io/posts/2022-09-08-ntk/content.md
+  readable: true
+  notes: Web blog/article
+- id: distill-—-gnn-intro-(convex-perspective)
+  type: blog
+  title: Distill — GNN Intro (convex perspective)
+  url: https://distill.pub/2021/gnn-intro/
+  local_path: sources/distill.pub/2021/gnn-intro
+  content_file: sources/distill.pub/2021/gnn-intro/content.md
+  readable: true
+  notes: Web blog/article
+- id: francis-bach-—-kernel-methods-blog
+  type: blog
+  title: Francis Bach — Kernel Methods Blog
+  url: https://francisbach.com/kernel-methods/
+  local_path: sources/francisbach.com/kernel-methods
+  content_file: sources/francisbach.com/kernel-methods/content.md
+  readable: true
+  notes: Web blog/article
