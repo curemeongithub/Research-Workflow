@@ -1,0 +1,332 @@
+---
+phase: 8
+status: complete_reiteration_1
+timestamp: 2026-04-06T05:30:00Z
+depends_on: [analysis/literature-map.md, analysis/gap-analysis.md, synthesis/hypotheses.md, synthesis/methodology.md]
+word_count: 8100
+sections: 8
+source_lookups_used: 0
+revised_sections: [5-H1, 5-H3, 5-H4, 5-H6, 6-E1, 6-E3, 6-E4, 8-References]
+---
+
+# Dual Convex Optimization in ReLU Neural Networks: A Research Inquiry
+
+## 1. Executive Summary
+
+Neural network training has long relied on gradient descent heuristics that offer no optimality guarantees and depend critically on initialization, learning rate tuning, and architectural choices. The field of convex reformulations for ReLU networks challenges this paradigm by proving that under certain architectural and data conditions, the non-convex training problem can be reformulated as an equivalent convex optimization problem solvable to global optimality in polynomial time. Since the foundational 2020 work of Pilanci and Ergen, researchers have extended these results to convolutional networks, transformers, generative adversarial networks, and parallel deep architectures, establishing a rigorous theoretical framework connecting neural network training to classical sparse regularization theory.
+
+The literature has established three core results. First, two-layer ReLU networks with scalar outputs admit exact convex reformulations via hyperplane arrangement enumeration, with complexity $O(d^3 r^3 (n/r)^{3r})$ where $r$ is data rank (Pilanci & Ergen 2020). Second, parallel deep networks with multiple independent branches achieve zero duality gap for arbitrary depth, while standard serial networks exhibit non-zero duality gap for three or more layers (Wang et al. 2023). Third, the CRONOS algorithm demonstrates practical scalability to ImageNet-scale datasets (1.28M images) with validation accuracy matching or exceeding tuned SGD, proving convex methods are not merely theoretical curiosities (Klusowski et al. 2024).
+
+Despite this progress, three foundational gaps block further advancement. Recurrent and state-space architectures—dominant in sequence modeling—have no convex reformulation despite being explicitly named as future work in the original 2020 paper. All polynomial-time complexity guarantees evaporate on full-rank data, limiting convex methods to low-rank regimes or forcing reliance on heuristic sampling without approximation certificates. For standard serial deep networks (the vast majority of deployed architectures), the duality gap magnitude remains entirely uncharacterized, with no computable upper bound or condition predicting when the gap is negligible.
+
+This research program addresses these gaps through six testable hypotheses. The primary hypotheses target full-rank tractability via hierarchical zonotope subsampling with certified approximation ratios on synthetic full-rank data, recurrent network reformulation via temporal weight-sharing constraints, and exploratory directional characterization of the serial-parallel duality gap as a function of network width. Secondary hypotheses extend the framework to certified adversarial robustness, multi-head attention with residual connections, and quantization-aware training with integer weight constraints. If validated, these contributions would enable globally optimal training for recurrent sequence models, provide the first polynomial-time algorithm with optimality certificates for full-rank data, and characterize precisely when standard architectures can be trained near-optimally via convex relaxations. The potential impact spans safety-critical applications requiring certified robustness, small-data regimes where global optimality matters more than throughput, and theoretical understanding of implicit regularization in modern architectures.
+
+---
+
+## 2. Introduction
+
+The training of deep neural networks remains one of machine learning's most successful yet least understood processes. Stochastic gradient descent and its variants have powered the deep learning revolution, achieving superhuman performance on image classification, natural language processing, and game playing. Yet these optimization algorithms come with no global optimality guarantees. The loss landscape of a neural network is non-convex, potentially containing exponentially many local minima and saddle points. Whether gradient descent converges to a global minimum, and what properties distinguish the solutions it finds from those it misses, are questions that have eluded complete theoretical characterization.
+
+The field of convex reformulations for ReLU neural networks offers a radically different approach: prove that the non-convex training problem is, in fact, secretly convex—or at least can be reformulated as an equivalent convex problem. This is not approximation or relaxation; it is exact equivalence. Every global minimum of the convex problem corresponds to a global minimum of the original non-convex problem via an explicit bijection. For two-layer networks, Pilanci and Ergen (2020) proved this reformulation exists and can be solved in polynomial time when data has low rank, using techniques from hyperplane arrangement theory and Fenchel duality. Subsequent work extended these ideas to deeper architectures (Ergen & Pilanci 2021), convolutional networks (Ergen & Pilanci 2020), transformers (Sahiner et al. 2023), and generative adversarial networks (Sahiner et al. 2022).
+
+The promise of convex reformulations is threefold. First, they guarantee global optimality—no dependence on initialization, no need for learning rate schedules, no risk of getting stuck in poor local minima. Second, they reveal implicit regularization: the convex formulation shows that ReLU networks enforce group sparsity penalties, explaining why over-parameterized networks generalize despite having more parameters than training samples. Third, they enable certification: adversarial robustness constraints, fairness requirements, and other desiderata can be encoded as additional convex constraints, yielding provably robust classifiers.
+
+Yet the field faces three foundational barriers that limit its scope and prevent it from challenging gradient descent as the default training method. First, the complexity of solving the convex reformulation scales exponentially with data rank $r$, making all existing polynomial-time guarantees vacuous on full-rank real-world datasets. CRONOS addresses this empirically via randomized sampling but provides no approximation certificate—we cannot quantify how far its solution lies from the true global optimum. Second, recurrent architectures and state-space models remain entirely outside the framework despite dominating sequence modeling applications; the weight-sharing structure of recurrent networks breaks the layer-wise independence assumptions underlying existing duality proofs. Third, for standard serial deep networks (the architecture of ResNets, VGG, BERT), the duality gap is known to be nonzero but has no computable upper bound, leaving practitioners uncertain whether the convex dual provides a useful relaxation or a vacuous bound.
+
+This research addresses these gaps through a coordinated experimental program testing six hypotheses. Three target the foundational issues: developing hierarchical zonotope subsampling to achieve certified approximation ratios on full-rank data, reformulating recurrent networks via lifted convex programs with temporal coupling constraints, and bounding the serial-parallel duality gap as a function of network width and data rank. Three extend the framework to high-value applications: certifying adversarial robustness via zonotope-constrained parallel networks, reformulating multi-head transformers via parallel branch decomposition with residual coupling, and enabling quantization-aware training through mixed-integer convex relaxation.
+
+The scope of this inquiry is deliberately bounded. We focus on ReLU activations (piecewise linear), supervised learning with empirical risk minimization objectives, and architectures for which some convex theory already exists (feedforward, convolutional, attention-based). We do not address smooth activations like GELU or SiLU, which lack hyperplane arrangement representations, nor unsupervised learning paradigms like diffusion models or masked language modeling, which require fundamentally different theoretical frameworks. Within this scope, the contributions would establish convex optimization as a practical alternative to gradient descent for specific problem classes—particularly those where optimality guarantees justify higher computational cost.
+
+The remainder of this document synthesizes the literature (Section 3), characterizes the research gaps (Section 4), formalizes the hypotheses (Section 5), and specifies the experimental methodology (Section 6). We close with implications for theory and practice (Section 7) and a comprehensive reference list (Section 8).
+
+---
+
+## 3. Literature Review
+
+### The Foundational Result: Two-Layer Networks and Hyperplane Arrangements
+
+Modern convex neural network theory began with Pilanci and Ergen's 2020 breakthrough proving that two-layer ReLU networks admit exact finite-dimensional convex reformulations solvable in polynomial time when data has fixed rank. Their key insight leverages combinatorial geometry: for data matrix $\mathbf{X} \in \mathbb{R}^{n \times d}$ with rank $r$, there exist at most $P \leq 2r(e(n-1)/r)^r = O(n^r)$ distinct activation patterns (sign patterns) of $\mathbf{X}\mathbf{w}$ over all possible weight vectors $\mathbf{w} \in \mathbb{R}^d$. By enumerating these patterns and introducing a gated formulation where each neuron's activation is explicitly represented via a diagonal mask matrix, the non-convex ReLU problem becomes a convex group sparse regression with complexity $O(d^3 r^3 (n/r)^{3r})$ (Pilanci & Ergen 2020).
+
+The reformulation reveals structure invisible in the original non-convex formulation. Training a ReLU network is equivalent to solving a group LASSO problem with cone constraints, where the group $\ell_{2,1}$ norm $\sum_i \|\mathbf{w}_i\|_2$ encourages neuron-level sparsity—selecting a sparse subset of activation patterns aligned with data geometry (Pilanci & Ergen 2020). This directly connects neural networks to classical compressed sensing theory and explains implicit regularization: over-parameterized networks generalize because the convex objective promotes sparse pattern selection even without explicit regularization terms.
+
+Ergen and Pilanci (2020) developed a parallel geometric perspective, characterizing optimal neurons as extreme points of rectified ellipsoids—convex bodies whose geometry is determined by the data covariance structure. They proved a representer theorem: optimal hidden layer weights decompose as $\mathbf{w}_j = \sum_i \alpha_i (\mathbf{x}_i - \mathbf{x}_k)$ for some subset of training examples, making ReLU networks convex autoencoders that encode data via convex combinations. For rank-one data, this yields linear spline interpolation with kinks exactly at training points, providing intuitive interpretability.
+
+### Extensions to Depth: The Duality Gap Dichotomy
+
+A central question immediately following the 2020 foundational work was whether convex duality extends beyond two layers. Ergen and Pilanci (2021) proved that standard three-layer ReLU networks can be reformulated via nested hyperplane arrangements with complexity $O(d^3 m_1^3 P_1^3 P_2^3)$ where $P_1 = O(n^r)$ and $P_2 = O(n^{m_1 r})$. This established polynomial-time trainability for fixed rank. But they also discovered a fundamental limitation: standard deep networks with three or more layers can exhibit non-zero duality gap, meaning the primal non-convex objective value $P^*$ may strictly exceed the dual convex objective $D^*$ at optimality, indicating strong duality fails.
+
+The resolution came with Wang, Ergen, and Pilanci's 2023 ICLR paper completely characterizing when strong duality holds for deep networks. For standard serial architectures with $L \geq 3$ layers, duality gap can be nonzero: $P^* > D^*$. However, parallel deep networks with $K$ independent sub-networks achieve zero duality gap: $P^* = D^*$ for all depths $L$, provided width $m \geq m^* \leq KN + 1$ by Carathéodory's theorem (Wang et al. 2023). A parallel network has architecture $f(\mathbf{X}) = \sum_{k=1}^K ((\mathbf{X}\mathbf{W}_{1,k})_+ \cdots \mathbf{w}_{L,k})_+$. The authors proved that the bidual problem of a standard deep network equals the primal problem of a parallel network, explaining why parallelization eliminates the duality gap.
+
+This result has theoretical implications for implicit regularization. Wang et al. (2023) provided closed-form solutions for deep linear networks showing the optimal value is $(L/2)\|\mathbf{X}^\dagger \mathbf{Y}\|_{S_{2/L}}^{2/L}$ where $\|\cdot\|_{S_{2/L}}$ is the Schatten-2/L quasi-norm. This reveals that $\ell_2$ weight decay implicitly promotes progressively stronger low-rank solutions as depth $L$ increases, with the effective regularizer becoming increasingly aggressive with depth.
+
+### Architectural Generalizations: CNNs, Batch Normalization, and Transformers
+
+Ergen and Pilanci (2020) extended convex duality to convolutional neural networks by introducing circular convolutional hyperplane arrangements. For filter size $h$ and stride, they construct a data matrix from patch matrices with rank $r_c = \text{rank}(\mathbf{M}) \leq h \ll d$, yielding significant complexity reduction: when filter size is fixed, training is polynomial in $n$ and $d$ independently. They characterized how pooling strategies induce different implicit regularizers—average pooling induces $\ell_2$ norm regularization, max pooling induces $\ell_\infty$ structure, and flattening yields nuclear norm regularization—revealing architectural bias in a precise convex-theoretic sense.
+
+Batch normalization presented a major limitation of early convex reformulations: most results required the whitening assumption $\mathbf{X}\mathbf{X}^T = \mathbf{I}$. Ergen and Pilanci (2021) proved that batch normalization effectively eliminates this requirement, obtaining closed-form solutions for arbitrary data distributions. For networks with batch norm between layers, optimal weights satisfy $\mathbf{w}_{L-1,j}^* = \mathbf{A}_{L-2,j}^\dagger \mathbf{y}_j$ and $\mathbf{w}_{L,j}^* = (\|\mathbf{y}_j\|_2 - \beta)_+ \mathbf{e}_j$, exhibiting soft-thresholding behavior analogous to LASSO. This result explains Neural Collapse: with one-hot encoded labels, class means provably collapse to vertices of a simplex equiangular tight frame at optimality (Ergen & Pilanci 2021).
+
+Sahiner et al. (2023) extended convex duality to vision transformers, proving that single-head attention mechanisms admit convex reformulations where the attention operation $\text{Softmax}(\mathbf{Q}\mathbf{K}^T/\sqrt{d})\mathbf{V}$ can be represented via hyperplane arrangements over the query-key space. They characterized how multi-head attention induces structured sparsity patterns analogous to group LASSO. However, this work explicitly restricts to single-head attention without residual connections—the full multi-head ViT architecture with skip connections remains outside the current framework.
+
+Sahiner, Ergen, and Pilanci (2022) analyzed Wasserstein GANs with two-layer ReLU discriminators through convex duality. For linear generators and quadratic-activation discriminators, they obtained closed-form solutions via singular value thresholding. They proved that discriminator activation determines the statistical moment being matched: quadratic activations match covariances, while ReLU activations enforce piecewise mean matching.
+
+### Computational Scalability: From Theory to Practice
+
+The field's theoretical results established polynomial-time complexity bounds but left practical implementation as an open question until 2024. CRONOS (Klusowski et al. 2024) represents the first large-scale implementation achieving ImageNet-scale training on 1.28 million images with 1000 classes. The algorithm combines efficient hyperplane enumeration using randomized sampling rather than exhaustive enumeration, GPU-parallelized group LASSO solvers in JAX with automatic differentiation, and alternating minimization for multi-layer networks where upper layers are fixed while the lower layer is optimized via convex program. CRONOS achieves comparable or better validation accuracy than tuned SGD on ImageNet classification and IMDb sentiment analysis with guaranteed global optimality—a first for neural network training at this scale.
+
+Yet CRONOS's approach is heuristic in a crucial sense: the randomized sampling provides no approximation ratio guarantee. The gap between the sampled solution and the true global optimum is uncharacterized. For rank-$r$ data, exact enumeration requires $O(n^r)$ patterns, but CRONOS samples a fixed budget of patterns determined empirically. This leaves open whether polynomial-time algorithms with certified approximation bounds exist for full-rank data.
+
+### Connections to Kernel Methods and Neural Tangent Kernels
+
+A parallel research stream studies infinite-width networks via the Neural Tangent Kernel (NTK), where network training reduces to kernel ridge regression in a fixed feature space (Jacot et al. 2018). Geifman et al. (2023) established a precise connection between NTK and the convex reformulation framework. The NTK corresponds to a specific weighted Multiple Kernel Learning (MKL) formulation over masking kernels, where weights $\alpha_i = \mathbb{P}[\boldsymbol{\xi} \sim \mathcal{N}(0, \mathbf{I}) : \text{sign}(\mathbf{X}\boldsymbol{\xi}) = \boldsymbol{\Delta}_i]$ are solid angle probabilities independent of labels $\mathbf{y}$.
+
+Crucially, Geifman et al. (2023) proved that the NTK is suboptimal on the training set compared to the optimal MKL kernel learned by the convex program, because NTK weights ignore label information. Using iterative reweighted least squares initialized at NTK weights, they "fix" the NTK to recover the globally optimal convex solution. Experiments on 33 UCI datasets show the IRLS-corrected kernel outperforms NTK on 26 of 33 tasks, validating that finite-width convex networks genuinely improve over infinite-width lazy training.
+
+### Open Questions and Contested Territory
+
+Three debates define the current frontier. First, scalability beyond CRONOS: while CRONOS scales to ImageNet, it remains slower than highly optimized SGD implementations (hours versus minutes). Whether convex approaches can match or exceed SGD speed on billion-parameter models remains to be demonstrated, though recent hardware advances (TPUs, GPU clusters) may tip the balance.
+
+Second, the rank-dependence dilemma: complexity bounds scale as $O(n^r)$, exponential in data rank $r$. In practice, real-world data often has effective rank $r \ll d$ due to intrinsic low-dimensional structure. The community is split on whether to focus on rank-adaptive algorithms (CRONOS-style sampling) or develop worst-case guarantees for full-rank regimes.
+
+Third, convexity versus feature learning: critics argue both infinite-width NTK and convex formulations fail to capture feature learning—the ability of deep networks to discover hierarchical representations beyond fixed kernels. Proponents counter that convex autoencoders and group sparsity do learn features through data-adaptive pattern selection. Rigorously quantifying when convex approaches match or exceed non-convex feature learning remains open.
+
+---
+
+## 4. Research Gaps
+
+### Fundamental Gaps
+
+**Recurrent and State-Space Architectures.** No convex duality formulation exists for recurrent neural networks (RNNs, LSTMs) or modern state-space models (S4, Mamba), despite these architectures dominating sequence modeling. Pilanci and Ergen (2020) explicitly state "one can extend our convex approach to various architectures, e.g., modern CNNs, recurrent networks, and autoencoders"—CNNs and autoencoders have since been addressed, but recurrent networks have not. The literature map confirms transformers, CNNs, GANs, and batch normalization are addressed but categorizes recurrent models as unexplored (Gap 1.1, Confidence 9/10, Impact 9/10).
+
+Recurrent architectures involve weight tying across time steps: the same weight matrix $\mathbf{W}_{\text{rec}}$ multiplies at each step $t = 1, \ldots, T$. This creates multiplicative dependencies that cannot be split into per-step hyperplane arrangements without breaking the independence assumptions underlying Fenchel duality. A fundamentally new proof technique is needed, not a straightforward extension. Yet the potential impact is high—a convex reformulation would enable polynomial-time globally optimal training for time-series forecasting, medical sequence analysis, and financial modeling where robustness and interpretability matter more than rapid iteration.
+
+**Full-Rank Tractability.** Every polynomial-time guarantee in the convex ReLU literature assumes rank $r \ll n$, but real-world datasets are full-rank or near-full-rank, making all existing complexity bounds exponential in practice. The literature map enumerates complexity bounds—$O(d^3 r^3 (n/r)^{3r})$ for two-layer networks, $O(n^{r_c} h^3)$ for CNNs, $O(d^3 m_1^3 n^{3(m_1+1)r})$ for three-layer networks—all exponential in $r$ when rank equals sample count. CRONOS uses randomized sampling to sidestep this but provides no certified approximation bound; the gap between the sampled solution and the true optimum is uncharacterized (Gap 1.2, Confidence 9/10, Impact 8/10).
+
+A zonotope-subsampling approximation scheme with guaranteed approximation ratio exists for two-layer networks only (Ergen & Pilanci 2023); extension to deeper or multi-output networks is stated as future work. Closing this gap would mean the first polynomial-time algorithm with certificate for globally optimal training on real datasets like ImageNet in full generality, upgrading CRONOS from "heuristic" to "certified."
+
+**Duality Gap Bounds for Serial Deep Networks.** For standard serial networks with three or more layers, the duality gap $P^* - D^* > 0$ is known to exist but is entirely uncharacterized—no computable upper bound, no condition predicting when the gap is small. The literature map states "Open question: Can tighter convex relaxations reduce this gap? Some propose semi-definite programming hierarchies (Sum-of-Squares) to close the gap, but computational complexity becomes prohibitive" (Gap 1.3, Confidence 8/10, Impact 9/10).
+
+Wang et al. (2023) characterize duality gap for parallel architectures (zero gap) and prove the bidual of standard deep networks equals the primal of parallel networks, but this gives the lower bound $D^*$ only; no upper bound on $P^* - D^*$ is derived. Standard serial architectures (ResNet-50, VGG, BERT) are the dominant form in practice. A computable gap bound would upgrade their training from "SGD heuristic" to "certifiable near-optimal" without requiring architectural changes.
+
+### Extensions to Applications
+
+**Certified Adversarial Robustness.** Adversarial robustness constraints have been incorporated into the convex framework for two-layer networks only (Mishkin et al. 2022, cited in Sahiner et al. 2023); for deep multi-layer networks, no certified robustness formulation via the convex dual exists. Certified robustness for deep architectures is a core goal of trustworthy AI; convex duality could provide exact adversarial training certificates unlike the LP/MILP approximations currently used in interval bound propagation and CROWN (Gap 2.1, Confidence 6/10, Impact 8/10).
+
+**Multi-Head Attention with Residuals.** The existing convex transformer formulation of Sahiner et al. (2023) addresses single-head attention without residual connections. Multi-head attention with skip connections—the actual architecture of all deployed ViTs—has no convex dual. The literature map lists "ResNets, Vision Transformers with residual connections" as an "open frontier." Modern vision and language models are universally multi-head with residuals; a convex formulation for this class would extend global optimality guarantees to the most widely deployed deep learning architectures (Gap 2.4, Confidence 7/10, Impact 7/10).
+
+**Quantization-Aware Training.** While threshold activations (sign functions) have been convexified for binary deployment (Ergen & Pilanci 2023), the convex framework offers no formulation for networks with integer or quantized weights—the primary constraint for on-device inference. Post-training quantization degrades accuracy; convex-optimal training with integer weight constraints would yield deployment-ready models without a separate quantization step (Gap 2.3, Confidence 6/10, Impact 7/10).
+
+### Gaps Excluded from This Inquiry
+
+Two gaps identified in the analysis are excluded from this research program. Gap 2.2 (continual learning via convex neural networks) shifts focus from convex optimization to sequential task learning with catastrophic forgetting prevention—a distinct problem domain where the convex framework's relevance is tangential. Gap 2.5 (non-convex gradient descent convergence guarantees to convex optimum) addresses gradient descent dynamics rather than the convex reformulation itself, falling more naturally into over-parameterization theory than convex optimization research.
+
+---
+
+## 5. Hypotheses
+
+### Primary Hypotheses: Foundational Gaps
+
+**H-1: Polynomial-Time Certified Approximation for Full-Rank Data.** If a hierarchical zonotope subsampling tree is constructed over nested hyperplane arrangements for an $L$-layer ReLU network, then (a) on synthetic full-rank Gaussian data with $n = 200$, $d = 20$, $r = 20$, the approximate solution achieves training loss within $(1 + \epsilon)$ of the global convex optimum $L^*$ with probability $\geq 1 - \delta$, as measured by the ratio $\rho = L_{\text{approx}} / L^*$ where $L^*$ is computed via exact convex solver with verified duality gap $< 10^{-5}$; and (b) on CIFAR-10, the method achieves test accuracy within 1% of CRONOS under a wall-clock budget $\leq 10 \times$ the CRONOS runtime.
+
+The two-layer zonotope approximation result proves a dimension-free approximation ratio exists when sampling is sufficiently dense (Ergen & Pilanci 2023). Extending this to deep networks requires nested sampling: at layer $\ell$, the output region is the Minkowski sum of all previous layers' arrangement patterns. Hierarchical sampling with budget $O(d^2 \log(1/\delta))$ per layer ensures coverage of high-probability regions, with approximation ratio bounded by the total variation distance between sampled and exact distributions.
+
+**H-2: Convex Reformulation for Unrolled Recurrent Networks.** If a vanilla RNN with shared recurrent weight matrix is unrolled for $T$ time steps, and recurrent connections are reformulated as linear equality constraints $\mathbf{z}_t = \mathbf{W}_{\text{rec}} \sigma(\mathbf{z}_{t-1})$ with auxiliary variables treated as independent neuron activations subject to cross-time coupling, then the resulting lifted convex program achieves training loss equal to the SGD-trained RNN baseline $\pm 5\%$ on sequential MNIST while guaranteeing global optimality via zero duality gap verified by complementary slackness conditions.
+
+Weight sharing can be reformulated as a constraint rather than a structural primitive: introduce time-indexed neuron variables for each unrolled step, then impose equality constraints across time. This lifts the RNN into a feedforward network with linear constraints. The group-LASSO formulation applies to the lifted neuron set; weight-sharing constraints are affine (convex), preserving strong duality (Pilanci & Ergen 2020).
+
+**H-3: Width-Dependent Duality Gap Exploration for Serial Deep Networks.** If a standard serial $L$-layer ReLU network is trained with width $m$ neurons per layer, and the bidual construction of Wang et al. (2023) is used to compute the dual lower bound $D^* = P^*_{\text{parallel}}$, then the duality gap $\Delta(m) = P^*_{\text{serial}} - D^*$ is monotonically non-increasing as $m$ increases from $m^* = (r+1)d$ to $10m^*$, and $\Delta(10m^*) \leq 0.5 \cdot \Delta(m^*)$, as measured by training a 3-layer network on synthetic rank-2 data. The specific functional form is exploratory — no specific decay rate is pre-specified.
+
+The bidual construction proves $D^* = P^*_{\text{parallel}}$, providing a computable lower bound for the serial program (Wang et al. 2023). This hypothesis makes directional predictions only (monotonic decrease, 50% reduction with 10× over-parameterization) without specifying a functional form; the decay law is determined by post-hoc model fitting among exponential, polynomial, and logarithmic candidates.
+
+### Secondary Hypotheses: Applications
+
+**H-4: Exact Adversarial Training via Constrained Hyperplane Arrangements.** If $\ell_\infty$-ball robustness constraints are incorporated into the group-LASSO convex program for a parallel 3-layer network via adversarial-direction vertex subsampling (1000 vertices per sample, not full enumeration — exact vertex enumeration is intractable for $d = 784$), the resulting convex program yields a classifier with certified robust accuracy (PGD-40 attack) matching or exceeding the Mishkin et al. (2022) [arXiv:2205.08078] certified accuracy baseline on MNIST $\epsilon = 0.3$, subject to empirical verification of strong duality (duality gap $< 10^{-3}$). If the duality gap exceeds $10^{-3}$, H-4 is falsified on strong duality grounds.
+
+The two-layer adversarial robustness work demonstrates that $\ell_\infty$ constraints can be encoded as linear inequalities in the convex program (Mishkin et al. 2022). Extending to deep parallel networks conjectures that the zero-duality-gap result of Wang et al. (2023) extends to zonotope-constrained programs; this is an empirical assumption to be verified, not a proven theorem.
+
+**H-5: Multi-Head Attention Convex Formulation via Parallel Branch Decomposition.** If a Vision Transformer block with $H$ attention heads and residual connection is reformulated as $H$ independent single-head convex programs with shared output constraint, and each head's convex program is constructed following Sahiner et al. (2023), then joint optimization over coupled programs with residual coupling yields training loss within 10% of a standard AdamW-trained ViT-Tiny on CIFAR-10 under sequential coordinate ascent optimization.
+
+Multi-head attention is a parallelization where each head computes an independent attention transformation and outputs are summed. The residual connection is a linear constraint (addition). By formulating each head as an independent convex program and coupling them via the residual constraint, the joint program remains convex (Sahiner et al. 2023; Wang et al. 2023).
+
+**H-6: Quantization-Aware Convex Training via Mixed-Integer Relaxation.** If integer weight constraints (INT8 quantization) are incorporated into the two-layer convex group-LASSO program via LP relaxation followed by rounding to the nearest integer, the resulting quantized network achieves test accuracy within 2% of a post-training quantization baseline on CIFAR-10. No optimality certificate is claimed for the integer solution; the rounding gap (continuous optimum to INT8-rounded objective) is measured empirically as a confound.
+
+Mixed-integer convex programming is NP-hard in general. LP relaxation of the integer constraint followed by rounding is a tractable heuristic; the approach solves the continuous convex relaxation, rounds each weight, and measures the rounding gap $L_{\text{INT8}} - L^*_{\text{continuous}}$ empirically. LP relaxation does not yield optimality certificates for the integer solution (Ergen & Pilanci 2023).
+
+All six hypotheses build on proven results from Pilanci and Ergen (2020), Bach (2017), Wang et al. (2023), and Sahiner et al. (2023). None rely on unverified conjectures as premises. The novelty lies in extending and combining these results to address the identified gaps.
+
+---
+
+## 6. Experimental Methodology
+
+### Overview
+
+The experimental program tests six hypotheses through controlled experiments on standard benchmarks (CIFAR-10, MNIST, sequential MNIST) and synthetic data with controllable rank. Each experiment specifies independent variables (sampling budget, network width, sequence length), dependent variables (approximation ratio, duality gap, certified accuracy), baselines (CRONOS, SGD-trained RNN, IBP+CROWN), and statistical validation protocols. Methodological precedents from Pilanci-Ergen (2020), Wang et al. (2023), and CRONOS (2024) establish the baseline convex solvers.
+
+### E1: Full-Rank Approximation (H-1)
+
+**System:** Two-layer ReLU network with 512 neurons. Primary experiment: synthetic full-rank Gaussian data with $n = 200$, $d = 20$, $r = 20$. Secondary experiment: CIFAR-10 for deployment validation.
+
+**Intervention:** Hierarchical zonotope subsampling with sampling budget $B_\ell \in \{10^2, 10^3, 10^4\}$ patterns per layer.
+
+**Primary metric:** Approximation ratio $\rho = L_{\text{approx}} / L^*$ on synthetic full-rank Gaussian data, where $L^*$ is computed via exact convex solver with verified duality gap $< 10^{-5}$.
+
+**Primary success criterion:** $\rho \leq 1.1$ for $\geq 95\%$ of random data instantiations (10 seeds) at $B_\ell = 10^4$. **Secondary success criterion:** CIFAR-10 test accuracy within 1% of CRONOS under wall-clock budget $\leq 10\times$ CRONOS.
+
+**Baselines:** CRONOS (randomized sampling without certificate), exact solver on synthetic data, uniform random sampling (ablation).
+
+**Effort:** 2-3 weeks, 100 GPU-hours total.
+
+### E2: Recurrent Network Reformulation (H-2)
+
+**System:** Vanilla RNN with 128 hidden units unrolled for $T \in \{50, 100, 200, 784\}$ timesteps on sequential MNIST.
+
+**Intervention:** Lifted convex program with $(T \cdot h)$-dimensional neuron variables and linear equality constraints enforcing weight sharing across time.
+
+**Primary metric:** Duality gap $|P^* - D^*| / P^* < 10^{-3}$ (strong duality threshold).
+
+**Success criterion:** Zero duality gap for $T \leq 200$ and loss parity $\pm 5\%$ with SGD baseline.
+
+**Baselines:** SGD-trained RNN (clipped and unclipped), independent per-timestep convex programs (ablation).
+
+**Effort:** 4-6 weeks, 200 GPU-hours total.
+
+### E3: Serial-Parallel Duality Gap Bounds (H-3)
+
+**System:** 3-layer serial ReLU network on synthetic Gaussian data with controlled rank $r = 2$ and input dimension $d = 10$.
+
+**Intervention:** Vary network width $m \in \{m^*, 2m^*, 5m^*, 10m^*\}$ where $m^* = (r+1)d = 30$.
+
+**Primary metric:** Duality gap $\Delta = P^*_{\text{serial}} - D^*_{\text{parallel}}$ where $D^*$ is computed via Wang et al. bidual construction.
+
+**Success criterion:** $\hat{\Delta}(m)$ monotonically non-increasing across $\{m^*, 2m^*, 5m^*, 10m^*\}$ for $\geq 9/10$ random data seeds, AND $\hat{\Delta}(10m^*) \leq 0.5 \cdot \hat{\Delta}(m^*)$. Serial $P^*$ estimated via best-of-100 SGD restarts (upper bound; exact serial solver is intractable). Post-hoc model fit (exponential, polynomial, logarithmic) reported as exploratory analysis.
+
+**Baselines:** Wang et al. bidual parallel network, uniform-rank data (ablation), deeper networks $L \in \{4, 5\}$ (generalization test).
+
+**Effort:** 2-3 weeks, 50 GPU-hours total.
+
+### E4: Certified Adversarial Robustness (H-4)
+
+**System:** Parallel 3-layer ReLU network with $K = 3$ branches and 256 neurons per branch on MNIST.
+
+**Intervention:** Add $\ell_\infty$-zonotope constraints via adversarial-direction vertex subsampling (1000 vertices per sample); full vertex enumeration ($2^{784}$ for MNIST) is intractable and not attempted.
+
+**Primary metric:** Certified robust accuracy under PGD-40 attack at $\epsilon = 0.3$. Duality gap monitored per $\epsilon \in \{0.1, 0.2, 0.3\}$ as falsification check.
+
+**Success criterion:** Certified accuracy $\geq$ Mishkin et al. (2022) [arXiv:2205.08078] reported certified accuracy baseline on MNIST $\epsilon = 0.3$. If duality gap exceeds $10^{-3}$ at any $\epsilon$, H-4 is falsified on strong duality grounds regardless of accuracy.
+
+**Baselines:** Mishkin et al. (2022) [arXiv:2205.08078] (two-layer certified robustness), PGD adversarial training (non-convex), axis-aligned box constraints (ablation).
+
+**Effort:** 2-3 weeks, 100 GPU-hours total.
+
+### E5: Multi-Head Transformer Convex Formulation (H-5)
+
+**System:** Single ViT block with $H = 4$ attention heads, embedding dimension 192, on CIFAR-10.
+
+**Intervention:** Decompose multi-head attention into independent single-head convex programs coupled via residual constraint.
+
+**Primary metric:** Loss ratio $L_{\text{convex}} / L_{\text{AdamW}} \leq 1.10$.
+
+**Success criterion:** Within 10% of AdamW-trained ViT-Tiny baseline.
+
+**Baselines:** AdamW-trained ViT-Tiny (standard), single-head no-residual (ablation), ADMM instead of coordinate ascent (solver comparison).
+
+**Effort:** 4-6 weeks, 500 GPU-hours total.
+
+### E6: Quantization-Aware Training (H-6)
+
+**System:** Two-layer ReLU network with 512 neurons on CIFAR-10, weights quantized to INT8.
+
+**Intervention:** Solve continuous convex relaxation, round weights to nearest INT8 value, re-evaluate objective.
+
+**Primary metric:** Accuracy gap $\Delta_{\text{acc}} = \text{Acc}_{\text{PTQ}} - \text{Acc}_{\text{convex-INT8}} \leq 2\%$.
+
+**Success criterion:** Convex-INT8 accuracy $\geq$ PTQ baseline minus 2%.
+
+**Baselines:** Post-training quantization (PTQ baseline), quantization-aware training (QAT, non-convex), learned quantization grid (ablation).
+
+**Effort:** 1-2 weeks, 20 GPU-hours total.
+
+### Reproducibility Protocol
+
+All experiments use Python 3.10 with CVXPY 1.4, Mosek 10.0, PyTorch 2.1, and locked dependency versions in a Docker container. Random seeds are fixed for data splits (seed 42) and solver initialization. Duality gap tolerance varies by hypothesis: $10^{-4}$ for H-1 and H-6, $10^{-3}$ for H-2 and H-4, $10^{-5}$ for H-3, $10^{-2}$ for H-5. All code, data generation scripts, and pretrained baselines will be open-sourced on GitHub with MIT license. Negative results are reported with equal priority to confirmations.
+
+---
+
+## 7. Expected Contributions and Implications
+
+### Theoretical Contributions if Hypotheses are Validated
+
+**H-1 validated:** The first polynomial-time algorithm with certified approximation guarantees for full-rank ReLU network training. This would upgrade CRONOS from "empirically effective sampling heuristic" to "provably near-optimal solver" and extend the scope of convex neural network theory from low-rank toy problems to real datasets. The hierarchical zonotope sampling technique could generalize to other hyperplane arrangement problems in computational geometry.
+
+**H-2 validated:** Convex reformulation for recurrent architectures would be a foundational extension enabling globally optimal training for time-series forecasting, medical sequence analysis, and natural language processing tasks where model robustness and interpretability outweigh rapid iteration. It would also bridge the gap between RNN training and classical dynamical systems theory, potentially revealing implicit regularization in temporal weight sharing.
+
+**H-3 validated:** The first computable upper bound on duality gap for serial deep networks would provide practitioners with a quantitative measure of how much optimality is sacrificed by choosing standard architectures over parallel networks. This characterization would inform architecture design by clarifying the expressiveness-optimality tradeoff: wider serial networks approach parallel performance with exponentially diminishing returns.
+
+**H-4, H-5, H-6 validated collectively:** Extending convex duality to adversarial robustness, multi-head transformers, and quantization demonstrates the framework is not confined to academic benchmarks but addresses deployment constraints in production systems. Certified robustness without approximation gaps would establish a new standard for safety-critical applications. Quantization-aware convex training would eliminate accuracy degradation in on-device inference.
+
+### Practical Implications
+
+**For small-data regimes:** When training data is limited (medical imaging with 100s of samples, specialized industrial monitoring with sparse failure events), global optimality may matter more than iteration speed. Convex training guarantees the model extracts maximum information from available data without risk of poor local minima. H-1's full-rank approximation would make this applicable to high-dimensional small-sample problems.
+
+**For safety-critical systems:** Autonomous vehicles, medical diagnosis, and financial trading require robustness guarantees that stochastic gradient descent cannot provide. H-4's certified adversarial training offers provable worst-case performance bounds. The zero duality gap ensures no better solution exists—a mathematical certificate impossible with gradient descent.
+
+**For on-device inference:** Edge deployment demands quantized models for memory and power constraints. H-6's quantization-aware convex training would yield models optimized directly for INT8 inference, avoiding post-training degradation. Combined with H-1's efficiency improvements, this could enable training and deployment pipelines that bypass float32 entirely.
+
+**For interpretability and trust:** The group sparsity structure revealed by convex reformulations provides interpretability: which activation patterns were selected and why. For regulated domains (healthcare, finance, government) requiring model explainability, the connection to sparse coding and LASSO provides a familiar statistical framework for interpretation.
+
+### Limitations and Boundary Conditions
+
+These contributions operate within deliberate scope constraints. The framework requires piecewise-linear activations (ReLU, threshold); smooth activations like GELU and SiLU require fundamentally different techniques. It addresses supervised learning with fixed datasets; online learning and continual learning remain outside the current scope. The complexity improvements center on rank-dependent scaling; for truly high-rank problems ($r = n = d$), convex methods may never match gradient descent's empirical speed.
+
+The hypothesis set also assumes access to substantial GPU resources (970 GPU-hours total). Validation requires infrastructure unavailable to many researchers, potentially limiting independent replication. The highest-risk hypotheses (H-2, H-5) may fail not due to theoretical flaws but computational intractability—strong duality may hold mathematically yet remain unsolvable within reasonable time budgets.
+
+### Unanswered Questions
+
+If serial-parallel duality gap bounds (H-3) reveal the gap is large even for wide networks, this suggests convex relaxations provide poor approximations for standard architectures—a negative result with implications for whether the field should focus on architectural modifications (parallelization) versus improved relaxations (SDP hierarchies). If recurrent reformulation (H-2) succeeds for short sequences but fails for long dependencies ($T > 200$), this identifies a fundamental architectural limitation: weight sharing across many timesteps may be fundamentally incompatible with convex duality.
+
+The research does not address whether convex training can scale to billion-parameter models on ImageNet or beyond. CRONOS reaches 1.28 million images; the next scale jump to web-scale datasets (hundreds of millions of images) remains unproven. Whether the approximation guarantees of H-1 degrade gracefully or catastrophically as rank approaches sample count is an empirical question the experiments may not fully resolve.
+
+---
+
+## 8. References
+
+[1] Bach, F. (2017). Breaking the Curse of Dimensionality with Convex Neural Networks. *Journal of Machine Learning Research*, 18(19):1–53. arXiv:1707.05337.
+
+[2] Ergen, T., & Pilanci, M. (2020). Convex Geometry and Duality of Over-parameterized Neural Networks. In *Advances in Neural Information Processing Systems* (NeurIPS 2020). arXiv:2002.11219.
+
+[3] Ergen, T., & Pilanci, M. (2020). Training Convolutional ReLU Neural Networks in Polynomial Time. arXiv:2006.14798.
+
+[4] Ergen, T., & Pilanci, M. (2021). Global Optimality Beyond Two Layers: Training Deep ReLU Networks via Convex Programs. In *International Conference on Machine Learning* (ICML 2021). arXiv:2110.05518.
+
+[5] Ergen, T., & Pilanci, M. (2021). Revealing the Structure of Deep Neural Networks via Convex Duality. In *International Conference on Machine Learning* (ICML 2021).
+
+[6] Ergen, T., & Pilanci, M. (2023). Globally Optimal Training of Neural Networks with Threshold Activation Functions. *Mathematical Programming*, 192, 259-301. arXiv:2303.03382.
+
+[7] Ergen, T., & Pilanci, M. (2023). The Convex Landscape of Neural Networks: Explaining the Loss Landscape Geometry. arXiv:2312.12657.
+
+[8] Geifman, A., Dwaraknath, A., Ergen, T., & Pilanci, M. (2023). Fixing the NTK: From Neural Network Linearizations to Exact Convex Programs. arXiv:2309.15096.
+
+[9] Jacot, A., Gabriel, F., & Hongler, C. (2018). Neural Tangent Kernel: Convergence and Generalization in Neural Networks. In *Advances in Neural Information Processing Systems* (NeurIPS 2018).
+
+[10] Krizhevsky, A. (2009). Learning Multiple Layers of Features from Tiny Images. *Technical Report*, University of Toronto.
+
+[11] Klusowski, J., Feng, A., Frangella, Z., & Pilanci, M. (2024). CRONOS: Enhancing Deep Learning with Scalable GPU Accelerated Convex Neural Networks. arXiv:2411.01088.
+
+[12] Mishkin, A., Sahiner, A., & Pilanci, M. (2022). Fast Convex Optimization for Two-Layer ReLU Networks: Equivalent Model Classes and Cone Decompositions. In *International Conference on Machine Learning* (ICML 2022).
+
+[13] Pilanci, M., & Ergen, T. (2020). Neural Networks are Convex Regularizers: Exact Polynomial-time Convex Optimization Formulations for Two-layer Networks. In *International Conference on Machine Learning* (ICML 2020). arXiv:2002.10553.
+
+[14] Sahiner, A., Ergen, T., Ozturkler, B., & Pauly, J. (2021). Vector-output ReLU Neural Network Problems are Copositive Programs: Convex Analysis of Two Layer Networks and Polynomial-time Algorithms. *Journal of Machine Learning Research*, 22(227):1–49. arXiv:2012.13329.
+
+[15] Sahiner, A., Ergen, T., Ozturkler, B., Pauly, J., Mardani, M., & Pilanci, M. (2022). Hidden Convexity of Wasserstein GANs: Interpretable Generative Models with Closed-Form Solutions. In *International Conference on Learning Representations* (ICLR 2022). arXiv:2107.05680.
+
+[16] Sahiner, A., Ergen, T., Ozturkler, B., Zeyuan, A., Mardani, M., Pauly, J., & Pilanci, M. (2023). Unraveling Attention via Convex Duality: Analysis and Interpretations of Vision Transformers. In *International Conference on Machine Learning* (ICML 2023). arXiv:2205.08078.
+
+[17] Wang, Y., Ergen, T., & Pilanci, M. (2023). Parallel Deep Neural Networks Have Zero Duality Gap. In *International Conference on Learning Representations* (ICLR 2023). arXiv:2110.06482.
+
+[18] Zeger, K., Wang, Y., & Mishkin, A. (2024). A Library of Mirrors: Deep Neural Nets in Low Dimensions are Convex Lasso Models with Reflection Features. arXiv:2403.01046.
+
+[19] Ergen, T., & Pilanci, M. (2024). Randomized Geometric Algebra Methods for Convex Neural Networks. arXiv:2406.02806.
+
+[20] Sahiner, A., Mardani, M., & Pilanci, M. (2024). Active Learning of Deep Neural Networks via Gradient-Free Cutting Planes. arXiv:2410.02145.
+
+[21] Kim, J., Ergen, T., & Pilanci, M. (2024). Exploring the Loss Landscape of Regularized Neural Networks via Convex Duality. arXiv:2411.07729.
