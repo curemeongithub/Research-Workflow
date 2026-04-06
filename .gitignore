@@ -37,8 +37,8 @@ sources/*
 !sources/.gitkeep
 
 # User-provided PDFs (processed → sources/user-* which IS tracked)
-user-sources/*.pdf
-user-sources/*.PDF
+# user-sources/*.pdf
+# user-sources/*.PDF
 
 # Pipeline diagnostics (committed by pipeline agents, not local ignores)
 # diagnostics/ — intentionally NOT ignored (tracked by git checkpoints)
