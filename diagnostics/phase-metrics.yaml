@@ -22,3 +22,35 @@
   agent: UNKNOWN_CHECK_PROBE
   started: "2026-04-06T00:29:40Z"
   status: in_progress
+  stopped: "2026-04-06T00:34:46Z"
+  exit_code: UNKNOWN_CHECK_PROBE
+- phase: 5
+  agent: UNKNOWN_CHECK_PROBE
+  started: "2026-04-06T00:35:10Z"
+  status: in_progress
+  stopped: "2026-04-06T00:38:05Z"
+  exit_code: UNKNOWN_CHECK_PROBE
+- phase: 6
+  agent: UNKNOWN_CHECK_PROBE
+  started: "2026-04-06T00:38:23Z"
+  status: in_progress
+  stopped: "2026-04-06T00:43:02Z"
+  exit_code: UNKNOWN_CHECK_PROBE
+- phase: 7
+  agent: UNKNOWN_CHECK_PROBE
+  started: "2026-04-06T00:43:20Z"
+  status: in_progress
+  stopped: "2026-04-06T00:48:04Z"
+  exit_code: UNKNOWN_CHECK_PROBE
+- phase: 8
+  agent: UNKNOWN_CHECK_PROBE
+  started: "2026-04-06T00:48:27Z"
+  status: in_progress
+  stopped: "2026-04-06T00:55:13Z"
+  exit_code: UNKNOWN_CHECK_PROBE
+- phase: 9
+  agent: UNKNOWN_CHECK_PROBE
+  started: "2026-04-06T00:55:49Z"
+  status: in_progress
+  stopped: "2026-04-06T01:00:29Z"
+  exit_code: UNKNOWN_CHECK_PROBE

@@ -38,7 +38,6 @@ Your training data may contain information about the topic, but that information
 | General domain knowledge | "NeurIPS is a top AI conference" |
 | Common definitions | "An abstract summarizes the paper" |
 | Structural/rhetorical devices | Chapter organization, analogies |
-| Pointing to people as examples | "Karpathy's blog is widely read" (no claim about content) |
 
 ### The Test
 

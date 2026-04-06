@@ -1,7 +1,7 @@
 ---
 name: sanity-check
 description: Phase 5 — Fresh-eyes skeptical review of the gap analysis. Advisory only — NEVER blocks the pipeline. Checks whether gaps are real, feasibility is plausible, and claims are consistent with the literature map. Source-lookup limit 5. Output goes to analysis/review-notes.md.
-model: claude-sonnet-4.6 (copilot)
+model: claude-opus-4.6 (copilot)
 tools: Read, Write, Grep, Bash
 permissionMode: acceptEdits
 color: yellow

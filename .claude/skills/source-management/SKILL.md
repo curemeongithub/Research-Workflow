@@ -23,10 +23,6 @@ This is a shared, persistent repository. Sources downloaded for one run are avai
 | Source Type | Pattern | Example |
 |-------------|---------|---------|
 | arXiv papers | `sources/arxiv-{PAPER_ID}` | `sources/arxiv-2010.11929/` |
-| Blog posts | `sources/{domain}/{path}/` | `sources/lilianweng.github.io/posts/2022-06-09-vlm/` |
-| d2l.ai chapters | `sources/d2l.ai/{chapter-path}/` | `sources/d2l.ai/chapter_attention/vision-transformer/` |
-| HuggingFace | `sources/huggingface.co/docs/{path}/` | `sources/huggingface.co/docs/transformers/vit/` |
-| Other sites | `sources/{domain}/{path}/` | `sources/distill.pub/2021/gnn-intro/` |
 | GitHub repos | `sources/github.com/{OWNER}/{REPO}/` | `sources/github.com/google/jax/` |
 | User PDFs | `sources/user-{filename}/` | `sources/user-my-notes/` |
 
@@ -57,7 +53,6 @@ If it exists and has a readable content file, skip downloading.
 | arXiv (preferred) | `mkdir -p "sources/arxiv-{ID}" && cd "sources/arxiv-{ID}" && curl -sL "https://arxiv.org/src/{ID}" -o source.tar.gz && tar -xzf source.tar.gz && rm source.tar.gz` |
 | GitHub repo | `git clone --depth 1 "URL" "sources/github.com/OWNER/REPO"` |
 | Web page (default) | `.venv/bin/python scripts/authenticated_extract.py "URL"` |
-| Web page + auth | `.venv/bin/python scripts/authenticated_extract.py "URL" --profile substack` |
 | Static HTML (faster) | `.venv/bin/python scripts/webpage_to_md.py "URL" -o "sources/{domain}/{path}/"` |
 | Standard PDF | `.venv/bin/python scripts/mistral_ocr.py file.pdf -o "sources/{domain}/{path}/"` |
 
@@ -109,7 +104,7 @@ A source with `readable: false` in the manifest must be re-extracted before Phas
 
 ```yaml
 - id: arxiv-2010.11929
-  type: arxiv            # arxiv | blog | documentation | pdf | github | user-pdf
+  type: arxiv            # arxiv | documentation | pdf | github | user-pdf
   title: "Paper title"
   authors: ["Last, First", "Last, First"]
   year: 2020

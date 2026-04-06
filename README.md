@@ -64,14 +64,6 @@ Then create browser profiles for login-gated sites (one-time per site):
 
 ```bash
 cd /path/to/AI-Research-Workflow
-
-# Substack
-python scripts/setup_browser_profile.py "https://substack.com/sign-in" substack
-# → A Chromium window opens → log in → press Enter in terminal to save
-
-# Medium
-python scripts/setup_browser_profile.py "https://medium.com/m/signin" medium
-# → Same flow: log in → press Enter
 ```
 
 Profiles are saved to `scripts/.browser-profiles/` (gitignored — they contain session cookies).
@@ -86,15 +78,6 @@ The `scripts/` folder contains tools for downloading web sources as clean Markdo
 ### Authenticated / JS-Heavy Pages → Markdown + Images
 
 Uses [Crawl4AI](https://crawl4ai.com/) with persistent browser profiles.
-
-```bash
-# Substack article (auto-derives output path from URL)
-python scripts/authenticated_extract.py "https://substack.com/home/post/p-189051354" --profile substack
-# → sources/substack.com/home/post/p-189051354/content.md + images/
-
-# Public blog that needs JS rendering (no profile needed)
-python scripts/authenticated_extract.py "https://lilianweng.github.io/posts/2024-11-28-reward-hacking/"
-# → sources/lilianweng.github.io/posts/2024-11-28-reward-hacking/content.md + images/
 
 # Custom CSS selector for unknown sites
 python scripts/authenticated_extract.py "https://example.com/page" -s "article"

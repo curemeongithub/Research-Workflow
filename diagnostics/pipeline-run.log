@@ -11,3 +11,14 @@
 [2026-04-06T00:21:14Z] PreCompact | PreCompact phase=3 — context compaction triggered
 [2026-04-06T00:28:53Z] SubagentStop | SubagentStop phase=3 agent=UNKNOWN_CHECK_PROBE exit_code=UNKNOWN_CHECK_PROBE
 [2026-04-06T00:29:40Z] SubagentStart | SubagentStart phase=4 agent=UNKNOWN_CHECK_PROBE
+[2026-04-06T00:34:46Z] SubagentStop | SubagentStop phase=5 agent=UNKNOWN_CHECK_PROBE exit_code=UNKNOWN_CHECK_PROBE
+[2026-04-06T00:35:10Z] SubagentStart | SubagentStart phase=5 agent=UNKNOWN_CHECK_PROBE
+[2026-04-06T00:38:05Z] SubagentStop | SubagentStop phase=6 agent=UNKNOWN_CHECK_PROBE exit_code=UNKNOWN_CHECK_PROBE
+[2026-04-06T00:38:23Z] SubagentStart | SubagentStart phase=6 agent=UNKNOWN_CHECK_PROBE
+[2026-04-06T00:43:02Z] SubagentStop | SubagentStop phase=7 agent=UNKNOWN_CHECK_PROBE exit_code=UNKNOWN_CHECK_PROBE
+[2026-04-06T00:43:20Z] SubagentStart | SubagentStart phase=7 agent=UNKNOWN_CHECK_PROBE
+[2026-04-06T00:48:04Z] SubagentStop | SubagentStop phase=8 agent=UNKNOWN_CHECK_PROBE exit_code=UNKNOWN_CHECK_PROBE
+[2026-04-06T00:48:27Z] SubagentStart | SubagentStart phase=8 agent=UNKNOWN_CHECK_PROBE
+[2026-04-06T00:55:13Z] SubagentStop | SubagentStop phase=8 agent=UNKNOWN_CHECK_PROBE exit_code=UNKNOWN_CHECK_PROBE
+[2026-04-06T00:55:49Z] SubagentStart | SubagentStart phase=9 agent=UNKNOWN_CHECK_PROBE
+[2026-04-06T01:00:29Z] SubagentStop | SubagentStop phase=9 agent=UNKNOWN_CHECK_PROBE exit_code=UNKNOWN_CHECK_PROBE
