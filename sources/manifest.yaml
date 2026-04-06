@@ -1,0 +1,320 @@
+topic: "Duality Gap in Dual Convex Optimization in ReLU Neural Networks"
+generated: "2026-04-07T00:00:00Z"
+total_sources: 20
+sources:
+
+  # ── Core user-provided papers ──────────────────────────────────────────────
+
+  - id: arxiv-2002.10553
+    type: arxiv
+    title: "Neural Networks are Convex Regularizers: Exact Polynomial-time Convex Optimization Formulations for Two-layer Networks"
+    authors: ["Pilanci, Mert", "Ergen, Tolga"]
+    year: 2020
+    url: "https://arxiv.org/abs/2002.10553"
+    local_path: sources/arxiv-2002.10553/
+    content_file: sources/arxiv-2002.10553/content.md
+    readable: true
+    identity_verified: true
+    char_count: 73086
+    extraction_method: mistral-ocr-pdf
+    code_repos: []
+    notes: "Foundational paper establishing convex reformulation of two-layer ReLU networks; user-provided PDF."
+
+  - id: arxiv-2110.05518
+    type: arxiv
+    title: "Global Optimality Beyond Two Layers: Training Deep ReLU Networks via Convex Programs"
+    authors: ["Ergen, Tolga", "Pilanci, Mert"]
+    year: 2021
+    url: "https://arxiv.org/abs/2110.05518"
+    local_path: sources/arxiv-2110.05518/
+    content_file: sources/arxiv-2110.05518/content.md
+    readable: true
+    identity_verified: true
+    char_count: 90129
+    extraction_method: mistral-ocr-pdf
+    code_repos: []
+    notes: "Extends convex duality to deep (>2 layer) ReLU networks; user-provided PDF."
+
+  - id: arxiv-2110.06482
+    type: arxiv
+    title: "Parallel Deep Neural Networks Have Zero Duality Gap"
+    authors: ["Wang, Yifei", "Ergen, Tolga", "Pilanci, Mert"]
+    year: 2021
+    url: "https://arxiv.org/abs/2110.06482"
+    local_path: sources/arxiv-2110.06482/
+    content_file: sources/arxiv-2110.06482/content.md
+    readable: true
+    identity_verified: true
+    char_count: 107482
+    extraction_method: mistral-ocr-pdf
+    code_repos: []
+    notes: "Proves zero duality gap for parallel-architecture deep ReLU networks; user-provided PDF."
+
+  - id: arxiv-2402.03625
+    type: arxiv
+    title: "Convex Relaxations of ReLU Neural Networks Approximate Global Optima in Polynomial Time"
+    authors: ["Kim, Sungyoon", "Pilanci, Mert"]
+    year: 2024
+    url: "https://arxiv.org/abs/2402.03625"
+    local_path: sources/arxiv-2402.03625/
+    content_file: sources/arxiv-2402.03625/content.md
+    readable: true
+    identity_verified: true
+    char_count: 105643
+    extraction_method: mistral-ocr-pdf
+    code_repos: []
+    notes: "Polynomial-time approximation guarantees via convex relaxations; user-provided PDF."
+
+  - id: user-8652-CRONOS
+    type: user-pdf
+    title: "CRONOS: Enhancing Deep Learning with Scalable GPU Accelerated Convex Neural Networks"
+    authors: ["Feng, Miria", "Frangella, Zachary", "Pilanci, Mert"]
+    year: 2023
+    url: ""
+    local_path: sources/user-8652-CRONOS/
+    content_file: sources/user-8652-CRONOS/content.md
+    readable: true
+    identity_verified: true
+    char_count: 101419
+    extraction_method: mistral-ocr-pdf
+    code_repos:
+      - url: "https://github.com/pilancilab/CRONOS"
+        verified: true
+    notes: "Introduces CRONOS algorithm for scalable GPU-accelerated convex neural network optimization; user-provided PDF (NeurIPS workshop or similar venue)."
+
+  - id: user-ergen21b
+    type: user-pdf
+    title: "Revealing the Structure of Deep Neural Networks via Convex Duality"
+    authors: ["Ergen, Tolga", "Pilanci, Mert"]
+    year: 2021
+    url: "https://arxiv.org/abs/2002.09773"
+    local_path: sources/user-ergen21b/
+    content_file: sources/user-ergen21b/content.md
+    readable: true
+    identity_verified: true
+    char_count: 54225
+    extraction_method: mistral-ocr-pdf
+    code_repos: []
+    notes: "Published ICML 2021 version of arXiv:2002.09773. Characterizes optimal hidden-layer weights as extreme points of a convex set. User-provided PDF."
+
+  # ── arXiv papers: Pilanci/Ergen group foundational works ──────────────────
+
+  - id: arxiv-2002.09773
+    type: arxiv
+    title: "Revealing the Structure of Deep Neural Networks via Convex Duality"
+    authors: ["Ergen, Tolga", "Pilanci, Mert"]
+    year: 2020
+    url: "https://arxiv.org/abs/2002.09773"
+    local_path: sources/arxiv-2002.09773/
+    content_file: sources/arxiv-2002.09773/content.md
+    readable: true
+    identity_verified: true
+    char_count: 145803
+    extraction_method: mistral-ocr-pdf
+    code_repos: []
+    notes: "arXiv preprint of ergen21b; proves strong duality and optimal weight alignment for deep ReLU networks."
+
+  - id: arxiv-2002.11219
+    type: arxiv
+    title: "Convex Geometry and Duality of Over-parameterized Neural Networks"
+    authors: ["Ergen, Tolga", "Pilanci, Mert"]
+    year: 2020
+    url: "https://arxiv.org/abs/2002.11219"
+    local_path: sources/arxiv-2002.11219/
+    content_file: sources/arxiv-2002.11219/content.md
+    readable: true
+    identity_verified: true
+    char_count: 192088
+    extraction_method: mistral-ocr-pdf
+    code_repos: []
+    notes: "Develops convex geometry framework for over-parameterized networks; includes cutting-plane algorithms."
+
+  - id: arxiv-2006.05900
+    type: arxiv
+    title: "The Hidden Convex Optimization Landscape of Two-Layer ReLU Neural Networks: an Exact Characterization of the Optimal Solutions"
+    authors: ["Wang, Yifei", "Lacotte, Jonathan", "Pilanci, Mert"]
+    year: 2020
+    url: "https://arxiv.org/abs/2006.05900"
+    local_path: sources/arxiv-2006.05900/
+    content_file: sources/arxiv-2006.05900/content.md
+    readable: true
+    identity_verified: true
+    char_count: 105785
+    extraction_method: mistral-ocr-pdf
+    code_repos: []
+    notes: "Exact characterization of the convex loss landscape for two-layer ReLU networks."
+
+  - id: arxiv-2006.14798
+    type: arxiv
+    title: "Implicit Convex Regularizers of CNN Architectures: Convex Optimization of Two- and Three-Layer Networks in Polynomial Time"
+    authors: ["Ergen, Tolga", "Pilanci, Mert"]
+    year: 2020
+    url: "https://arxiv.org/abs/2006.14798"
+    local_path: sources/arxiv-2006.14798/
+    content_file: sources/arxiv-2006.14798/content.md
+    readable: true
+    identity_verified: true
+    char_count: 118143
+    extraction_method: mistral-ocr-pdf
+    code_repos: []
+    notes: "Extends convex duality to CNNs (two- and three-layer); ICLR 2021 version."
+
+  - id: arxiv-2012.13329
+    type: arxiv
+    title: "Vector-output ReLU Neural Network Problems are Copositive Programs: Convex Analysis of Two Layer Networks and Polynomial-time Algorithms"
+    authors: ["Sahiner, Arda", "Ergen, Tolga", "Pauly, John", "Pilanci, Mert"]
+    year: 2020
+    url: "https://arxiv.org/abs/2012.13329"
+    local_path: sources/arxiv-2012.13329/
+    content_file: sources/arxiv-2012.13329/content.md
+    readable: true
+    identity_verified: true
+    char_count: 88430
+    extraction_method: mistral-ocr-pdf
+    code_repos: []
+    notes: "Reformulates vector-output ReLU problems as copositive programs; polynomial-time exact algorithms."
+
+  - id: arxiv-2101.02429
+    type: arxiv
+    title: "Neural Spectrahedra and Semidefinite Lifts: Global Convex Optimization of Polynomial Activation Neural Networks in Fully Polynomial-Time"
+    authors: ["Bartan, Burak", "Pilanci, Mert"]
+    year: 2021
+    url: "https://arxiv.org/abs/2101.02429"
+    local_path: sources/arxiv-2101.02429/
+    content_file: sources/arxiv-2101.02429/content.md
+    readable: true
+    identity_verified: true
+    char_count: 150720
+    extraction_method: mistral-ocr-pdf
+    code_repos:
+      - url: "https://github.com/cvxgrp/scs"
+        verified: false
+    notes: "Semidefinite relaxation and neural spectrahedra for polynomial activation networks."
+
+  - id: arxiv-2103.01499
+    type: arxiv
+    title: "Demystifying Batch Normalization in ReLU Networks: Equivalent Convex Optimization Models and Implicit Regularization"
+    authors: ["Ergen, Tolga", "Sahiner, Arda", "Ozturkler, Batu", "Pauly, John", "Mardani, Morteza", "Pilanci, Mert"]
+    year: 2021
+    url: "https://arxiv.org/abs/2103.01499"
+    local_path: sources/arxiv-2103.01499/
+    content_file: sources/arxiv-2103.01499/content.md
+    readable: true
+    identity_verified: true
+    char_count: 153310
+    extraction_method: mistral-ocr-pdf
+    code_repos: []
+    notes: "Shows batch normalization effectively whitens data; convex equivalent models for BN-ReLU networks."
+
+  - id: arxiv-2110.09548
+    type: arxiv
+    title: "Path Regularization: A Convexity and Sparsity Inducing Regularization for Parallel ReLU Networks"
+    authors: ["Ergen, Tolga", "Pilanci, Mert"]
+    year: 2021
+    url: "https://arxiv.org/abs/2110.09548"
+    local_path: sources/arxiv-2110.09548/
+    content_file: sources/arxiv-2110.09548/content.md
+    readable: true
+    identity_verified: true
+    char_count: 104442
+    extraction_method: mistral-ocr-pdf
+    code_repos: []
+    notes: "Introduces path regularization as a convexity-inducing regularizer for parallel ReLU networks."
+
+  - id: arxiv-2202.01331
+    type: arxiv
+    title: "Fast Convex Optimization for Two-Layer ReLU Networks: Equivalent Model Classes and Cone Decompositions"
+    authors: ["Mishkin, Aaron", "Sahiner, Arda", "Pilanci, Mert"]
+    year: 2022
+    url: "https://arxiv.org/abs/2202.01331"
+    local_path: sources/arxiv-2202.01331/
+    content_file: sources/arxiv-2202.01331/content.md
+    readable: true
+    identity_verified: true
+    char_count: 175795
+    extraction_method: mistral-ocr-pdf
+    code_repos:
+      - url: "https://github.com/pilancilab/scnn"
+        verified: true
+      - url: "https://github.com/pilancilab/scnn_experiments"
+        verified: true
+    notes: "Scalable convex neural network training (SCNN); cone decomposition for fast optimization. ICML 2022."
+
+  - id: arxiv-2306.00119
+    type: arxiv
+    title: "Optimal Sets and Solution Paths of ReLU Networks"
+    authors: ["Mishkin, Aaron", "Pilanci, Mert"]
+    year: 2023
+    url: "https://arxiv.org/abs/2306.00119"
+    local_path: sources/arxiv-2306.00119/
+    content_file: sources/arxiv-2306.00119/content.md
+    readable: true
+    identity_verified: true
+    char_count: 157405
+    extraction_method: mistral-ocr-pdf
+    code_repos:
+      - url: "https://github.com/pilancilab/relu_optimal_sets"
+        verified: true
+    notes: "Characterizes the full set of optimal solutions and regularization paths for ReLU network training."
+
+  - id: arxiv-2309.15096
+    type: arxiv
+    title: "Fixing the NTK: From Neural Network Linearizations to Exact Convex Programs"
+    authors: ["Dwaraknath, Rajat Vadiraj", "Ergen, Tolga", "Pilanci, Mert"]
+    year: 2023
+    url: "https://arxiv.org/abs/2309.15096"
+    local_path: sources/arxiv-2309.15096/
+    content_file: sources/arxiv-2309.15096/content.md
+    readable: true
+    identity_verified: true
+    char_count: 86951
+    extraction_method: mistral-ocr-pdf
+    code_repos: []
+    notes: "Bridges NTK linearization and convex programs; shows exact convex reformulation fixes NTK approximation errors."
+
+  - id: arxiv-2312.12657
+    type: arxiv
+    title: "The Convex Landscape of Neural Networks: Characterizing Global Optima and Stationary Points via Lasso Models"
+    authors: ["Ergen, Tolga", "Pilanci, Mert"]
+    year: 2023
+    url: "https://arxiv.org/abs/2312.12657"
+    local_path: sources/arxiv-2312.12657/
+    content_file: sources/arxiv-2312.12657/content.md
+    readable: true
+    identity_verified: true
+    char_count: 171840
+    extraction_method: mistral-ocr-pdf
+    code_repos:
+      - url: "https://github.com/pilancilab/convex_nn"
+        verified: true
+    notes: "Comprehensive characterization of global optima and stationary points using Lasso model equivalence."
+
+  - id: arxiv-2403.01046
+    type: arxiv
+    title: "A Library of Mirrors: Deep Neural Nets in Low Dimensions are Convex Lasso Models with Reflection Features"
+    authors: ["Zeger, Emi", "Wang, Yifei", "Mishkin, Aaron", "Ergen, Tolga", "Candes, Emmanuel", "Pilanci, Mert"]
+    year: 2024
+    url: "https://arxiv.org/abs/2403.01046"
+    local_path: sources/arxiv-2403.01046/
+    content_file: sources/arxiv-2403.01046/content.md
+    readable: true
+    identity_verified: true
+    char_count: 193763
+    extraction_method: mistral-ocr-pdf
+    code_repos: []
+    notes: "Shows deep neural nets in low dimensions are equivalent to convex Lasso models with reflection features."
+
+  - id: arxiv-2501.03017
+    type: arxiv
+    title: "Convexity in ReLU Neural Networks: beyond ICNNs?"
+    authors: ["Gagneux, Anne", "Massias, Mathurin", "Soubies, Emmanuel", "Gribonval, Remi"]
+    year: 2025
+    url: "https://arxiv.org/abs/2501.03017"
+    local_path: sources/arxiv-2501.03017/
+    content_file: sources/arxiv-2501.03017/content.md
+    readable: true
+    identity_verified: true
+    char_count: 159333
+    extraction_method: mistral-ocr-pdf
+    code_repos: []
+    notes: "Investigates convexity properties of ReLU networks beyond input-convex neural networks (ICNNs); 2025."

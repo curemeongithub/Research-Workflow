@@ -1,81 +1,11 @@
-current_phase: 9
+current_phase: 2
 phases:
   1:
-    arxiv_count: 30
     output: sources/manifest.yaml
-    readable_count: 39
-    source_count: 39
-    started: '2026-04-05T23:51:47.096061Z'
+    source_count: 20
+    started: '2026-04-06T18:50:56.515486Z'
     status: complete
-    timestamp: '2026-04-05T23:58:36.805622+00:00'
-    user_pdf_count: 6
-    web_count: 3
-  2:
-    content_quality:
-      mismatch_note: 17/30 arXiv tarballs contained wrong papers from Phase 1 acquisition
-        failure
-      mismatched: 17
-      ok: 22
-      ok_breakdown: 13 arxiv + 6 user_pdfs + 3 blogs
-    methods:
-      mistral-ocr-copy: 6
-      pandoc-latex: 30
-      web-extract: 3
-    output: sources/
-    sources_readable: 39
-    sources_total: 39
-    started: '2026-04-06T00:00:09.924226Z'
-    status: complete
-    timestamp: '2026-04-06T00:12:07.424740+00:00'
-  3:
-    output: analysis/literature-map.md
-    sources_used: 22
-    status: complete
-    timestamp: '2026-04-06T01:00:00.000000+00:00'
-    word_count: 5200
-  4:
-    output: analysis/gap-analysis.md
-    status: complete
-    timestamp: '2026-04-06T00:34:29.345132+00:00'
-  5:
-    advisory: true
-    output: analysis/review-notes.md
-    started: '2026-04-06T00:35:18.886952Z'
-    status: complete
-    timestamp: 2026-04-06T00:37:51.500372+00:00Z
-  6:
-    output: synthesis/hypotheses.md
-    started: '2026-04-06T00:38:30.977850Z'
-    status: complete
-    timestamp: '2026-04-06T00:42:46.053993+00:00'
-  7:
-    output: synthesis/methodology.md
-    started: '2026-04-06T00:43:28.450965Z'
-    status: complete
-    timestamp: '2026-04-06T00:47:50.260829+00:00'
-  8:
-    output: synthesis/final-document.md
-    started: '2026-04-06T01:30:00Z'
-    status: complete
-    timestamp: '2026-04-06T00:55:21.333989Z'
-    word_count_approx: 9300
-  9:
-    output:
-    - reiteration/critique.md
-    - reiteration/reiteration-plan.md
-    scores:
-      1: 2
-      2: 3
-      3: 4
-      4: 4
-      5: 4
-      6: 4
-      7: 4
-      8: 4
-    started: '2026-04-06T02:00:00Z'
-    status: complete
-    timestamp: '2026-04-06T01:00:39.510341+00:00'
-    weakest_phase: 1
+    timestamp: '2026-04-06T19:05:10.011767Z'
 reiteration: 0
-started: '2026-04-06T00:00:00'
-topic: Dual Convex Optimization in ReLU Neural Networks
+started: '2026-04-07T00:00:00'
+topic: Duality Gap in Dual Convex Optimization in ReLU Neural Networks
