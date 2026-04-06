@@ -10,3 +10,5 @@
 [2026-04-05T22:55:56Z] === End Probe ===
 [2026-04-05T22:55:56Z] MISSING:CLAUDE_TOOL_NAME — Claude Code did not set this env var in the hook context. Falling back to 'UNKNOWN_CHECK_PROBE'. Check Claude Code hook documentation for available variables.
 [2026-04-05T22:55:56Z] MISSING:CLAUDE_TOOL_EXIT_CODE — Claude Code did not set this env var in the hook context. Falling back to 'UNKNOWN_CHECK_PROBE'. Check Claude Code hook documentation for available variables.
+[2026-04-05T23:51:34Z] MISSING:CLAUDE_SUBAGENT_NAME — Claude Code did not set this env var in the hook context. Falling back to 'UNKNOWN_CHECK_PROBE'. Check Claude Code hook documentation for available variables.
+[2026-04-05T23:59:40Z] MISSING:CLAUDE_SUBAGENT_EXIT_CODE — Claude Code did not set this env var in the hook context. Falling back to 'UNKNOWN_CHECK_PROBE'. Check Claude Code hook documentation for available variables.
