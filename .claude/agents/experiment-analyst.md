@@ -1,7 +1,7 @@
 ---
 name: experiment-analyst
 description: Phase 14 — Reads all experimental results for a completed hypothesis, performs statistical analysis, generates figures/tables, and writes a structured analysis report. Does NOT re-run experiments.
-model: claude-opus-4.6 (copilot)
+model: opus
 tools: Read, Write, Bash
 permissionMode: acceptEdits
 effort: high

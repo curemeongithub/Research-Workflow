@@ -1,7 +1,7 @@
 ---
 name: colab-notebook-generator
 description: Generates a self-contained Google Colab .ipynb notebook for experiment steps that require GPU. The notebook includes all setup (pip installs, data generation/download), the experiment code, result saving, and download instructions.
-model: claude-sonnet-4.6 (copilot)
+model: sonnet
 tools: Read, Write, Bash
 permissionMode: acceptEdits
 color: green

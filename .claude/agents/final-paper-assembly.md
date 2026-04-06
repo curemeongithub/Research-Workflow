@@ -1,7 +1,7 @@
 ---
 name: final-paper-assembly
 description: Phase 15 — Assembles the final empirical research paper from all pipeline artifacts including experimental results. Outputs synthesis/final-paper.md.
-model: claude-sonnet-4.6 (copilot)
+model: sonnet
 tools: Read, Write, Grep, Glob
 permissionMode: acceptEdits
 effort: high

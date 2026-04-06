@@ -1,7 +1,7 @@
 ---
 name: gap-analysis
 description: Phase 4 — Identifies and scores research gaps from the literature map using a tiered rubric (Tier 1/2/3). Uses Opus for calibrated reasoning — must distinguish genuine gaps from papers the agent missed. Source-lookup limit 5. Output goes to analysis/gap-analysis.md.
-model: claude-opus-4.6 (copilot)
+model: opus
 tools: Read, Write, Grep, Bash
 permissionMode: acceptEdits
 effort: high

@@ -500,7 +500,7 @@ compute_constraints:
 ---
 name: hypothesis-triage
 description: Phase 11 — Reads hypotheses, methodology, VM profile, and literature map. Scores each hypothesis on empirical feasibility × impact. Selects the 3 best for testing. Outputs experiments/triage.md.
-model: claude-opus-4.6 (copilot)
+model: opus
 tools: Read, Write, Bash
 permissionMode: acceptEdits
 effort: high
@@ -596,7 +596,7 @@ selected_hypotheses: [H4, H5, H3]
 ---
 name: experiment-roadmap
 description: Phase 12 — Creates a detailed implementation roadmap for a single hypothesis experiment. Called once per selected hypothesis. Reads hypothesis, methodology, VM profile, and literature map. Outputs experiments/H{n}/roadmap.md.
-model: claude-opus-4.6 (copilot)
+model: opus
 tools: Read, Write, Bash, Grep
 permissionMode: acceptEdits
 effort: high
@@ -762,7 +762,7 @@ This is the core execution engine. It's an orchestrator-managed loop of two agen
 ---
 name: experiment-coder
 description: Phase 13 worker — Reads the experiment roadmap and reviewer feedback, SSHs into the VM, writes experiment scripts, runs them, and reports results. Does not make scientific decisions — follows the roadmap and reviewer instructions.
-model: claude-sonnet-4.6 (copilot)
+model: sonnet
 tools: Bash, Read, Write
 permissionMode: acceptEdits
 color: green
@@ -811,7 +811,7 @@ skills:
 ---
 name: experiment-reviewer
 description: Phase 13 reviewer — Reads experiment results, errors, and the roadmap. Decides whether to continue, fix, adjust parameters, or declare base case met/failed. Writes instructions for the coder.
-model: claude-opus-4.6 (copilot)
+model: opus
 tools: Read, Write, Grep
 permissionMode: acceptEdits
 effort: high
@@ -927,7 +927,7 @@ for hypothesis in selected_hypotheses:
 ---
 name: experiment-analyst
 description: Phase 14 — Reads all experimental results for a completed hypothesis, performs statistical analysis, generates figures/tables, and writes a structured analysis report. Does NOT re-run experiments.
-model: claude-opus-4.6 (copilot)
+model: opus
 tools: Read, Write, Bash
 permissionMode: acceptEdits
 effort: high
@@ -1013,7 +1013,7 @@ timestamp: {TIMESTAMP}
 ---
 name: final-paper-assembly
 description: Phase 15 — Assembles the final empirical research paper from all pipeline artifacts including experimental results. Outputs synthesis/final-paper.md.
-model: claude-sonnet-4.6 (copilot)
+model: sonnet
 tools: Read, Write, Grep, Glob
 permissionMode: acceptEdits
 effort: high
@@ -1077,7 +1077,7 @@ skills:
 ---
 name: critique-v2
 description: Phase 16 — Evaluates the entire pipeline output including experimental results. Identifies weaknesses, scores phases, and produces a reiteration plan that may target research phases (1-7), experiment execution (13-14), or document assembly (15). Requires user approval before re-running.
-model: claude-opus-4.6 (copilot)
+model: opus
 tools: Read, Write
 permissionMode: acceptEdits
 color: red
@@ -1218,7 +1218,7 @@ After confirmation, it continues the experiment loop.
 ---
 name: colab-notebook-generator
 description: Generates a self-contained Google Colab .ipynb notebook for experiment steps that require GPU. The notebook includes all setup (pip installs, data generation/download), the experiment code, result saving, and download instructions.
-model: claude-sonnet-4.6 (copilot)
+model: sonnet
 tools: Read, Write, Bash
 permissionMode: acceptEdits
 color: green

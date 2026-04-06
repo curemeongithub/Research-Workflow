@@ -1,7 +1,7 @@
 ---
 name: hypothesis-triage
 description: Phase 11 — Reads hypotheses, methodology, VM profile, and literature map. Scores each hypothesis on empirical feasibility × impact. Selects the 3 best for testing. Outputs experiments/triage.md.
-model: claude-opus-4.6 (copilot)
+model: opus
 tools: Read, Write, Bash
 permissionMode: acceptEdits
 effort: high

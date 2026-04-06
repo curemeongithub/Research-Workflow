@@ -1,7 +1,7 @@
 ---
 name: literature-comprehension
 description: Phase 3 — Reads all extracted sources sequentially and produces a single comprehensive literature map (~4-5K words). Organizes the field by research themes (MECE), NOT by paper. Output goes to analysis/literature-map.md.
-model: claude-opus-4.6 (copilot)
+model: opus
 tools: Read, Write, Grep, Glob
 permissionMode: acceptEdits
 effort: high
