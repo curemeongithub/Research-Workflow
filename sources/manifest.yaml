@@ -7,44 +7,62 @@ sources:
   type: user_pdf
   title: 2002.10553v2.pdf
   local_path: sources/user-2002.10553v2
-  content_file: sources/user-2002.10553v2/2002.10553v2.md
+  content_file: sources/user-2002.10553v2/content.md
   readable: true
   notes: User-provided PDF processed via Mistral OCR
+  char_count: 71781
+  extraction_method: mistral-ocr-copy
+  content_quality: ok
 - id: user-2110.05518v2
   type: user_pdf
   title: 2110.05518v2.pdf
   local_path: sources/user-2110.05518v2
-  content_file: sources/user-2110.05518v2/2110.05518v2.md
+  content_file: sources/user-2110.05518v2/content.md
   readable: true
   notes: User-provided PDF processed via Mistral OCR
+  char_count: 90248
+  extraction_method: mistral-ocr-copy
+  content_quality: ok
 - id: user-2402.03625v3
   type: user_pdf
   title: 2402.03625v3.pdf
   local_path: sources/user-2402.03625v3
-  content_file: sources/user-2402.03625v3/2402.03625v3.md
+  content_file: sources/user-2402.03625v3/content.md
   readable: true
   notes: User-provided PDF processed via Mistral OCR
+  char_count: 105658
+  extraction_method: mistral-ocr-copy
+  content_quality: ok
 - id: user-ergen21b
   type: user_pdf
   title: ergen21b.pdf
   local_path: sources/user-ergen21b
-  content_file: sources/user-ergen21b/ergen21b.md
+  content_file: sources/user-ergen21b/content.md
   readable: true
   notes: User-provided PDF processed via Mistral OCR
+  char_count: 54261
+  extraction_method: mistral-ocr-copy
+  content_quality: ok
 - id: user-8652_CRONOS_Enhancing_Deep_Lea
   type: user_pdf
   title: 8652_CRONOS_Enhancing_Deep_Lea.pdf
   local_path: sources/user-8652_CRONOS_Enhancing_Deep_Lea
-  content_file: sources/user-8652_CRONOS_Enhancing_Deep_Lea/8652_CRONOS_Enhancing_Deep_Lea.md
+  content_file: sources/user-8652_CRONOS_Enhancing_Deep_Lea/content.md
   readable: true
   notes: User-provided PDF processed via Mistral OCR
+  char_count: 101348
+  extraction_method: mistral-ocr-copy
+  content_quality: ok
 - id: user-2110.06482v3
   type: user_pdf
   title: 2110.06482v3.pdf
   local_path: sources/user-2110.06482v3
-  content_file: sources/user-2110.06482v3/2110.06482v3.md
+  content_file: sources/user-2110.06482v3/content.md
   readable: true
   notes: User-provided PDF processed via Mistral OCR
+  char_count: 107356
+  extraction_method: mistral-ocr-copy
+  content_quality: ok
 - id: arxiv-2012.13401
   type: arxiv
   title: 'Neural Networks are Convex Regularizers: Exact Polynomial-time Convex Optimization
@@ -55,9 +73,13 @@ sources:
   arxiv_id: '2012.13401'
   url: https://arxiv.org/abs/2012.13401
   local_path: sources/arxiv-2012.13401
-  content_file: sources/arxiv-2012.13401/UnderTheSpellOfDynkinFinal.tex
+  content_file: sources/arxiv-2012.13401/content.md
   readable: true
   notes: LaTeX source tarball
+  char_count: 258221
+  extraction_method: pandoc-latex
+  content_quality: mismatched
+  phase1_note: Matter representations / F-theory physics
 - id: arxiv-2110.06482
   type: arxiv
   title: 'Global Optimality Beyond Two Layers: Training Deep ReLU Networks via Convex
@@ -68,9 +90,12 @@ sources:
   arxiv_id: '2110.06482'
   url: https://arxiv.org/abs/2110.06482
   local_path: sources/arxiv-2110.06482
-  content_file: sources/arxiv-2110.06482/iclr2023.tex
+  content_file: sources/arxiv-2110.06482/content.md
   readable: true
   notes: LaTeX source tarball
+  char_count: 93547
+  extraction_method: pandoc-latex
+  content_quality: ok
 - id: arxiv-2012.13635
   type: arxiv
   title: Convex Geometry and Duality of Over-parameterized Neural Networks
@@ -80,9 +105,13 @@ sources:
   arxiv_id: '2012.13635'
   url: https://arxiv.org/abs/2012.13635
   local_path: sources/arxiv-2012.13635
-  content_file: sources/arxiv-2012.13635/learning_in_ltn.tex
+  content_file: sources/arxiv-2012.13635/content.md
   readable: true
   notes: LaTeX source tarball
+  char_count: 44957
+  extraction_method: pandoc-latex
+  content_quality: mismatched
+  phase1_note: Logic Tensor Networks (LTN) -- wrong paper
 - id: arxiv-2002.10553
   type: arxiv
   title: Convex Duality and Cutting Plane Methods for Over-parameterized Neural Networks
@@ -92,9 +121,12 @@ sources:
   arxiv_id: '2002.10553'
   url: https://arxiv.org/abs/2002.10553
   local_path: sources/arxiv-2002.10553
-  content_file: sources/arxiv-2002.10553/main.tex
+  content_file: sources/arxiv-2002.10553/content.md
   readable: true
   notes: LaTeX source tarball
+  char_count: 85262
+  extraction_method: pandoc-latex
+  content_quality: ok
 - id: arxiv-2110.05518
   type: arxiv
   title: Hyperparameter Optimization as a Service via Convex Neural Networks
@@ -104,9 +136,12 @@ sources:
   arxiv_id: '2110.05518'
   url: https://arxiv.org/abs/2110.05518
   local_path: sources/arxiv-2110.05518
-  content_file: sources/arxiv-2110.05518/main.tex
+  content_file: sources/arxiv-2110.05518/content.md
   readable: true
   notes: LaTeX source tarball
+  char_count: 88691
+  extraction_method: pandoc-latex
+  content_quality: ok
 - id: arxiv-2402.03625
   type: arxiv
   title: Scalable Convex Optimization of Neural Networks via Frank-Wolfe Methods
@@ -116,9 +151,12 @@ sources:
   arxiv_id: '2402.03625'
   url: https://arxiv.org/abs/2402.03625
   local_path: sources/arxiv-2402.03625
-  content_file: sources/arxiv-2402.03625/icml2024.tex
+  content_file: sources/arxiv-2402.03625/content.md
   readable: true
   notes: LaTeX source tarball
+  char_count: 100369
+  extraction_method: pandoc-latex
+  content_quality: ok
 - id: arxiv-2106.05528
   type: arxiv
   title: Convex Neural Networks with Sparsity-Inducing Regularizers
@@ -128,9 +166,13 @@ sources:
   arxiv_id: '2106.05528'
   url: https://arxiv.org/abs/2106.05528
   local_path: sources/arxiv-2106.05528
-  content_file: sources/arxiv-2106.05528/tmm_cdcl.tex
+  content_file: sources/arxiv-2106.05528/content.md
   readable: true
   notes: LaTeX source tarball
+  char_count: 46717
+  extraction_method: pandoc-latex
+  content_quality: mismatched
+  phase1_note: Contrastive Learning / Unsupervised Domain Adaptation
 - id: arxiv-2104.02796
   type: arxiv
   title: Global Optimality via Convex Duality for Deep Neural Networks
@@ -140,9 +182,13 @@ sources:
   arxiv_id: '2104.02796'
   url: https://arxiv.org/abs/2104.02796
   local_path: sources/arxiv-2104.02796
-  content_file: sources/arxiv-2104.02796/On_configurationally_driven_nanoscale_motion.tex
+  content_file: sources/arxiv-2104.02796/content.md
   readable: true
   notes: LaTeX source tarball
+  char_count: 23100
+  extraction_method: pandoc-latex
+  content_quality: mismatched
+  phase1_note: Carbon nanotube molecular dynamics
 - id: arxiv-2209.01113
   type: arxiv
   title: Vector-Output ReLU Neural Network Problems are Copositive Programs
@@ -152,9 +198,13 @@ sources:
   arxiv_id: '2209.01113'
   url: https://arxiv.org/abs/2209.01113
   local_path: sources/arxiv-2209.01113
-  content_file: sources/arxiv-2209.01113/main_jcap.tex
+  content_file: sources/arxiv-2209.01113/content.md
   readable: true
   notes: LaTeX source tarball
+  char_count: 63791
+  extraction_method: pandoc-latex
+  content_quality: mismatched
+  phase1_note: Hubble constant / f(T) gravity cosmology
 - id: arxiv-2307.01197
   type: arxiv
   title: Convex Relaxations of ReLU Neural Networks for the Certification of Robustness
@@ -164,9 +214,12 @@ sources:
   arxiv_id: '2307.01197'
   url: https://arxiv.org/abs/2307.01197
   local_path: sources/arxiv-2307.01197
-  content_file: sources/arxiv-2307.01197/preamble.tex
+  content_file: sources/arxiv-2307.01197/content.md
   readable: true
   notes: LaTeX source tarball
+  char_count: 50706
+  extraction_method: pandoc-latex
+  content_quality: ok
 - id: arxiv-2209.01062
   type: arxiv
   title: Regularization and Optimization in Deep Learning via Dual Methods
@@ -176,9 +229,13 @@ sources:
   arxiv_id: '2209.01062'
   url: https://arxiv.org/abs/2209.01062
   local_path: sources/arxiv-2209.01062
-  content_file: sources/arxiv-2209.01062/sigma23-092.tex
+  content_file: sources/arxiv-2209.01062/content.md
   readable: true
   notes: LaTeX source tarball
+  char_count: 82981
+  extraction_method: pandoc-latex
+  content_quality: mismatched
+  phase1_note: Dubrovin-Frobenius manifolds (pure algebraic geometry)
 - id: arxiv-2104.14641
   type: arxiv
   title: Optimal Approximation with Sparse Deep Neural Networks using Residual Connections
@@ -188,9 +245,13 @@ sources:
   arxiv_id: '2104.14641'
   url: https://arxiv.org/abs/2104.14641
   local_path: sources/arxiv-2104.14641
-  content_file: sources/arxiv-2104.14641/overview.tex
+  content_file: sources/arxiv-2104.14641/content.md
   readable: true
   notes: LaTeX source tarball
+  char_count: 4398
+  extraction_method: pandoc-latex
+  content_quality: mismatched
+  phase1_note: Tuna deep learning kernel compiler -- wrong paper
 - id: arxiv-1806.07572
   type: arxiv
   title: 'Neural Tangent Kernel: Convergence and Generalization in Neural Networks'
@@ -200,9 +261,12 @@ sources:
   arxiv_id: '1806.07572'
   url: https://arxiv.org/abs/1806.07572
   local_path: sources/arxiv-1806.07572
-  content_file: sources/arxiv-1806.07572/main_Arxiv2.tex
+  content_file: sources/arxiv-1806.07572/content.md
   readable: true
   notes: LaTeX source tarball
+  char_count: 70601
+  extraction_method: pandoc-latex
+  content_quality: ok
 - id: arxiv-2002.02405
   type: arxiv
   title: 'Finite Versus Infinite Neural Networks: an Empirical Study'
@@ -212,9 +276,12 @@ sources:
   arxiv_id: '2002.02405'
   url: https://arxiv.org/abs/2002.02405
   local_path: sources/arxiv-2002.02405
-  content_file: sources/arxiv-2002.02405/arxiv.tex
+  content_file: sources/arxiv-2002.02405/content.md
   readable: true
   notes: LaTeX source tarball
+  char_count: 724
+  extraction_method: pandoc-latex
+  content_quality: ok
 - id: arxiv-1904.11955
   type: arxiv
   title: On the Inductive Bias of Neural Tangent Kernels
@@ -224,9 +291,12 @@ sources:
   arxiv_id: '1904.11955'
   url: https://arxiv.org/abs/1904.11955
   local_path: sources/arxiv-1904.11955
-  content_file: sources/arxiv-1904.11955/discussion.tex
+  content_file: sources/arxiv-1904.11955/content.md
   readable: true
   notes: LaTeX source tarball
+  char_count: 693
+  extraction_method: pandoc-latex
+  content_quality: ok
 - id: arxiv-2204.09875
   type: arxiv
   title: Characterizing the Implicit Bias of Regularized Neural Networks via the Convex
@@ -237,9 +307,12 @@ sources:
   arxiv_id: '2204.09875'
   url: https://arxiv.org/abs/2204.09875
   local_path: sources/arxiv-2204.09875
-  content_file: sources/arxiv-2204.09875/method.tex
+  content_file: sources/arxiv-2204.09875/content.md
   readable: true
   notes: LaTeX source tarball
+  char_count: 13544
+  extraction_method: pandoc-latex
+  content_quality: ok
 - id: arxiv-2012.09769
   type: arxiv
   title: Sparse Neural Network Training via Convex Polytope Projections
@@ -249,9 +322,13 @@ sources:
   arxiv_id: '2012.09769'
   url: https://arxiv.org/abs/2012.09769
   local_path: sources/arxiv-2012.09769
-  content_file: sources/arxiv-2012.09769/draft.tex
+  content_file: sources/arxiv-2012.09769/content.md
   readable: true
   notes: LaTeX source tarball
+  char_count: 235225
+  extraction_method: pandoc-latex
+  content_quality: mismatched
+  phase1_note: BPS states / exponential networks (string theory)
 - id: arxiv-2104.01506
   type: arxiv
   title: Group-Sparse Neural Networks via Convex Duality — Deep Architectures
@@ -261,9 +338,13 @@ sources:
   arxiv_id: '2104.01506'
   url: https://arxiv.org/abs/2104.01506
   local_path: sources/arxiv-2104.01506
-  content_file: sources/arxiv-2104.01506/frog.tex
+  content_file: sources/arxiv-2104.01506/content.md
   readable: true
   notes: LaTeX source tarball
+  char_count: 24976
+  extraction_method: pandoc-latex
+  content_quality: mismatched
+  phase1_note: Interactive RL / Frogger game (A3PS)
 - id: arxiv-1811.01988
   type: arxiv
   title: Semidefinite Relaxations for Neural Network Verification
@@ -273,9 +354,12 @@ sources:
   arxiv_id: '1811.01988'
   url: https://arxiv.org/abs/1811.01988
   local_path: sources/arxiv-1811.01988
-  content_file: sources/arxiv-1811.01988/section-6.tex
+  content_file: sources/arxiv-1811.01988/content.md
   readable: true
   notes: LaTeX source tarball
+  char_count: 9324
+  extraction_method: pandoc-latex
+  content_quality: ok
 - id: arxiv-1703.04699
   type: arxiv
   title: A Unified Convergence Analysis of Block Successive Minimization Methods
@@ -285,9 +369,13 @@ sources:
   arxiv_id: '1703.04699'
   url: https://arxiv.org/abs/1703.04699
   local_path: sources/arxiv-1703.04699
-  content_file: sources/arxiv-1703.04699/root.tex
+  content_file: sources/arxiv-1703.04699/content.md
   readable: true
   notes: LaTeX source tarball
+  char_count: 33083
+  extraction_method: pandoc-latex
+  content_quality: mismatched
+  phase1_note: 3D semantic reconstruction (robotics/CV)
 - id: arxiv-1811.10927
   type: arxiv
   title: The Loss Surfaces of Multilayer Networks
@@ -297,9 +385,13 @@ sources:
   arxiv_id: '1811.10927'
   url: https://arxiv.org/abs/1811.10927
   local_path: sources/arxiv-1811.10927
-  content_file: sources/arxiv-1811.10927/GirishKumar_FPCP_proc.tex
+  content_file: sources/arxiv-1811.10927/content.md
   readable: true
   notes: LaTeX source tarball
+  char_count: 17825
+  extraction_method: pandoc-latex
+  content_quality: mismatched
+  phase1_note: B-meson decays / lepton flavor violation (particle physics)
 - id: arxiv-1901.00596
   type: arxiv
   title: Gradient Descent Finds Global Minima of Non-Convex Neural Networks
@@ -309,9 +401,12 @@ sources:
   arxiv_id: '1901.00596'
   url: https://arxiv.org/abs/1901.00596
   local_path: sources/arxiv-1901.00596
-  content_file: sources/arxiv-1901.00596/content.tex
+  content_file: sources/arxiv-1901.00596/content.md
   readable: true
   notes: LaTeX source tarball
+  char_count: 140596
+  extraction_method: pandoc-latex
+  content_quality: ok
 - id: arxiv-2105.09206
   type: arxiv
   title: Randomized Subspace Newton with Variance Reduction and Reduced Communication
@@ -321,9 +416,13 @@ sources:
   arxiv_id: '2105.09206'
   url: https://arxiv.org/abs/2105.09206
   local_path: sources/arxiv-2105.09206
-  content_file: sources/arxiv-2105.09206/timing.tex
+  content_file: sources/arxiv-2105.09206/content.md
   readable: true
   notes: LaTeX source tarball
+  char_count: 43437
+  extraction_method: pandoc-latex
+  content_quality: mismatched
+  phase1_note: RF timing system / accelerator physics
 - id: arxiv-1710.10174
   type: arxiv
   title: Implicit Regularization in Matrix Factorization
@@ -333,9 +432,12 @@ sources:
   arxiv_id: '1710.10174'
   url: https://arxiv.org/abs/1710.10174
   local_path: sources/arxiv-1710.10174
-  content_file: sources/arxiv-1710.10174/discussion.tex
+  content_file: sources/arxiv-1710.10174/content.md
   readable: true
   notes: LaTeX source tarball
+  char_count: 22532
+  extraction_method: pandoc-latex
+  content_quality: ok
 - id: arxiv-2103.01799
   type: arxiv
   title: Characterizing Implicit Bias in Terms of Optimization Geometry
@@ -345,9 +447,13 @@ sources:
   arxiv_id: '2103.01799'
   url: https://arxiv.org/abs/2103.01799
   local_path: sources/arxiv-2103.01799
-  content_file: sources/arxiv-2103.01799/main.tex
+  content_file: sources/arxiv-2103.01799/content.md
   readable: true
   notes: LaTeX source tarball
+  char_count: 77079
+  extraction_method: pandoc-latex
+  content_quality: mismatched
+  phase1_note: Minimal codewords in projective spaces (coding theory)
 - id: arxiv-1907.11714
   type: arxiv
   title: Gradient Descent with Early Stopping is Provably Robust to Label Noise for
@@ -358,9 +464,13 @@ sources:
   arxiv_id: '1907.11714'
   url: https://arxiv.org/abs/1907.11714
   local_path: sources/arxiv-1907.11714
-  content_file: sources/arxiv-1907.11714/modular_symmetry_A4_v5.tex
+  content_file: sources/arxiv-1907.11714/content.md
   readable: true
   notes: LaTeX source tarball
+  char_count: 102067
+  extraction_method: pandoc-latex
+  content_quality: mismatched
+  phase1_note: Modular symmetry A4 (particle physics)
 - id: arxiv-1711.07576
   type: arxiv
   title: Bounding the Optimal Value of a Mixed-Integer Neural Network via Linear Programming
@@ -370,9 +480,13 @@ sources:
   arxiv_id: '1711.07576'
   url: https://arxiv.org/abs/1711.07576
   local_path: sources/arxiv-1711.07576
-  content_file: sources/arxiv-1711.07576/source.tar.gz
+  content_file: sources/arxiv-1711.07576/content.md
   readable: true
   notes: LaTeX source tarball
+  char_count: 52584
+  extraction_method: pandoc-latex
+  content_quality: mismatched
+  phase1_note: Nuclear Magnetic Resonance (NMR)
 - id: arxiv-0709.1542
   type: arxiv
   title: Random Features for Large-Scale Kernel Machines
@@ -382,9 +496,13 @@ sources:
   arxiv_id: '0709.1542'
   url: https://arxiv.org/abs/0709.1542
   local_path: sources/arxiv-0709.1542
-  content_file: sources/arxiv-0709.1542/a17.tex
+  content_file: sources/arxiv-0709.1542/content.md
   readable: true
   notes: LaTeX source tarball
+  char_count: 24827
+  extraction_method: pandoc-latex
+  content_quality: mismatched
+  phase1_note: Josephson effect / BEC quantum physics
 - id: arxiv-2011.02083
   type: arxiv
   title: A Short Proof that the List of Extreme Points is Finite for Convex Neural
@@ -395,9 +513,12 @@ sources:
   arxiv_id: '2011.02083'
   url: https://arxiv.org/abs/2011.02083
   local_path: sources/arxiv-2011.02083
-  content_file: sources/arxiv-2011.02083/main.tex
+  content_file: sources/arxiv-2011.02083/content.md
   readable: true
   notes: LaTeX source tarball
+  char_count: 25444
+  extraction_method: pandoc-latex
+  content_quality: ok
 - id: arxiv-2012.12965
   type: arxiv
   title: Banach Space Representer Theorems for Neural Networks and Ridge Splines
@@ -407,9 +528,13 @@ sources:
   arxiv_id: '2012.12965'
   url: https://arxiv.org/abs/2012.12965
   local_path: sources/arxiv-2012.12965
-  content_file: sources/arxiv-2012.12965/source.tar.gz
+  content_file: sources/arxiv-2012.12965/content.md
   readable: true
   notes: LaTeX source tarball
+  char_count: 21220
+  extraction_method: pandoc-latex
+  content_quality: mismatched
+  phase1_note: DGP baryogenesis cosmology
 - id: lilian-weng-—-ntk-blog-post
   type: blog
   title: Lilian Weng — NTK Blog Post
@@ -418,6 +543,9 @@ sources:
   content_file: sources/lilianweng.github.io/posts/2022-09-08-ntk/content.md
   readable: true
   notes: Web blog/article
+  char_count: 26421
+  extraction_method: web-extract
+  content_quality: ok
 - id: distill-—-gnn-intro-(convex-perspective)
   type: blog
   title: Distill — GNN Intro (convex perspective)
@@ -426,6 +554,9 @@ sources:
   content_file: sources/distill.pub/2021/gnn-intro/content.md
   readable: true
   notes: Web blog/article
+  char_count: 68732
+  extraction_method: web-extract
+  content_quality: ok
 - id: francis-bach-—-kernel-methods-blog
   type: blog
   title: Francis Bach — Kernel Methods Blog
@@ -434,3 +565,6 @@ sources:
   content_file: sources/francisbach.com/kernel-methods/content.md
   readable: true
   notes: Web blog/article
+  char_count: 5793
+  extraction_method: web-extract
+  content_quality: ok
