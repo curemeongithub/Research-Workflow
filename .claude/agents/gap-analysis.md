@@ -99,8 +99,9 @@ Score each gap on four dimensions (0-10):
 | **Potential Impact** | If filled, how much would it advance the field? |
 | **Feasibility** | Can this be addressed with current methods/resources? |
 | **Verifiability** | Can a researcher confirm the gap closing with measurable results? |
+| **Empirical Testability** | Can this gap be investigated by running code experiments? (10 = existing code + public data + commodity CPU; 1 = requires new theory/algorithms) |
 
-**Composite score** = (Confidence × 2 + Impact + Feasibility + Verifiability) / 5
+**Composite score** = (Confidence × 2 + Impact + Feasibility + Verifiability + EmpiricalTestability) / 6
 
 ### Step 4 — Tier Assignment
 
@@ -111,6 +112,8 @@ Score each gap on four dimensions (0-10):
 | **Tier 3 — Stress-test** | Tests robustness of existing findings under new conditions | Confidence ≥8, Impact 3-6 |
 
 Aim for 2-3 Tier 1 gaps, 3-5 Tier 2, and 2-3 Tier 3. If you cannot find Tier 1 gaps with confidence ≥6, degrade gracefully to Tier 2.
+
+**v2 rule:** A gap with Empirical Testability ≤ 3 CANNOT be Tier 1 regardless of other scores. A gap with Empirical Testability ≤ 2 cannot be Tier 2.
 
 ---
 
@@ -145,7 +148,8 @@ token_estimate: {ESTIMATE}
 - Potential Impact: 9/10 — [reasoning]
 - Feasibility: 7/10 — [reasoning]
 - Verifiability: 8/10 — [reasoning]
-- **Composite: 8.2/10**
+- Empirical Testability: 7/10 — [reasoning]
+- **Composite: 8.0/10**
 
 **Source lookup used:** [yes/no, query used if yes]
 

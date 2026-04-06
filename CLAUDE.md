@@ -1,4 +1,4 @@
-# Research Workflow — Orchestrator Instructions
+# Research Workflow — Orchestrator Instructions (v2)
 
 ## Core Rules (Apply to All Tasks)
 - Always provide verification (tests, scripts, screenshots). If you can't verify it, don't ship it.
@@ -12,25 +12,71 @@
 
 | User says... | Use |
 |-------------|-----|
-| "Research [topic] for me" (one-command) | **Research Pipeline** — 9-phase sequential subagent chain |
+| "Research [topic] for me" (one-command) | **Research Pipeline v2** — 16-phase pipeline with experiments |
 | "Write a textbook chapter on [topic]" | **Textbook Chapter** — legacy slash-command workflow |
 | "Analyze sources in [folder]" | **Textbook Chapter** — `/analyze-sources` agent |
 
 ---
 
-# PART A: Research Pipeline (New — 9-Phase, Conference-Grade)
+# PART A: Research Pipeline v2 (Conference-Grade Empirical Paper)
 
-The research pipeline produces a conference-grade research document: literature map, gap analysis, hypotheses, experimental methodology, and full assembled document. Fully autonomous on first pass; human decision required before reiteration.
+The research pipeline produces an empirical research paper: literature map, gap analysis, hypotheses, actual experimental results, statistical analysis, and full assembled paper. Autonomous through Phase 7; planning + execution phases follow; human decision required before reiteration.
 
 ## Quick Start
 
 > "Research [topic] for me"
 
-Orchestrator steps (run without confirmation):
-1. Initialize `pipeline-state.yaml`
-2. Spawn Phase 1-9 subagents sequentially
-3. Surface Phase 9 critique to user
-4. Wait for user decision on reiteration
+Orchestrator runs the full pipeline:
+1. Research Phase (Phases 1–7): ~1 hour
+2. Planning Phase (Phases 10–12): ~20 minutes
+3. Execution Phase (Phases 13–14): variable (hours to days, may require user Colab interaction)
+4. Assembly Phase (Phases 15–16): ~30 minutes
+5. Surface critique to user for reiteration decision
+
+## Pipeline Phase Map
+
+```
+═══════════════════════════════════════════════════════
+RESEARCH PHASE (Phases 1–7) — modified from v1
+═══════════════════════════════════════════════════════
+
+Phase 1:  Source Acquisition        → sources/manifest.yaml
+Phase 2:  Source Extraction         → sources/*/content.md
+Phase 3:  Literature Comprehension  → analysis/literature-map.md
+Phase 4:  Gap Analysis              → analysis/gap-analysis.md
+Phase 5:  Sanity Check (advisory)   → analysis/review-notes.md
+Phase 6:  Hypothesis Formation      → synthesis/hypotheses.md
+Phase 7:  Methodology Design        → synthesis/methodology.md
+
+═══════════════════════════════════════════════════════
+PLANNING PHASE (Phases 10–12) — NEW in v2
+═══════════════════════════════════════════════════════
+
+Phase 10: Compute Probe             → diagnostics/vm-profile.yaml
+Phase 11: Hypothesis Triage         → experiments/triage.md
+Phase 12: Experiment Roadmaps (×3)  → experiments/H{n}/roadmap.md
+
+═══════════════════════════════════════════════════════
+EXECUTION PHASE (Phases 13–14) — NEW in v2, runs 3×
+═══════════════════════════════════════════════════════
+
+  For each of the 3 selected hypotheses:
+
+  Phase 13: Experiment Loop         → experiments/H{n}/results/
+            (coder + reviewer in loop until base case met
+             or Colab gate hit → user action → resume)
+
+  Phase 14: Results Analysis        → experiments/H{n}/analysis.md
+
+═══════════════════════════════════════════════════════
+ASSEMBLY PHASE (Phases 15–16) — replaces v1 Phases 8–9
+═══════════════════════════════════════════════════════
+
+Phase 15: Final Paper Assembly      → synthesis/final-paper.md
+Phase 16: Critique + Reiteration    → reiteration/critique.md
+```
+
+Phases 8 and 9 are intentionally skipped to preserve backward compatibility with v1 artifacts.
 
 ## Pipeline Orchestration
 
@@ -52,10 +98,10 @@ fi
 
 Also create required directories:
 ```bash
-mkdir -p analysis/ synthesis/ reiteration/ diagnostics/ user-sources/
+mkdir -p analysis/ synthesis/ reiteration/ diagnostics/ user-sources/ experiments/
 ```
 
-### Step 2 — Sequential Phase Execution
+### Step 2 — Research Phase (Phases 1–7)
 
 Run each phase by spawning the corresponding subagent. The orchestrator ONLY reads `pipeline-state.yaml` between phases — never reads research content.
 
@@ -67,15 +113,59 @@ Phase 4 → gap-analysis           (analysis/gap-analysis.md)        [Opus]
 Phase 5 → sanity-check           (analysis/review-notes.md)        [advisory]
 Phase 6 → hypothesis-formation   (synthesis/hypotheses.md)
 Phase 7 → methodology-design     (synthesis/methodology.md)
-Phase 8 → document-assembly      (synthesis/final-document.md)
-Phase 9 → critique               (reiteration/critique.md + reiteration-plan.md)  [Opus]
 ```
 
 After each phase, verify `current_phase` incremented in `pipeline-state.yaml` before spawning the next.
 
-### Step 3 — Reiteration (Human-Gated)
+### Step 3 — Planning Phase (Phases 10–12)
 
-After Phase 9 completes:
+After Phase 7 completes, DO NOT spawn Phase 8 or Phase 9 (v1). Instead:
+
+1. Spawn Phase 10 (compute-probe) → `diagnostics/vm-profile.yaml`
+2. Read `pipeline-state.yaml`, verify Phase 10 complete
+3. Spawn Phase 11 (hypothesis-triage) → `experiments/triage.md`
+4. Read `experiments/triage.md`, extract `selected_hypotheses` list
+5. For each hypothesis in `selected_hypotheses` (sequentially):
+   - Spawn Phase 12 (experiment-roadmap) for this hypothesis
+
+### Step 4 — Execution Phase (Phases 13–14)
+
+For each selected hypothesis (sequentially):
+
+```
+LOOP (max 30 iterations):
+  Spawn experiment-coder(H_n) → runs code, writes results
+  Read experiments/H{n}/status.yaml
+
+  IF status == "colab_needed":
+    Spawn colab-notebook-generator(H_n) → experiments/H{n}/colab/notebook.ipynb
+    PRINT to user: "Upload notebook, run cells, paste output to experiments/H{n}/colab-results/"
+    WAIT for user confirmation
+    UPDATE status.yaml → "colab_complete"
+    CONTINUE loop
+
+  IF status == "base_case_met":
+    BREAK
+
+  IF status == "failed_irrecoverable":
+    LOG failure, BREAK (skip this hypothesis)
+
+  Spawn experiment-reviewer(H_n) → experiments/H{n}/review.md
+  CONTINUE loop
+
+After loop: Spawn experiment-analyst(H_n) → experiments/H{n}/analysis.md
+```
+
+### Step 5 — Assembly Phase (Phases 15–16)
+
+After all 3 hypotheses are done:
+1. Spawn Phase 15 (final-paper-assembly) → `synthesis/final-paper.md`
+2. Spawn Phase 16 (critique-v2) → `reiteration/critique.md` + `reiteration/reiteration-plan.md`
+3. Surface both files to user
+
+### Step 6 — Reiteration (Human-Gated)
+
+After Phase 16 completes:
 1. Surface `reiteration/critique.md` to user
 2. Surface `reiteration/reiteration-plan.md` to user
 3. **STOP and wait for user decision**
@@ -83,15 +173,40 @@ After Phase 9 completes:
 If user approves re-run:
 ```bash
 git -C "${CLAUDE_PROJECT_DIR:-.}" checkout -b reiteration-1
-# Update pipeline-state.yaml to point to the weakest phase
-# Spawn agents from that phase forward
 ```
 
-One reiteration maximum. If second pass still has issues, note for manual review.
+The reiteration plan can target:
+- **Research re-run:** Re-run Phases 1–7
+- **Experiment re-run:** Re-run Phase 13 for a specific hypothesis
+- **Document revision:** Re-run Phase 15 only
+
+One reiteration maximum.
+
+### Colab Interaction Protocol
+
+When a hypothesis hits a COLAB_GATE, print to user:
+
+```
+=== COLAB ACTION REQUIRED ===
+
+Hypothesis {H_n} step {step_name} requires a GPU.
+A Colab notebook has been prepared.
+
+1. Upload: experiments/H{n}/colab/{notebook_name}.ipynb
+2. Runtime → Change runtime type → GPU (T4)
+3. Run all cells
+4. Download the output file(s) listed at the end of the notebook
+5. Place them in: experiments/H{n}/colab-results/
+
+Tell me when the results are ready.
+===
+```
+
+STOP and WAIT for user confirmation.
 
 ## Resume from Checkpoint
 
-If a run was interrupted, check `pipeline-state.yaml` and resume from the correct point:
+If a run was interrupted, check `pipeline-state.yaml` and resume:
 
 ```bash
 cat pipeline-state.yaml
@@ -99,16 +214,13 @@ cat pipeline-state.yaml
 
 ### Resume Rules
 
-The `current_phase` field tells you the phase that was running when the session ended.
-The phase's `status` field tells you whether it finished.
-
 | `status` of `current_phase` | Action |
 |-----------------------------|--------|
-| `complete` | That phase finished. Spawn the **next** phase (`current_phase + 1`). |
-| `in_progress` | That phase was interrupted mid-run. **Re-run it from scratch** — its output may be partial or absent. Do NOT increment `current_phase`. |
-| absent (key missing) | Phase was never started. Spawn it. |
+| `complete` | Spawn the **next** phase. |
+| `in_progress` | Re-run from scratch — output may be partial. |
+| absent | Phase was never started. Spawn it. |
 
-**Never skip a phase whose status is `in_progress`.** A crash after `in_progress` was written but before `complete` was written means the output file is unreliable. Re-running is always safe because agents write to fixed output paths and each run ends with a git commit.
+**Never skip a phase whose status is `in_progress`.**
 
 ### Resume Script
 
@@ -126,6 +238,9 @@ status = phase_state.get('status', 'absent')
 
 if status == 'complete':
     resume_at = current + 1
+    # Skip phases 8-9 (v1 only)
+    if resume_at in (8, 9):
+        resume_at = 10
     print(f'Phase {current} is complete. Resume at phase {resume_at}.')
 elif status == 'in_progress':
     resume_at = current
@@ -137,8 +252,6 @@ else:
 print(f'RESUME_AT={resume_at}')
 " 2>&1
 ```
-
-Use the `RESUME_AT` value to determine which subagent to spawn next. Do NOT re-run phases with `status: complete`.
 
 ---
 
@@ -168,69 +281,9 @@ Claude will:
 | `/write-textbook-chapter` | Writes full chapter from `TEXTBOOK-PLAN.md`, 1,500-2,000 words/section | After research is done |
 | `/edit-textbook-chapter` | Prose-quality editing pass + semantic coloring | After chapter is written |
 | `/update-textbook-chapter` | Integrates new sources into an existing chapter surgically | When you find new papers to add |
-| `/analyze-sources` | Runs structured literature analysis (intake, gaps, knowledge map, synthesis) on already-downloaded sources | Standalone literature review or dissertation prep |
-| `/deep-factual-search` | 40+ source rigorous research, outputs to chat with full source audit trail | One-off factual questions, not chapter-writing |
+| `/analyze-sources` | Runs structured literature analysis on already-downloaded sources | Standalone literature review or dissertation prep |
+| `/deep-factual-search` | 40+ source rigorous research, outputs to chat with full source audit trail | One-off factual questions |
 | `/pdf-to-md` | Converts PDF (handwritten or typeset) to Markdown | Converting lecture notes or papers |
-
----
-
-## Full Automated Pipeline
-
-> **Depth:** This pipeline is tuned for final-year thesis research. Default source counts (40-60), mandatory Tier 2 analyses, and citation-chain tracing reflect the academic rigour expected of thesis-level work.
-
-When the user gives a topic with no other instructions, run this full pipeline autonomously:
-
-### Step 1 — Infer Parameters
-Extract from the user's message (or infer defaults):
-- **Topic:** The subject to research
-- **Prior Knowledge:** What the user likely knows (infer from context, or default to "strong technical background, new to this specific topic")
-- **Learning Goals:** Default to "deep understanding sufficient to apply the concepts"
-- **Target Depth:** Default to Graduate
-- **Output Folder:** Infer from topic (e.g., "preference learning" → `Preference Learning/Learning from Human Feedback/`)
-
-### Step 2 — Research (30-40 sources + structured analysis)
-Run `/research-textbook-chapter` with the inferred parameters. This produces:
-- Downloaded sources in `sources/` (centralized)
-- Source analysis: clusters, contradictions, research gaps, knowledge map, master synthesis
-- `TEXTBOOK-PLAN.md` with section plans, source image catalog, notation table
-
-### Step 3 — Write (5-6 sections, ~10,000 words)
-Run `/write-textbook-chapter` pointing to the `TEXTBOOK-PLAN.md` from Step 2. This produces:
-- `[Topic]/[Topic Name].md` — index file
-- `[Topic]/[Topic Name]/_01-introduction.md` through `_99-closing.md` — section files
-- Images copied from `sources/` into chapter folder
-
-### Step 4 — Edit (prose quality + semantic coloring)
-Run `/edit-textbook-chapter` pointing to the index file from Step 3. This:
-- Fixes sentence rhythm, given-new flow, AI tells, emphasis hierarchy
-- Applies semantic color-coding (3-5 colors per chapter, WCAG AA compliant)
-
-### What "autonomous" means
-- Do NOT ask the user to confirm steps 2-4
-- Do NOT ask which folder to use (infer it)
-- Do NOT stop between steps unless a scope expansion is genuinely needed
-- Brief chat progress updates are fine (e.g., "✓ 32 sources downloaded, starting plan")
-
----
-
-## Rules Files (Auto-loaded)
-
-All agents re-read these rules from disk at the start of each task. They are not optional:
-
-| File | What It Governs |
-|---|---|
-| `.claude/skills/source-integrity/SKILL.md` | Zero World Knowledge principle — every specific claim requires a downloaded source |
-| `.claude/skills/writing-style/SKILL.md` | Sentence rhythm, given-new contract, AI tell avoidance, emphasis hierarchy, inline citations |
-| `.claude/skills/markdown-conventions/SKILL.md` | Folder structure, section file naming, LaTeX formatting, per-section source headers |
-| `.claude/skills/web-source-fetching/SKILL.md` | Site-specific fetch strategies (arXiv, PDFs) |
-| `.claude/skills/source-management/SKILL.md` | Centralized `sources/` storage, folder naming conventions, PDF figure conversion |
-| `.claude/skills/source-lookup/SKILL.md` | Grep-first controlled access to raw sources (Phases 4-9) |
-| `.claude/skills/literature-analysis/SKILL.md` | MECE theme organization, cross-paper synthesis |
-| `.claude/skills/gap-scoring-rubric/SKILL.md` | Tiered gap scoring criteria, validation protocol |
-| `.claude/skills/methodology-standards/SKILL.md` | DOE best practices, experimental design templates |
-| `content/maybe-rules/visualization-standards.md` | Image priority order (source images > D2 > hvplot > web > generate_image) |
-| `content/maybe-rules/semantic-coloring.md` | WCAG AA color palette, concept color-coding rules for equations and prose |
-| `content/maybe-rules/force_verbosity.md` | Default section length: 1,500-2,000 words. Length from depth, never repetition. |
 
 ---
 
@@ -238,71 +291,75 @@ All agents re-read these rules from disk at the start of each task. They are not
 
 The Zero World Knowledge Principle applies to all writing tasks:
 - **Hard Ban (requires a downloaded source):** Direct quotes, statistics, named frameworks, specific claims about what authors said, paper titles/authors/venues/years
-- **Acceptable (no source needed):** General domain knowledge, structural devices, common definitions, pointing to well-known people as examples
+- **Acceptable (no source needed):** General domain knowledge, structural devices, common definitions
 
-An `N/A` in the Local Path column of the Source Processing Log is **always a failure**. Every source must be downloaded before writing begins.
+An `N/A` in the Local Path column of the Source Processing Log is **always a failure**.
 
 ---
 
-## Folder Structure
+## Folder Structure (v2)
 
 ```
 Research-Workflow/
 ├── .claude/
-│   ├── agents/           ← 9-phase research pipeline agents
-│   ├── skills/           ← 9 skill directories (SKILL.md per skill)
+│   ├── agents/                    # Agent definitions (v1 + v2)
+│   ├── skills/                    # Skill directories (SKILL.md per skill)
 │   ├── hooks/
 │   │   └── pipeline-logger.sh
 │   ├── rules/
 │   │   └── portable-env.md
-│   └── settings.json     ← Hook configurations
-├── sources/              ← Centralized, shared across all chapters and runs
-│   ├── arxiv-{PAPER_ID}/ ← arXiv papers (LaTeX source)
-│   └── {domain}/{path}/  ← All other sources
-├── analysis/             ← Phase 3-5 output (per-run)
-├── synthesis/            ← Phase 6-8 output (per-run)
-├── reiteration/          ← Phase 9 output (per-run)
-├── diagnostics/          ← Hook output (per-run)
-├── user-sources/         ← Drop user PDFs here before running
-├── pipeline-state.yaml   ← Created per-run (tracks progress)
-├── {Subject Area}/       ← Textbook chapter output (legacy workflow)
-│   ├── {Topic Name}.md   ← Index file (links to sections)
-│   └── {Topic Name}/
-│       ├── TEXTBOOK-PLAN.md
-│       ├── _01-introduction.md
-│       └── _99-closing.md
-├── content/
-│   └── agents/           ← Textbook chapter slash-command agents (legacy)
-└── scripts/              ← Python extraction scripts
+│   └── settings.json
+├── CLAUDE.md                      # This file
+├── sources/                       # Centralized, shared across all runs
+│   ├── manifest.yaml
+│   └── {source-dirs}/content.md
+├── user-sources/                  # Drop user PDFs here before running
+├── analysis/                      # Phase 3-5 output
+│   ├── literature-map.md
+│   ├── gap-analysis.md
+│   └── review-notes.md
+├── synthesis/                     # Phase 6-7 + 15 output
+│   ├── hypotheses.md
+│   ├── methodology.md
+│   └── final-paper.md
+├── experiments/                   # Phases 10-14 output (NEW in v2)
+│   ├── triage.md
+│   └── H{n}/
+│       ├── roadmap.md
+│       ├── status.yaml
+│       ├── review.md
+│       ├── error.log
+│       ├── scripts/
+│       ├── results/
+│       │   ├── figures/
+│       │   └── base_case_evaluation.json
+│       ├── colab/
+│       ├── colab-results/
+│       └── analysis.md
+├── reiteration/                   # Phase 16 output
+│   ├── critique.md
+│   └── reiteration-plan.md
+├── diagnostics/                   # Hook output + VM profile
+│   ├── vm-profile.yaml
+│   └── pipeline-run.log
+├── pipeline-state.yaml            # Progress tracker
+└── scripts/                       # Python scripts
 ```
 
 ---
 
-## Editing Existing Chapters
+## Rules Files (Auto-loaded)
 
-To update an existing chapter with new sources:
-> "Update [chapter path] with these new sources: [URL1], [URL2]"
-
-Claude runs `/update-textbook-chapter`, which:
-1. Downloads new sources
-2. Runs source analysis (Phase 1D) restricted to new sources vs. existing content
-3. Surgically integrates new material without rewriting existing sections
-4. Updates TEXTBOOK-PLAN.md to record the change
-
-To do a prose-quality editing pass on an existing chapter:
-> "Edit [chapter index path]"
-
----
-
-## Literature Analysis (Without Writing)
-
-For dissertation work or research without chapter-writing:
-> "Analyze the sources in [folder] — I want the knowledge map, research gaps, and contradictions"
-
-Claude runs `/analyze-sources`, which produces structured analysis outputs to chat:
-- Intake Protocol (clusters, core claims, direct contradictions)
-- Gap Scanner (5 most significant research gaps with root causes)
-- Knowledge Map (central claim, pillars, contested zones, frontier questions)
-- Master Synthesis (400-word field-level synthesis)
-
-Add `contradictions`, `assumptions`, or `methodology` flags for Tier 2 analyses.
+| File | What It Governs |
+|---|---|
+| `.claude/skills/source-integrity/SKILL.md` | Zero World Knowledge — every claim needs a source |
+| `.claude/skills/writing-style/SKILL.md` | Sentence rhythm, given-new contract, AI tell avoidance |
+| `.claude/skills/markdown-conventions/SKILL.md` | Folder structure, section naming, LaTeX formatting |
+| `.claude/skills/web-source-fetching/SKILL.md` | Site-specific fetch strategies (arXiv PDFs) |
+| `.claude/skills/source-management/SKILL.md` | Centralized `sources/` storage, naming conventions |
+| `.claude/skills/source-lookup/SKILL.md` | Grep-first controlled access to raw sources (Phases 4-9) |
+| `.claude/skills/literature-analysis/SKILL.md` | MECE theme organization, cross-paper synthesis |
+| `.claude/skills/gap-scoring-rubric/SKILL.md` | 5-dimensional tiered gap scoring (v2) |
+| `.claude/skills/methodology-standards/SKILL.md` | Implementation specifications, base cases |
+| `.claude/skills/experiment-execution/SKILL.md` | Experiment directories, status tracking, coder-reviewer protocol |
+| `.claude/skills/vm-interaction/SKILL.md` | SSH commands, file transfer, VM environment rules |

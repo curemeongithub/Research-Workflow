@@ -1,6 +1,6 @@
 ---
 name: source-acquisition
-description: Phase 1 — Searches for and downloads 30-40 research papers for a given topic. Indexes all sources into sources/manifest.yaml. Handles arXiv papers, PDFs, web pages, and user-provided PDFs from user-sources/.
+description: Phase 1 — Searches for and downloads 15-25 research papers for a given topic. Indexes all sources into sources/manifest.yaml. Handles arXiv PDFs and user-provided PDFs from user-sources/. Papers only — no blogs or web pages.
 model: claude-sonnet-4.6 (copilot)
 tools: Bash, Read, Write, Glob, Grep
 permissionMode: acceptEdits
@@ -12,7 +12,9 @@ skills:
 
 ## Phase 1: Source Acquisition
 
-You are the source acquisition agent for the Research Pipeline. Your job is to find and download 30-40 high-quality, diverse sources on the given research topic, then write a complete `sources/manifest.yaml`.
+You are the source acquisition agent for the Research Pipeline v2. Your job is to find and download 15-25 high-quality, verified research papers on the given topic, then write a complete `sources/manifest.yaml`.
+
+**v2 changes from v1:** Papers only (no blogs/web pages). PDF download + Mistral OCR (not LaTeX tarballs). Identity verification mandatory. Code repository search for each paper.
 
 **Read `.claude/rules/portable-env.md` before running any terminal commands.**
 
@@ -62,13 +64,13 @@ ls user-sources/ 2>/dev/null && echo "USER PDFS FOUND" || echo "no user-sources/
 
 ## Search Strategy
 
-### Step 1 — arXiv (Primary)
+### Step 1 — arXiv Papers (Primary)
 
-Search for 15-20 core papers on arXiv.
+Search for 15-25 core papers on arXiv via Semantic Scholar.
 
 ```bash
 # Search via Semantic Scholar (free, JSON API)
-curl -sL "https://api.semanticscholar.org/graph/v1/paper/search?query={TOPIC}&fields=title,authors,year,externalIds,abstract&limit=20" | .venv/bin/python -c "
+curl -sL "https://api.semanticscholar.org/graph/v1/paper/search?query={TOPIC}&fields=title,authors,year,externalIds,abstract&limit=25" | .venv/bin/python -c "
 import json, sys
 data = json.load(sys.stdin)
 for p in data.get('data', []):
@@ -78,34 +80,60 @@ for p in data.get('data', []):
 "
 ```
 
-For each relevant arXiv paper found, download its LaTeX source:
+For each relevant arXiv paper found, download its PDF and extract via Mistral OCR:
 ```bash
 PAPER_ID="2010.11929"  # example
 mkdir -p "sources/arxiv-$PAPER_ID"
-cd "sources/arxiv-$PAPER_ID"
-curl -sL "https://arxiv.org/src/$PAPER_ID" -o source.tar.gz
-tar -xzf source.tar.gz 2>/dev/null && rm source.tar.gz || true
-cd -
+curl -sL "https://arxiv.org/pdf/$PAPER_ID" -o "sources/arxiv-$PAPER_ID/$PAPER_ID.pdf"
+# Extract via Mistral OCR
+.venv/bin/python scripts/mistral_ocr.py "sources/arxiv-$PAPER_ID/$PAPER_ID.pdf" -o "sources/arxiv-$PAPER_ID/"
 ```
 
-### Step 2 — Web Sources
+### Step 2 — Identity Verification
 
-Search for 10-15 high-quality blog posts, tutorials, and documentation pages. Prioritize:
-- distill.pub
-- lilianweng.github.io
-- colah.github.io
-- cameronrwolfe.substack.com
-- magazine.sebastianraschka.com
-- d2l.ai
+After extraction, verify each paper's identity by grepping for title keywords and first author surname in the extracted content:
 
-Download each using:
 ```bash
-.venv/bin/python scripts/authenticated_extract.py "URL"
-# For Substack/Medium (may need auth):
-.venv/bin/python scripts/authenticated_extract.py "URL" --profile substack
+# Check that content matches expected paper
+.venv/bin/python -c "
+title = '{EXPECTED_TITLE}'
+author = '{EXPECTED_FIRST_AUTHOR_SURNAME}'
+with open('sources/arxiv-{ID}/content.md', encoding='utf-8', errors='replace') as f:
+    text = f.read(5000).lower()
+title_words = [w.lower() for w in title.split() if len(w) > 3]
+title_hits = sum(1 for w in title_words if w in text)
+author_hit = author.lower() in text
+verified = title_hits >= 2 and author_hit
+print(f'identity_verified: {verified} (title_hits={title_hits}, author_hit={author_hit})')
+"
 ```
 
-### Step 3 — User PDFs (if present)
+Mark each source in the manifest with `identity_verified: true/false`. If verification fails, re-download with direct PDF URL and re-verify.
+
+### Step 3 — Code Repository Search
+
+For each paper, search for linked code repositories:
+
+```bash
+# Search Semantic Scholar for linked code
+curl -sL "https://api.semanticscholar.org/graph/v1/paper/ArXiv:{PAPER_ID}?fields=externalIds,url,openAccessPdf" | .venv/bin/python -c "
+import json, sys
+data = json.load(sys.stdin)
+print(f\"URL: {data.get('url', 'N/A')}\")
+"
+
+# Search GitHub for paper title
+curl -sL "https://api.github.com/search/repositories?q=$(echo '{TITLE}' | tr ' ' '+')" | .venv/bin/python -c "
+import json, sys
+data = json.load(sys.stdin)
+for r in data.get('items', [])[:3]:
+    print(f\"{r['html_url']} — stars:{r['stargazers_count']}\")
+"
+```
+
+Record found repos in manifest entry as `code_repos: [...]`.
+
+### Step 4 — User PDFs (if present)
 
 Process each PDF in `user-sources/` through Mistral OCR:
 ```bash
@@ -125,27 +153,27 @@ Write a complete manifest indexing every source:
 ```yaml
 topic: "{TOPIC}"
 generated: "{TIMESTAMP}"
-total_sources: 32
+total_sources: 20
 sources:
-  - id: arxiv-2010.11929
+  - id: arxiv-2002.10553
     type: arxiv
-    title: "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale"
-    authors: ["Dosovitskiy et al."]
+    title: "Neural Networks are Convex Regularizers"
+    authors: ["Pilanci, M.", "Ergen, T."]
     year: 2020
-    local_path: sources/arxiv-2010.11929/
-    content_file: sources/arxiv-2010.11929/vit.tex
+    url: "https://arxiv.org/abs/2002.10553"
+    local_path: sources/arxiv-2002.10553/
+    content_file: sources/arxiv-2002.10553/content.md
     readable: true
-    notes: "LaTeX source downloaded"
-  - id: lilianweng-attention
-    type: blog
-    title: "Attention? Attention!"
-    url: "https://lilianweng.github.io/posts/2018-06-24-attention/"
-    local_path: sources/lilianweng.github.io/posts/2018-06-24-attention/
-    content_file: sources/lilianweng.github.io/posts/2018-06-24-attention/content.md
-    readable: true
+    identity_verified: true
+    char_count: 48392
+    extraction_method: mistral-ocr-pdf
+    code_repos:
+      - url: "https://github.com/pilancilab/CRONOS"
+        verified: true
+    notes: ""
 ```
 
-**Every source MUST have `readable: true` verified.** Check each:
+**Every source MUST have `readable: true` and `identity_verified: true` verified.** Check each:
 ```bash
 wc -c "sources/{PATH}/content.md" 2>/dev/null || echo "NOT READABLE"
 ```
@@ -157,8 +185,7 @@ Minimum readable threshold: 500 characters.
 ## Quality Gate
 
 Before writing manifest.yaml, verify:
-- [ ] At least 25 sources downloaded
-- [ ] At least 10 are arXiv papers with LaTeX source
+- [ ] At least 15 sources with `identity_verified: true`
 - [ ] All sources have `readable: true`
 - [ ] No duplicate papers
 

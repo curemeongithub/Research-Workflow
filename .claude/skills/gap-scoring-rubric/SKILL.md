@@ -1,6 +1,6 @@
 ---
 name: gap-scoring-rubric
-description: Standardized 4-dimensional scoring rubric for research gap analysis. Use when scoring gaps by Confidence, Impact, Feasibility, and Verifiability to assign Tier 1/2/3 classification.
+description: Standardized 5-dimensional scoring rubric for research gap analysis. Use when scoring gaps by Confidence, Impact, Feasibility, Verifiability, and Empirical Testability to assign Tier 1/2/3 classification.
 user-invocable: false
 ---
 
@@ -10,7 +10,7 @@ Standardized scoring criteria for Phase 4 gap analysis. Ensures gaps are scored 
 
 ---
 
-## The Four Dimensions
+## The Five Dimensions
 
 ### 1. Confidence of Existence (0-10)
 
@@ -63,27 +63,41 @@ Can researchers confirm the gap is being closed through measurable results?
 | 3-4 | Difficult to define success objectively; risk of goalpost moving. |
 | 1-2 | Essentially unfalsifiable; success cannot be measured. |
 
+### 5. Empirical Testability (0-10) — NEW in v2
+
+Can this gap be investigated through empirical experiments (running code)?
+
+| Score | Criteria |
+|-------|---------|
+| 9-10 | Testable by running existing code on public data with commodity hardware (CPU, ≤16GB RAM). |
+| 7-8 | Requires writing new experiment code (<500 lines) using existing libraries; public data; standard hardware (CPU or single GPU). |
+| 5-6 | Requires moderate new code (500-2000 lines) and/or GPU and/or specialized data preparation. |
+| 3-4 | Requires significant new implementation (>2000 lines), proprietary resources, or multi-GPU compute. |
+| 1-2 | Requires new theory, algorithms, or mathematical proofs before any experiment is possible. |
+
 ---
 
 ## Composite Score
 
 ```
-Composite = (Confidence × 2 + Impact + Feasibility + Verifiability) / 5
+Composite = (Confidence × 2 + Impact + Feasibility + Verifiability + EmpiricalTestability) / 6
 ```
 
-Confidence is weighted 2× because an unverified gap is not a real gap.
+Confidence is weighted 2× because an unverified gap is not a real gap. Empirical Testability ensures gaps selected for v2 pipeline execution are actually runnable.
 
 ---
 
 ## Tier Assignment Rules
 
-| Tier | Minimum Composite | Confidence Minimum | Impact Minimum |
-|------|-----------------|-------------------|---------------|
-| **Tier 1** | ≥7.0 | ≥7 | ≥8 |
-| **Tier 2** | ≥5.5 | ≥6 | ≥5 |
-| **Tier 3** | ≥4.0 | ≥8 | ≥3 |
+| Tier | Minimum Composite | Confidence Minimum | Impact Minimum | EmpiricalTestability Minimum |
+|------|-----------------|-------------------|---------------|---------------------------|
+| **Tier 1** | ≥7.0 | ≥7 | ≥8 | ≥5 |
+| **Tier 2** | ≥5.5 | ≥6 | ≥5 | ≥3 |
+| **Tier 3** | ≥4.0 | ≥8 | ≥3 | — |
 
 Note: Tier 3 requires HIGH confidence despite lower impact — stress-tests must be verifiably needed.
+
+**v2 hard rule:** A gap with EmpiricalTestability ≤ 3 CANNOT be Tier 1, regardless of other scores.
 
 If no gaps qualify for Tier 1, degrade gracefully to Tier 2. Do not fabricate Tier 1 gaps to fill the template.
 
@@ -91,7 +105,7 @@ If no gaps qualify for Tier 1, degrade gracefully to Tier 2. Do not fabricate Ti
 
 ## Rejected Candidate Requirements
 
-Every rejected candidatesMUST include:
+Every rejected candidate MUST include:
 1. The specific reason for rejection (evidence found, gap too vague, not verifiable)
 2. The source that most directly addresses the gap (with file path and approximate location)
 

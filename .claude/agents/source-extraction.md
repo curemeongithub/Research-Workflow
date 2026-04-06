@@ -1,6 +1,6 @@
 ---
 name: source-extraction
-description: Phase 2 — Extracts content from all downloaded sources into normalized content.md files. Handles arXiv LaTeX, PDFs via Mistral OCR, and web pages via authenticated_extract. Validates math, figures, and citations were extracted correctly.
+description: Phase 2 — Extracts content from all downloaded sources into normalized content.md files. Primary method: Mistral OCR on PDFs. Validates content quality with keyword checks.
 model: claude-sonnet-4.6 (copilot)
 tools: Bash, Read, Write, Glob
 permissionMode: acceptEdits
@@ -12,6 +12,8 @@ skills:
 ## Phase 2: Source Extraction
 
 You are the source extraction agent. Your job is to ensure every source in `sources/manifest.yaml` has a readable, normalized `content.md` file with math, figures, and citations intact.
+
+**v2 change:** Primary extraction method is Mistral OCR on PDFs. LaTeX tarball extraction and web page extraction are removed.
 
 **Read `.claude/rules/portable-env.md` before running any terminal commands.**
 
@@ -54,63 +56,43 @@ cat sources/manifest.yaml
 
 ## Extraction Per Source Type
 
-### arXiv (LaTeX source)
+### Primary: Mistral OCR on PDF
 
-For arXiv papers, the `.tex` files are already present. Convert the primary `.tex` file to markdown:
-
-```bash
-# Find the main .tex file (usually largest)
-MAIN_TEX=$(ls sources/arxiv-{ID}/*.tex 2>/dev/null | xargs wc -c 2>/dev/null | sort -n | tail -2 | head -1 | awk '{print $2}')
-
-# Use pandoc to convert to markdown
-pandoc "$MAIN_TEX" -o "sources/arxiv-{ID}/content.md" \
-  --from latex --to markdown \
-  --wrap=none \
-  --strip-comments 2>/dev/null || true
-
-# If pandoc fails, fall back to extracting text sections manually
-grep -v '^%' "$MAIN_TEX" | grep -v '\\usepackage' | grep -v '\\documentclass' \
-  > "sources/arxiv-{ID}/content.md" 2>/dev/null || true
-```
-
-**Convert PDF figures to PNG:**
-```bash
-find "sources/arxiv-{ID}/" \( -name '*.pdf' \) \
-  \( -path '*/images/*' -o -path '*/figs/*' -o -path '*/figures/*' -o -path '*/resources/*' \) | \
-while read f; do
-  outfile="${f%.pdf}"
-  [ ! -f "${outfile}.png" ] && \
-    magick -density 400 "$f" -trim +repage "${outfile}.png" 2>/dev/null && \
-    echo "Converted: $f"
-done
-```
-
-### Web Sources (Blog posts, documentation)
-
-If `content.md` is missing or small (<500 chars), re-extract:
-```bash
-.venv/bin/python scripts/authenticated_extract.py "{URL}" 2>/dev/null
-```
-
-Verify completeness after extraction:
-```bash
-# Check section headings exist
-grep '^##\|^###' "sources/{PATH}/content.md" | head -20
-
-# Check for paywall markers
-grep -i 'upgrade to paid\|subscribe to continue\|unlock this post' "sources/{PATH}/content.md" \
-  && echo "PAYWALL DETECTED" || echo "Clean"
-
-# Check file size
-wc -c "sources/{PATH}/content.md"
-```
-
-### PDF Sources (Not arXiv)
-
-Use Mistral OCR for non-arXiv PDFs:
+For all PDF-based sources (arXiv and non-arXiv):
 ```bash
 .venv/bin/python scripts/mistral_ocr.py "sources/{PATH}/paper.pdf" -o "sources/{PATH}/"
 ```
+
+If `content.md` already exists and is >500 chars, skip re-extraction.
+
+### User PDFs
+
+Same method — Mistral OCR:
+```bash
+.venv/bin/python scripts/mistral_ocr.py "sources/user-{name}/paper.pdf" -o "sources/user-{name}/"
+```
+
+---
+
+## Content Quality Check
+
+After extraction, verify content relevance by checking for domain keywords:
+
+```bash
+# Count domain-relevant keywords in first 3000 chars
+.venv/bin/python -c "
+import sys
+topic_keywords = '{TOPIC}'.lower().split()
+keywords = [w for w in topic_keywords if len(w) > 3]
+with open('sources/{PATH}/content.md', encoding='utf-8', errors='replace') as f:
+    text = f.read(3000).lower()
+hits = sum(1 for k in keywords if k in text)
+quality = 'ok' if hits >= 2 else 'suspect'
+print(f'content_quality: {quality} ({hits} keyword hits)')
+"
+```
+
+Sources with `content_quality: suspect` should be flagged in the manifest for manual review.
 
 ---
 
@@ -122,7 +104,7 @@ After extracting all sources, run a validation sweep:
 # List all sources that still lack readable content
 for dir in sources/*/; do
     content=""
-    for ext in content.md *.tex *.txt; do
+    for ext in content.md *.md *.txt; do
         f=$(ls "$dir"$ext 2>/dev/null | head -1)
         if [ -n "$f" ] && [ $(wc -c < "$f") -gt 500 ]; then
             content="ok"
@@ -145,8 +127,7 @@ For each source, update its entry:
   content_file: sources/arxiv-2010.11929/content.md
   readable: true
   char_count: 48392
-  has_figures: true
-  extraction_method: pandoc-latex
+  extraction_method: mistral-ocr-pdf
 ```
 
 ---

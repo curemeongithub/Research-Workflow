@@ -1,24 +1,25 @@
 ---
 name: methodology-standards
-description: DOE best practices and experimental design standards for Phase 7. Use when designing experiments, selecting baselines, identifying variables, and writing reproducibility checklists.
+description: Implementation specification standards and experimental design best practices for Phase 7. Use when designing experiments, writing implementation specs, defining base cases, and creating reproducibility checklists.
 user-invocable: false
 ---
 
 # Methodology Standards
 
-Design of Experiments (DOE) best practices for Phase 7. Ensures experimental designs are rigorous, reproducible, and grounded in the literature.
+Implementation specification and experimental design best practices for Phase 7. Ensures experiments are rigorous, reproducible, and sized to available compute.
 
 ---
 
-## The FATS Framework (from Phase 6)
+## The FATES Framework (from Phase 6)
 
 Every experiment must test a hypothesis that is:
 - **Falsifiable** — a conceivable result would disprove it
 - **Actionable** — can be investigated with real experiments
 - **Testable** — has measurable outcomes
+- **Empirically tractable** — can be tested by writing code and running experiments, not by proving theorems (NEW in v2)
 - **Specific** — names specific conditions, methods, or quantities
 
-If the hypothesis is not FATS, the experiment is not worth designing.
+If the hypothesis is not FATES, the experiment is not worth designing.
 
 ---
 
@@ -108,19 +109,57 @@ A methodology is complete only if a researcher with standard resources could rep
 - [ ] Dataset with specific version/split specified
 - [ ] All hyperparameters listed
 - [ ] Hardware requirements specified
-- [ ] Estimated compute budget (GPU-hours)
+- [ ] Estimated compute budget (CPU-hours or GPU-hours)
 - [ ] Random seeds specified
 - [ ] Evaluation metric formula given
 
 ---
 
+## Implementation Specification Format (v2)
+
+Phase 7 now produces implementation specifications — software-level details for each experiment.
+
+### Required Sections per Experiment
+
+**Repository setup:**
+- Clone command for any existing codebase to build on
+- Key files and what they do
+- Install command with exact packages
+
+**Script specification:**
+- Filename: `experiments/H{n}/scripts/{name}.py`
+- Inputs: data sources, parameters
+- Outputs: file paths and formats
+- Entry point: exact command with arguments
+
+**Compute requirements:**
+- CPU estimate in hours on 4-core machine
+- RAM peak estimate
+- GPU needed: yes/no
+- If GPU: mark as COLAB_GATE with Colab T4 time estimate
+
+**Data specification:**
+- Source: synthetic / {dataset name}
+- Size estimate
+- Download or generation command
+
+**Base case definition (MANDATORY):**
+- PASS criterion: specific quantitative threshold
+- FAIL criterion: specific quantitative threshold
+- INCONCLUSIVE: between thresholds
+- Minimum runs: N seeds × M parameter settings
+
+Every experiment must be runnable as code. No mathematical derivation plans or proof strategies.
+
+---
+
 ## Effort Estimation Guidelines
 
-| Effort Level | Typical Profile |
-|-------------|----------------|
-| **LOW** (<1 week) | Existing code, existing data, small model (<1B params), < 8 GPU-hours |
-| **MEDIUM** (1-4 weeks) | New implementation, public data, medium model (1-10B params), < 100 GPU-hours |
-| **HIGH** (>4 weeks) | New dataset collection, large model (>10B params), >100 GPU-hours, OR requires coordination with external parties |
+| Effort Level | Typical Profile | v2 Compute Context |
+|-------------|----------------|-------------------|
+| **LOW** (<4 hours) | Existing code, synthetic data, CPU-only, <100 lines new code | Runs on VM (4 vCPU, 16GB RAM) |
+| **MEDIUM** (4-24 hours) | New implementation (<500 lines), public data, CPU or single GPU | CPU on VM; GPU steps via Colab T4 |
+| **HIGH** (>24 hours) | Significant new code (>500 lines), large datasets, multi-step pipeline | May need parameter reduction or scope narrowing |
 
 ---
 

@@ -53,6 +53,8 @@ cat pipeline-state.yaml
 cat sources/manifest.yaml
 ```
 
+Also read `sources/manifest.yaml` to identify papers with `code_repos` entries for Section 10 (Implementation Landscape).
+
 ---
 
 ## Reading Protocol
@@ -64,7 +66,9 @@ For each source in the manifest:
 2. Read the file (use full read for papers <30K chars; read sections for larger ones)
 3. Take working notes: key claims, methodologies, relationships to other papers
 
-**For arXiv LaTeX files, focus on:**
+**Context management (CRITICAL for large corpora):** After reading each paper and taking working notes, explicitly drop the raw content from working memory. Carry forward only your structured notes (key claims, methods, results, relationships). Do not attempt to hold more than 2 papers' raw text simultaneously.
+
+**For each paper, focus on:**
 - Abstract and Introduction (thesis claims)
 - Method/Theory sections (technical contributions)
 - Experiments and Results (empirical findings)
@@ -116,6 +120,11 @@ token_estimate: {ESTIMATE}
 
 ## 9. Key Papers Summary
 [1-2 sentences per paper: what it contributed, why it matters. Cover ALL papers in the manifest.]
+
+## 10. Implementation Landscape
+[For each paper with a public code repository (from `code_repos` in manifest)]
+- **[AuthorYear]**: Repo: {URL}. Language: {lang}. Contains: {brief description}.
+  Dependencies: {key packages}. Last commit: {if determinable from manifest}.
 ```
 
 **MECE principle:** Theme sections must be mutually exclusive — no paper's main contribution appears in two theme sections. They must be collectively exhaustive — every paper in the manifest appears somewhere.

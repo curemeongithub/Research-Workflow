@@ -1,12 +1,12 @@
 ---
 name: markdown-conventions
-description: Formatting, citation, and frontmatter rules for pipeline research documents. Use when assembling the final document in Phase 8 to ensure consistent structure and inline citation format.
+description: Formatting, citation, and frontmatter rules for pipeline research documents. Use when assembling the final document in Phase 15 (v2) or Phase 8 (v1) to ensure consistent structure and inline citation format.
 user-invocable: false
 ---
 
 # Markdown Conventions
 
-Formatting and citation rules for the final research document (Phase 8).
+Formatting and citation rules for the final research document (Phase 15).
 
 ---
 
@@ -135,16 +135,58 @@ When writing section files, include sources at the top:
 
 ---
 
+## Empirical Paper Structure (v2 — Phase 15)
+
+The v2 pipeline produces an empirical research paper, not a proposal. The document structure is:
+
+```
+1. Abstract (300 words)
+2. Introduction (800 words)
+3. Background and Related Work (2,000 words)
+4. Research Gaps and Hypotheses (1,000 words)
+5. Experimental Setup (1,500 words)
+   - 5.1 Hypothesis H_a: Setup
+   - 5.2 Hypothesis H_b: Setup
+   - 5.3 Hypothesis H_c: Setup
+6. Results (2,000 words)
+   - 6.1 H_a Results (with tables and figures)
+   - 6.2 H_b Results
+   - 6.3 H_c Results
+7. Discussion (800 words)
+8. Limitations and Future Work (500 words)
+9. Conclusion (300 words)
+10. References
+11. Appendix: Additional Experimental Details
+```
+
+Target total length: 8,000–12,000 words.
+
+---
+
 ## Length Targets
+
+### v1 Research Proposal (Phases 1-9)
 
 | Section | Target Length |
 |---------|--------------|
 | Executive Summary | 400-500 words |
-| Introduction | ~600 words |
 | Literature Review | ~2,000 words |
-| Key Paper Summaries | ~150 words per paper |
 | Gap Analysis | ~1,200 words |
 | Hypotheses | ~800 words |
 | Methodology | ~1,500 words |
-| Discussion | ~600 words |
 | **Total** | **9,000-11,000 words** |
+
+### v2 Empirical Paper (Phases 1-16)
+
+| Section | Target Length |
+|---------|--------------|
+| Abstract | ~300 words |
+| Introduction | ~800 words |
+| Background and Related Work | ~2,000 words |
+| Research Gaps and Hypotheses | ~1,000 words |
+| Experimental Setup | ~1,500 words |
+| Results | ~2,000 words |
+| Discussion | ~800 words |
+| Limitations and Future Work | ~500 words |
+| Conclusion | ~300 words |
+| **Total** | **8,000-12,000 words** |
