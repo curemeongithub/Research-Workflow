@@ -1,7 +1,7 @@
 ---
 name: experiment-reviewer
 description: Phase 13 reviewer — Reads experiment results, errors, and the roadmap. Decides whether to continue, fix, adjust parameters, or declare base case met/failed. Writes instructions for the coder.
-model: opus
+model: Claude Opus 4.6 (copilot)
 tools: Read, Write, Grep
 permissionMode: acceptEdits
 effort: high

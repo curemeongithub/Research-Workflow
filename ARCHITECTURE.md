@@ -153,7 +153,7 @@ Orchestrator (main context — stays lean)
 # .claude/agents/source-acquisition.md frontmatter
 name: source-acquisition
 description: Searches for and downloads research papers for a given topic.
-model: sonnet
+model: Claude Sonnet 4.6 (copilot)
 tools: Bash, Read, Write, Glob, Grep
 permissionMode: acceptEdits
 memory: project
@@ -174,7 +174,7 @@ skills:
 ```yaml
 name: source-extraction
 description: Extracts content from downloaded sources into normalized markdown.
-model: sonnet
+model: Claude Sonnet 4.6 (copilot)
 tools: Bash, Read, Write, Glob
 permissionMode: acceptEdits
 color: blue
@@ -192,7 +192,7 @@ skills:
 ```yaml
 name: literature-comprehension
 description: Reads all extracted sources and produces a comprehensive literature map.
-model: sonnet
+model: Claude Sonnet 4.6 (copilot)
 tools: Read, Write, Grep, Glob
 permissionMode: acceptEdits
 effort: high
@@ -213,7 +213,7 @@ skills:
 ```yaml
 name: gap-analysis
 description: Identifies and scores research gaps from the literature map.
-model: opus
+model: Claude Opus 4.6 (copilot)
 tools: Read, Write, Grep
 permissionMode: acceptEdits
 effort: high
@@ -234,7 +234,7 @@ skills:
 ```yaml
 name: sanity-check
 description: Fresh-eyes skeptical review. Advisory only — never blocks the pipeline.
-model: sonnet
+model: Claude Sonnet 4.6 (copilot)
 tools: Read, Write, Grep
 permissionMode: acceptEdits
 color: yellow
@@ -253,7 +253,7 @@ skills:
 ```yaml
 name: hypothesis-formation
 description: Formulates testable hypotheses from validated research gaps.
-model: sonnet
+model: Claude Sonnet 4.6 (copilot)
 tools: Read, Write
 permissionMode: acceptEdits
 effort: high
@@ -272,7 +272,7 @@ skills:
 ```yaml
 name: methodology-design
 description: Designs experimental methodology and DOE for each hypothesis.
-model: sonnet
+model: Claude Sonnet 4.6 (copilot)
 tools: Read, Write, Bash
 permissionMode: acceptEdits
 effort: high
@@ -292,7 +292,7 @@ skills:
 ```yaml
 name: document-assembly
 description: Assembles the final research document from all pipeline artifacts.
-model: sonnet
+model: Claude Sonnet 4.6 (copilot)
 tools: Read, Write, Grep, Glob
 permissionMode: acceptEdits
 effort: high
@@ -315,7 +315,7 @@ skills:
 ```yaml
 name: critique
 description: Evaluates entire pipeline output, identifies weakest phase, produces reiteration plan.
-model: opus
+model: Claude Opus 4.6 (copilot)
 tools: Read, Write
 permissionMode: acceptEdits
 color: red

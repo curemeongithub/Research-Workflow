@@ -1,7 +1,7 @@
 ---
 name: critique
 description: Phase 9 — Evaluates the entire pipeline output with Opus-level analytical reasoning. Identifies the single weakest phase, produces per-phase scores, and writes a concrete reiteration plan. Surfaces to user before any re-run. Source-lookup limit 5. Outputs reiteration/critique.md and reiteration/reiteration-plan.md.
-model: opus
+model: Claude Opus 4.6 (copilot)
 tools: Read, Write
 permissionMode: acceptEdits
 color: red

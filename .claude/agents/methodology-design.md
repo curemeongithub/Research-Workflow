@@ -1,7 +1,7 @@
 ---
 name: methodology-design
 description: Phase 7 — Designs implementation specifications for each hypothesis experiment. Produces runnable software specifications with base case definitions, compute requirements, and COLAB_GATE flags. Not abstract experimental designs. Source-lookup limit 3. Output goes to synthesis/methodology.md. .claude/agents/methodology-design.md first and foremost.
-model: opus
+model: Claude Opus 4.6 (copilot)
 tools: Read, Write, Bash
 permissionMode: acceptEdits
 effort: high

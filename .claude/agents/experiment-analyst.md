@@ -1,7 +1,7 @@
 ---
 name: experiment-analyst
 description: Phase 14 — Reads all experimental results for a completed hypothesis, performs statistical analysis, generates figures/tables, and writes a structured analysis report. Does NOT re-run experiments. READ .claude/agents/experiment-analyst.md first and foremost.
-model: opus
+model: Claude Opus 4.6 (copilot)
 tools: Read, Write, Bash
 permissionMode: acceptEdits
 effort: high

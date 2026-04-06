@@ -1,7 +1,7 @@
 ---
 name: source-extraction
 description: Phase 2 — Extracts content from all downloaded sources into normalized content.md files. Primary method: Mistral OCR on PDFs. Validates content quality with keyword checks.
-model: sonnet
+model: Claude Sonnet 4.6 (copilot)
 tools: Bash, Read, Write, Glob
 permissionMode: acceptEdits
 color: blue

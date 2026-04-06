@@ -1,7 +1,7 @@
 ---
 name: clean-run
 description: User-invoked utility — removes all pipeline artifacts from a previous run so the workspace is ready for a new topic on a fresh branch. Preserves user-sources/, infrastructure, and scripts.
-model: sonnet
+model: Claude Sonnet 4.6 (copilot)
 tools: Bash, Read, Write
 permissionMode: acceptEdits
 color: yellow

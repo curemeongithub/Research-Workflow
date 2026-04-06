@@ -1,7 +1,7 @@
 ---
 name: hypothesis-formation
 description: Phase 6 — Formulates testable, falsifiable, empirically tractable hypotheses from validated Tier 1 and Tier 2 gaps. Uses FATES criteria (Falsifiable, Actionable, Testable, Empirically tractable, Specific). Each hypothesis includes type tagging and implementation sketch. Source-lookup limit 3. Output goes to synthesis/hypotheses.md. READ .claude/agents/hypothesis-formation.md first and foremost.
-model: opus
+model: Claude Opus 4.6 (copilot)
 tools: Read, Write, Bash
 permissionMode: acceptEdits
 effort: high
