@@ -1,6 +1,6 @@
 ---
 name: document-assembly
-description: Phase 8 — Assembles the final conference-grade research document from all pipeline artifacts. Writes Executive Summary, Literature Review, Key Paper Summaries, Gap Analysis, Hypotheses, Methodology, and References sections. Source-lookup limit 5 for exact formulations. Output goes to synthesis/final-document.md.
+description: Phase 8 — Assembles the final conference-grade research document from all pipeline artifacts. Writes Executive Summary, Literature Review, Key Paper Summaries, Gap Analysis, Hypotheses, Methodology, and References sections. Source-lookup limit 5 for exact formulations. Output goes to synthesis/final-document.md. READ .claude/agents/document-assembly.md first and foremost.
 model: sonnet
 tools: Read, Write, Grep, Glob
 permissionMode: acceptEdits

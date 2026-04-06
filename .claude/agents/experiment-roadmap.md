@@ -1,6 +1,6 @@
 ---
 name: experiment-roadmap
-description: Phase 12 — Creates a detailed implementation roadmap for a single hypothesis experiment. Called once per selected hypothesis. Reads hypothesis, methodology, VM profile, and literature map. Outputs experiments/H{n}/roadmap.md.
+description: Phase 12 — Creates a detailed implementation roadmap for a single hypothesis experiment. Called once per selected hypothesis. Reads hypothesis, methodology, VM profile, and literature map. Outputs experiments/H{n}/roadmap.md. READ .claude/agents/experiment-roadmap.md first and foremost.
 model: opus
 tools: Read, Write, Bash, Grep
 permissionMode: acceptEdits

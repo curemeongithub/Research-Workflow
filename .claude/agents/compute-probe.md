@@ -1,6 +1,6 @@
 ---
 name: compute-probe
-description: Phase 10 — SSHs into the experiment VM, profiles hardware, software, and storage. Writes diagnostics/vm-profile.yaml for use by downstream experiment planning agents.
+description: Phase 10 — SSHs into the experiment VM, profiles hardware, software, and storage. Writes diagnostics/vm-profile.yaml for use by downstream experiment planning agents. READ .claude/agents/compute-probe.md first and foremost.
 model: haiku
 tools: Bash
 permissionMode: acceptEdits

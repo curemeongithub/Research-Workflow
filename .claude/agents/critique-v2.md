@@ -1,6 +1,6 @@
 ---
 name: critique-v2
-description: Phase 16 — Evaluates the entire pipeline output including experimental results. Identifies weaknesses, scores phases, and produces a reiteration plan that may target research phases (1-7), experiment execution (13-14), or document assembly (15). Requires user approval before re-running.
+description: Phase 16 — Evaluates the entire pipeline output including experimental results. Identifies weaknesses, scores phases, and produces a reiteration plan that may target research phases (1-7), experiment execution (13-14), or document assembly (15). Requires user approval before re-running. READ .claude/agents/critique-v2.md first and foremost.
 model: opus
 tools: Read, Write, Bash
 permissionMode: acceptEdits

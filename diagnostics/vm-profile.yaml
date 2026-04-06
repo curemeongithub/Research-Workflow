@@ -1,0 +1,50 @@
+---
+# Compute Profile — Phase 10 Compute Probe
+# Probed: 2026-04-07
+# Mode: LOCAL (no VM — all experiments run in compute/ workspace)
+---
+
+compute_mode: local
+workspace: "/Users/abhinavmallick/Github.nosync/Research-Workflow/compute"
+project_venv: "/Users/abhinavmallick/Github.nosync/Research-Workflow/.venv"
+
+hardware:
+  cpu:
+    model: "Apple M4 Pro"
+    cores: 12
+    arch: "arm64"
+  ram:
+    total: "24 GiB"
+  disk:
+    total: "460 GiB"
+    available: "118 GiB"
+  gpu:
+    available: true
+    type: "Apple M4 Pro (integrated)"
+    backend: "MPS (Metal Performance Shaders)"
+    note: "PyTorch MPS backend available for GPU acceleration — no Colab needed"
+
+software:
+  os: "macOS Darwin 25.3.0"
+  python: "3.13.12"
+  installed:
+    - "numpy 2.2.6"
+    - "scipy 1.15.3"
+  missing_packages:
+    - cvxpy
+    - torch
+    - scikit-learn
+    - matplotlib
+
+setup_required:
+  - "pip install cvxpy torch scikit-learn matplotlib (in project .venv)"
+  - "Clone CRONOS/SCNN repos into compute/ as needed"
+
+constraints:
+  max_parallel_jobs: 4  # 12 cores, comfortable headroom
+  max_ram_per_job: "8 GiB"
+  gpu_available: true
+  gpu_backend: "mps"
+  colab_required_for: []  # MPS handles GPU experiments locally
+  all_experiments_local: true
+  note: "All 7 experiments (E1-E7) can run locally — MPS replaces Colab for GPU work"

@@ -1,4 +1,4 @@
-opus# AI Research Workflow
+# AI Research Workflow
 
 An agentic research workflow for generating high-quality, structured markdown content from complex technical papers and webpages using Claude Code.
 

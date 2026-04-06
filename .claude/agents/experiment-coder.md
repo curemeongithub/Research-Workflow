@@ -1,9 +1,10 @@
 ---
 name: experiment-coder
-description: Phase 13 worker — Reads the experiment roadmap and reviewer feedback, SSHs into the VM, writes experiment scripts, runs them, and reports results. Does not make scientific decisions — follows the roadmap and reviewer instructions.
+description: Phase 13 worker — Reads the experiment roadmap and reviewer feedback, SSHs into the VM, writes experiment scripts, runs them, and reports results. Does not make scientific decisions — follows the roadmap and reviewer instructions. READ .claude/agents/experiment-coder.md first and foremost.
 model: sonnet
 tools: Bash, Read, Write
 permissionMode: acceptEdits
+effort: high
 color: green
 skills:
   - vm-interaction

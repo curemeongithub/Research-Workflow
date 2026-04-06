@@ -34,7 +34,7 @@ chapters.yml
 
 # Downloaded sources (large, user-specific)
 sources/*
-!sources/.gitkeep
+# !sources/.gitkeep
 
 # User-provided PDFs (processed → sources/user-* which IS tracked)
 # user-sources/*.pdf

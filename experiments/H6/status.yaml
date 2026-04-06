@@ -1,0 +1,12 @@
+hypothesis: H6
+status: roadmap_complete
+steps_total: 6
+steps_completed: 0
+iteration: 0
+base_case_met: false
+base_case_metric: normalized_gap_at_ratio_1
+base_case_value: null
+base_case_threshold: 0.10
+colab_gates_pending: 0
+last_error: null
+last_updated: "2026-04-07T21:45:00Z"
