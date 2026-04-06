@@ -5,3 +5,6 @@
 [phase-6] 2026-04-06 | query: "Caratheodory n+1 sparsity bound hyperplane arrangement" | result: FOUND — arxiv-2002.10553/content.md:60 and arxiv-2402.03625/content.md:56
 [phase-6] 2026-04-06 | query: "RIP restricted isometry Gordon comparison Gaussian assumption A1" | result: FOUND — arxiv-2402.03625/content.md:62: "a connection to restricted isometry property could be a key to extending the result to different distributions"
 [phase-6] 2026-04-06 | query: "rank-1 L=3 three-layer zero duality gap open problem" | result: FOUND — user-2110.05518v2/content.md:387: "deriving the corresponding convex representations still remain an open problem"; rank-1 / L=3 sub-case confirmed as solved boundary
+[phase-7] 2026-04-06T | query: MNIST/CIFAR/dataset/UCI/ImageNet | result: FOUND (UCI in CRONOS Table 2, CIFAR-10 in user-2110.05518v2:353, ImageNet in Feng&Frangella&Pilanci2023, MNIST in Kim&Pilanci2024)
+[phase-7] 2026-04-06T | query: CVXPY/JAX/ADMM/logistic loss solver refs | result: FOUND (JAX+JIT in CRONOS, CVXPY for small-scale, logistic loss supported in CRONOS)
+[phase-7] 2026-04-06T | query: RIP/CKA/Gordon/self-concordance | result: FOUND (Gordon in arxiv-2402.03625:62, RIP extension mentioned arxiv-2402.03625:62, CKA standard metric)
