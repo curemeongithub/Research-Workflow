@@ -3,3 +3,7 @@
 [phase-P4] 2026-04-08T00:20:45Z | query: 'whitening / batch normalization / Theorem 2.2' | file: 'sources/arxiv-2103.01499/content.md' | line: 150 | result: FOUND
 [phase-P4] 2026-04-08T00:21:00Z | query: 'ImageNet / ADMM / CRONOS' | file: 'sources/user-8652-CRONOS/content.md' | line: 40 | result: FOUND
 [phase-P4] 2026-04-08T00:21:15Z | query: 'sqrt log n / approximation' | file: 'sources/arxiv-2402.03625/content.md' | line: 42 | result: FOUND
+[phase-P5] 2026-04-07T22:03:21Z | query: 'open problem extending deeper' | file: 'arxiv-2110.06482/content.md' | line: 18 | result: FOUND
+[phase-P5] 2026-04-07T22:03:21Z | query: 'future work ICNN depth' | file: 'arxiv-2501.03017/content.md' | line: 1261 | result: FOUND
+[phase-P5] 2026-04-07T22:03:37Z | query: 'conclusion future work Kim-Pilanci' | file: 'arxiv-2402.03625/content.md' | line: 461 | result: FOUND
+[phase-P5] 2026-04-07T22:03:37Z | query: 'future work CRONOS convergence' | file: 'user-8652-CRONOS/content.md' | line: 366 | result: FOUND
