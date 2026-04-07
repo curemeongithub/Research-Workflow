@@ -1,0 +1,98 @@
+{
+  "passed": false,
+  "max_gap": 0.5987842059987699,
+  "threshold": 0.001,
+  "per_cell": [
+    {
+      "rank": 1,
+      "seed": 0,
+      "p_standard": 0.07329811155796051,
+      "d_parallel": 0.029408360027517864,
+      "gap_absolute": 0.043889751530442646,
+      "gap_normalized": 0.5987842059987699,
+      "num_patterns": 4
+    },
+    {
+      "rank": 1,
+      "seed": 1,
+      "p_standard": 0.01796836592257023,
+      "d_parallel": 0.014063248846970937,
+      "gap_absolute": 0.003905117075599292,
+      "gap_normalized": 0.2173329000771316,
+      "num_patterns": 4
+    },
+    {
+      "rank": 1,
+      "seed": 3,
+      "p_standard": 0.016190525144338608,
+      "d_parallel": 0.012098553784936565,
+      "gap_absolute": 0.004091971359402043,
+      "gap_normalized": 0.2527386433066314,
+      "num_patterns": 4
+    },
+    {
+      "rank": 1,
+      "seed": 2,
+      "p_standard": 0.029746217653155327,
+      "d_parallel": 0.016470366283231945,
+      "gap_absolute": 0.013275851369923382,
+      "gap_normalized": 0.44630384692001834,
+      "num_patterns": 4
+    },
+    {
+      "rank": 1,
+      "seed": 4,
+      "p_standard": 0.017879363149404526,
+      "d_parallel": 0.011443735464072563,
+      "gap_absolute": 0.006435627685331962,
+      "gap_normalized": 0.3599472549192168,
+      "num_patterns": 4
+    },
+    {
+      "rank": 2,
+      "seed": 1,
+      "p_standard": 0.05474240332841873,
+      "d_parallel": 0.027474281000313114,
+      "gap_absolute": 0.027268122328105618,
+      "gap_normalized": 0.49811701113147444,
+      "num_patterns": 194
+    },
+    {
+      "rank": 2,
+      "seed": 0,
+      "p_standard": 0.013402557000517845,
+      "d_parallel": 0.008997720292357044,
+      "gap_absolute": 0.004404836708160801,
+      "gap_normalized": 0.3286564427959984,
+      "num_patterns": 197
+    },
+    {
+      "rank": 2,
+      "seed": 2,
+      "p_standard": 0.014216925017535686,
+      "d_parallel": 0.009755316859720795,
+      "gap_absolute": 0.004461608157814892,
+      "gap_normalized": 0.3138237102827635,
+      "num_patterns": 189
+    },
+    {
+      "rank": 2,
+      "seed": 3,
+      "p_standard": 0.035411883145570755,
+      "d_parallel": 0.023626748902428663,
+      "gap_absolute": 0.011785134243142092,
+      "gap_normalized": 0.3328016811389527,
+      "num_patterns": 190
+    },
+    {
+      "rank": 2,
+      "seed": 4,
+      "p_standard": 0.04238160699605942,
+      "d_parallel": 0.022566674864228278,
+      "gap_absolute": 0.01981493213183114,
+      "gap_normalized": 0.4675361208854941,
+      "num_patterns": 197
+    }
+  ],
+  "wall_clock_sec": 56.31935405731201
+}

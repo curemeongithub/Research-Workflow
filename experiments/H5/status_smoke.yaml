@@ -1,0 +1,13 @@
+hypothesis: H5
+status: in_progress
+current_step: 5
+steps_total: 6
+steps_completed: 4
+iteration: 1
+base_case_met: false
+base_case_metric: rank2_gap_fraction_above_1e_minus_4
+base_case_threshold: 0.9
+progress: 4/4
+last_error: null
+last_updated: '2026-04-07T01:39:40Z'
+eta_minutes: 0.0
