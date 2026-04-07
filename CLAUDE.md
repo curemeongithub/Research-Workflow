@@ -436,25 +436,25 @@ research pipeline on the same topic, start at Phase 3 of the research branch.
 ## Orchestration
 
 ### Phase P3 — Audience-Oriented Literature Comprehension
-Spawn agent: `audience-literature` (in `.claude/agents/presentation/`)
+Spawn agent: `audience-literature` (in `.claude/agents/`)
 Input: sources/manifest.yaml, sources/*/content.md, pipeline-state.yaml (talk_spec)
 Output: analysis/audience-map.md
 Verify: current_phase incremented to P4 in pipeline-state.yaml
 
 ### Phase P4 — Key Findings Extraction
-Spawn agent: `key-findings` (in `.claude/agents/presentation/`)
+Spawn agent: `key-findings` (in `.claude/agents/`)
 Input: analysis/audience-map.md, sources/manifest.yaml, pipeline-state.yaml
 Output: analysis/key-findings.md
 Verify: current_phase incremented to P5
 
 ### Phase P5 — Open Questions Distillation
-Spawn agent: `open-questions` (in `.claude/agents/presentation/`)
+Spawn agent: `open-questions` (in `.claude/agents/`)
 Input: analysis/audience-map.md, analysis/key-findings.md, pipeline-state.yaml
 Output: analysis/open-questions.md
 Verify: current_phase incremented to P6
 
 ### Phase P6 — Talk Architecture Design ← USER APPROVAL GATE
-Spawn agent: `talk-architecture` (in `.claude/agents/presentation/`)
+Spawn agent: `talk-architecture` (in `.claude/agents/`)
 Input: analysis/audience-map.md, analysis/key-findings.md,
        analysis/open-questions.md, pipeline-state.yaml
 Output: synthesis/talk-architecture.md
@@ -481,7 +481,7 @@ If changes requested: re-run Phase P6 (talk-architecture agent reads the
 If approved: continue.
 
 ### Phase P7 — Knowledge Base Assembly
-Spawn agent: `knowledge-base` (in `.claude/agents/presentation/`)
+Spawn agent: `knowledge-base` (in `.claude/agents/`)
 Input: synthesis/talk-architecture.md, analysis/audience-map.md,
        analysis/key-findings.md, analysis/open-questions.md,
        sources/manifest.yaml, pipeline-state.yaml
@@ -489,7 +489,7 @@ Output: synthesis/knowledge-base.md
 Verify: current_phase incremented to P8
 
 ### Phase P8 — Beamer Script Generation
-Spawn agent: `beamer-script` (in `.claude/agents/presentation/`)
+Spawn agent: `beamer-script` (in `.claude/agents/`)
 Input: synthesis/knowledge-base.md, synthesis/talk-architecture.md,
        sources/manifest.yaml, pipeline-state.yaml
 Output: synthesis/beamer-script.tex, synthesis/references.bib

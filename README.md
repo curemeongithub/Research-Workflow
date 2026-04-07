@@ -1,109 +1,175 @@
-# AI Research Workflow
+# Research Workflow (v2)
 
-An agentic research workflow for generating high-quality, structured markdown content from complex technical papers and webpages using Claude Code.
+An agentic research pipeline that produces either a **conference-grade empirical paper** or a **compilable oral presentation** from a topic string. Runs autonomously on Claude Code using a two-branch architecture.
 
-## How It Works
+---
 
-This project uses **agentic LLM prompts** to orchestrate deep research workflows. Instead of producing an entire document in one shot, the workflow divides the task into:
-1. Source extraction and parsing.
-2. Section-by-section research via Claude Code sub-process/agentss.
-3. Rigorous verification and markdown generation.
+## Workflows
 
-**Recommended model:** Claude 3.5 Sonnet / Claude Opus — for generating high-fidelity markdown and architecture diagrams.
+### (A) Research Pipeline v2 — Conference-Grade Empirical Paper
+
+> "Research [topic] for me"
+
+Runs 16 phases end-to-end: source acquisition → literature analysis → gap scoring → hypotheses → experiment implementation → statistical analysis → final paper → critique.
+
+**Phase map:**
+
+| Phase | Agent | Output |
+|---|---|---|
+| 1 | `source-acquisition` | `sources/manifest.yaml` |
+| 2 | `source-extraction` | `sources/*/content.md` |
+| 3 | `literature-comprehension` | `analysis/literature-map.md` |
+| 4 | `gap-analysis` | `analysis/gap-analysis.md` |
+| 5 | `sanity-check` | `analysis/review-notes.md` |
+| 6 | `hypothesis-formation` | `synthesis/hypotheses.md` |
+| 7 | `methodology-design` | `synthesis/methodology.md` |
+| 10 | `compute-probe` | `diagnostics/vm-profile.yaml` |
+| 11 | `hypothesis-triage` | `experiments/triage.md` |
+| 12 | `experiment-roadmap` ×3 | `experiments/H{n}/roadmap.md` |
+| 13 | `experiment-coder` + `experiment-reviewer` loop | `experiments/H{n}/results/` |
+| 14 | `experiment-analyst` | `experiments/H{n}/analysis.md` |
+| 15 | `final-paper-assembly` | `synthesis/final-paper.md` |
+| 16 | `critique-v2` | `reiteration/critique.md` |
+
+---
+
+### (B) Oral Presentation Branch — Beamer LaTeX + Knowledge Base
+
+> "Prepare a talk on [topic]"
+
+Runs Phases 1–2 (shared), then P3–P8. Produces a slide-by-slide outline, a full speaker knowledge base, and a compilable LaTeX Beamer file. No experiments or paper.
+
+**Additional inputs required at Step 0:**
+- Talk duration (minutes)
+- Audience type: `domain_experts` / `mixed_academic` / `general`
+- Goal: `survey` / `argue_position` / `introduce_open_problems` / `present_result`
+- Venue: `conference_talk` / `seminar` / `lecture` / `defense`
+- Q&A format: `during_talk` / `after_only`
+
+**Phase map:**
+
+| Phase | Agent | Output |
+|---|---|---|
+| 1–2 | (shared with research branch) | `sources/` |
+| P3 | `audience-literature` | `analysis/audience-map.md` |
+| P4 | `key-findings` | `analysis/key-findings.md` |
+| P5 | `open-questions` | `analysis/open-questions.md` |
+| P6 | `talk-architecture` ← **USER APPROVAL** | `synthesis/talk-architecture.md` |
+| P7 | `knowledge-base` | `synthesis/knowledge-base.md` |
+| P8 | `beamer-script` | `synthesis/beamer-script.tex` |
+
+---
 
 ## Project Structure
 
 ```
-AI-Research-Workflow/
-├── .cursor/commands/            # Claude Code agent prompts
-├── .claude/agents/            # Claude Code agent prompts
-├── scripts/                     # Source extraction tools
-│   ├── authenticated_extract.py # Login-gated / JS-heavy pages → MD + images
-│   ├── setup_browser_profile.py # One-time login to create browser profiles
-│   ├── webpage_to_md.py         # Static pages → MD + images
-│   ├── mistral_ocr.py           # PDF → MD + images (via Mistral API)
-│   └── .browser-profiles/       # Saved browser sessions (gitignored)
-├── sources/                     # Downloaded sources (gitignored)
-├── Topic-1/                     # Each topic is a folder with .md documents
-├── Topic-2/
-└── ...
+Research-Workflow/
+├── .claude/
+│   ├── agents/                      # All agent definitions (flat — both branches)
+│   │   ├── source-acquisition.md    # Phase 1
+│   │   ├── source-extraction.md     # Phase 2
+│   │   ├── literature-comprehension.md
+│   │   ├── gap-analysis.md
+│   │   ├── sanity-check.md
+│   │   ├── hypothesis-formation.md
+│   │   ├── methodology-design.md
+│   │   ├── compute-probe.md
+│   │   ├── hypothesis-triage.md
+│   │   ├── experiment-roadmap.md
+│   │   ├── experiment-coder.md
+│   │   ├── experiment-reviewer.md
+│   │   ├── experiment-analyst.md
+│   │   ├── final-paper-assembly.md
+│   │   ├── critique-v2.md
+│   │   ├── colab-notebook-generator.md
+│   │   ├── clean-run.md
+│   │   ├── diagnostics-summary.md
+│   │   ├── audience-literature.md   # Phase P3 (presentation branch)
+│   │   ├── key-findings.md          # Phase P4
+│   │   ├── open-questions.md        # Phase P5
+│   │   ├── talk-architecture.md     # Phase P6
+│   │   ├── knowledge-base.md        # Phase P7
+│   │   └── beamer-script.md         # Phase P8
+│   ├── skills/                      # Skill modules (SKILL.md per skill)
+│   │   ├── source-integrity/
+│   │   ├── writing-style/
+│   │   ├── markdown-conventions/
+│   │   ├── web-source-fetching/
+│   │   ├── source-management/
+│   │   ├── source-lookup/
+│   │   ├── literature-analysis/
+│   │   ├── gap-scoring-rubric/
+│   │   ├── methodology-standards/
+│   │   ├── experiment-execution/
+│   │   ├── vm-interaction/
+│   │   ├── audience-synthesis/      # Presentation branch
+│   │   └── talk-design/             # Presentation branch
+│   ├── hooks/
+│   │   └── pipeline-logger.sh
+│   ├── rules/
+│   │   └── portable-env.md
+│   └── settings.json
+├── CLAUDE.md                        # Orchestrator instructions
+├── pipeline-state.yaml              # Progress tracker
+├── sources/                         # Downloaded sources (shared across runs)
+│   ├── manifest.yaml
+│   └── {arxiv-id}/
+│       └── content.md
+├── user-sources/                    # Drop PDFs here before running
+├── analysis/                        # Intermediate analysis outputs
+├── synthesis/                       # Final deliverables
+├── experiments/                     # Experiment scripts, results, notebooks
+├── reiteration/                     # Critique and reiteration plan
+├── diagnostics/                     # Logs and VM profile
+└── scripts/                         # Source extraction utilities
 ```
 
 ---
 
 ## Setup
 
-### Python Environment (conda + uv)
-
-Create the project's conda environment and install all dependencies.
-These commands are idempotent — safe to re-run.
-
 ```bash
-# Create conda env (skips if already exists)
-conda create -n ai-learning-gems python=3.13 --yes 2>/dev/null || true
-conda activate ai-learning-gems
+# Create virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
 
-# Install uv for fast pip installs (skips if already installed)
-pip install uv 2>/dev/null || true
-
-# Install all Python dependencies
-cd /path/to/AI-Research-Workflow
-uv pip install -r requirements.txt
+# Install dependencies
+pip install -r requirements.txt
 ```
 
-### Crawl4AI Browser Setup (for authenticated web extraction)
-
-After installing requirements, set up Playwright browsers for the web extraction tool:
-
-```bash
-conda activate ai-learning-gems
-crawl4ai-setup    # Downloads Chromium (~90MB, one-time)
+Requires a `.env` file with:
 ```
-
-Then create browser profiles for login-gated sites (one-time per site):
-
-```bash
-cd /path/to/AI-Research-Workflow
+MISTRAL_API_KEY=...   # for PDF OCR (Phase 2)
 ```
-
-Profiles are saved to `scripts/.browser-profiles/` (gitignored — they contain session cookies).
-Re-run if sessions expire or you get empty output.
 
 ---
 
 ## Source Extraction Tools
 
-The `scripts/` folder contains tools for downloading web sources as clean Markdown with local images. See `.claude/rules/web-source-fetching.md` for the full decision tree.
-
-### Authenticated / JS-Heavy Pages → Markdown + Images
-
-Uses [Crawl4AI](https://crawl4ai.com/) with persistent browser profiles.
-
-# Custom CSS selector for unknown sites
-python scripts/authenticated_extract.py "https://example.com/page" -s "article"
-
-# Skip images
-python scripts/authenticated_extract.py "https://example.com/page" --no-images
-```
-
-### Static Web Pages (public, no JS needed)
-
-```bash
-python scripts/webpage_to_md.py "https://d2l.ai/chapter_.../section.html" -o sources/d2l.ai/chapter_.../
-```
+The `scripts/` folder contains utilities for downloading sources as clean Markdown.
 
 ### PDF → Markdown (via Mistral OCR)
 
-Requires `MISTRAL_API_KEY` in `.env`.
-
 ```bash
-python scripts/mistral_ocr.py document.pdf -o sources/output/
+.venv/bin/python scripts/mistral_ocr.py document.pdf -o sources/output/
 ```
 
-### ArXiv Papers (LaTeX source preferred)
+### Static Web Pages
 
 ```bash
-mkdir -p sources/arxiv-2010.11929 && cd sources/arxiv-2010.11929
-curl -sL "https://arxiv.org/src/2010.11929" -o source.tar.gz && tar -xzf source.tar.gz
+.venv/bin/python scripts/webpage_to_md.py "https://example.com/page" -o sources/example/
+```
+
+### Authenticated / JS-Heavy Pages
+
+```bash
+.venv/bin/python scripts/authenticated_extract.py "https://example.com/page" -s "article"
+```
+
+### ArXiv Papers
+
+```bash
+curl -sL "https://arxiv.org/pdf/2010.11929" -o sources/arxiv-2010.11929/paper.pdf
+.venv/bin/python scripts/mistral_ocr.py sources/arxiv-2010.11929/paper.pdf -o sources/arxiv-2010.11929/
 ```
 
