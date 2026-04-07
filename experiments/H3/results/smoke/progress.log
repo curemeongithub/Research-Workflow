@@ -1,6 +1,0 @@
-[16:17:17] Starting sweep: ranks=[1, 2] seeds=[0, 1] n=20 d=5 width=10 restarts=5 epochs=200 max_patterns=50 beta=0.01
-[16:17:18] [1/4] rank=1 seed=0 P=0.71082 D=0.43256 gap_norm=0.39146 status=optimal t=0.6s ETA=0.0min
-[16:17:18] [2/4] rank=1 seed=1 P=0.02091 D=0.01072 gap_norm=0.48752 status=optimal t=0.1s ETA=0.0min
-[16:17:18] [3/4] rank=2 seed=0 P=0.17984 D=0.20805 gap_norm=-0.15684 status=optimal t=0.2s ETA=0.0min
-[16:17:18] [4/4] rank=2 seed=1 P=0.05518 D=0.07451 gap_norm=-0.35030 status=optimal t=0.2s ETA=0.0min
-[16:17:18] Sweep complete. 4 cells in 0.0 min.

@@ -1,6 +1,0 @@
-[2026-04-07 07:09:23][MainProcess][INFO] Running 4/4 cells with 4 workers; ranks=[1, 2] seeds=2 restarts=40 epochs=1500 max_patterns=150
-[2026-04-07 07:09:35][MainProcess][INFO] [1/4] rank=1 seed=0 gap=7.728e-01 P=0.12941 D=0.02941 best_restart=15 t_primal=11.2s t_cvx=0.0s
-[2026-04-07 07:09:35][MainProcess][INFO] [2/4] rank=1 seed=1 gap=4.890e-01 P=0.02752 D=0.01406 best_restart=8 t_primal=11.3s t_cvx=0.0s
-[2026-04-07 07:09:38][MainProcess][INFO] [3/4] rank=2 seed=0 gap=5.926e-01 P=0.02209 D=0.00900 best_restart=7 t_primal=11.2s t_cvx=2.7s
-[2026-04-07 07:09:40][MainProcess][INFO] [4/4] rank=2 seed=1 gap=6.811e-01 P=0.08630 D=0.02752 best_restart=19 t_primal=11.3s t_cvx=4.5s
-[2026-04-07 07:09:40][MainProcess][INFO] Sweep complete. Wall-clock: 0.28 min
