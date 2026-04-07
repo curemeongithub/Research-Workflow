@@ -1,5 +1,43 @@
 # Research Workflow — Orchestrator Instructions (v2)
 
+## Step 0: Branch Selection (ALWAYS RUNS FIRST — before Phase 1)
+
+Before spawning any phase, ask the user:
+
+```
+Which workflow would you like to run?
+
+  (A) Research Pipeline
+      Produces an empirical research paper with literature review,
+      gap analysis, hypotheses, experiments, and final paper.
+      Full pipeline: Phases 1–16.
+
+  (B) Oral Presentation
+      Produces a presentation knowledge base and compilable Beamer
+      LaTeX for a talk you will give. No experiments or paper.
+      Pipeline: Phases 1–2 (shared), then Phases P3–P8.
+
+For option (B), also provide:
+  - Talk duration in minutes (e.g., 20, 30, 45)
+  - Audience type: domain_experts / mixed_academic / general
+  - Primary goal: survey / argue_position / introduce_open_problems / present_result
+  - Venue: conference_talk / seminar / lecture / defense
+  - Q&A format: during_talk (interactive) / after_only
+  - Any papers from your sources to emphasise (optional)
+  - Any papers to de-emphasise or skip (optional)
+```
+
+Wait for user response. Then write to pipeline-state.yaml:
+
+```yaml
+branch: research | presentation
+talk_spec: { ...parameters if presentation... }
+```
+
+Then proceed to Phase 1.
+
+---
+
 ## Core Rules (Apply to All Tasks)
 - Always provide verification (tests, scripts, screenshots). If you can't verify it, don't ship it.
 - Scope investigations narrowly or use subagents so the exploration doesn't consume your main context.
@@ -15,6 +53,7 @@
 | "Research [topic] for me" (one-command) | **Research Pipeline v2** — 16-phase pipeline with experiments |
 | "Write a textbook chapter on [topic]" | **Textbook Chapter** — legacy slash-command workflow |
 | "Analyze sources in [folder]" | **Textbook Chapter** — `/analyze-sources` agent |
+| "Prepare a talk / presentation on [topic]" | **Oral Presentation Branch** — Phases 1–2 shared, then Phases P3–P8 |
 
 ---
 
@@ -116,6 +155,23 @@ Phase 7 → methodology-design     (synthesis/methodology.md)
 ```
 
 After each phase, verify `current_phase` incremented in `pipeline-state.yaml` before spawning the next.
+
+**After Phase 2 Completes — Branch Routing:**
+
+Read `pipeline-state.yaml` → check `branch` field.
+
+```
+IF branch == "research" (or field absent):
+  Continue with Phase 3 (literature-comprehension) as defined below.
+  [All existing research pipeline phases run as normal.]
+
+IF branch == "presentation":
+  DO NOT run Phase 3 (literature-comprehension) from the research branch.
+  DO NOT run Phases 4, 5, 6, 7, or any research branch phase.
+  Instead, run the presentation branch phases in order:
+    Phase P3 → Phase P4 → Phase P5 → Phase P6 → [USER APPROVAL] → Phase P7 → Phase P8
+  See PART C: Oral Presentation Branch below for full orchestration logic.
+```
 
 ### Step 3 — Planning Phase (Phases 10–12)
 
@@ -363,3 +419,128 @@ Research-Workflow/
 | `.claude/skills/methodology-standards/SKILL.md` | Implementation specifications, base cases |
 | `.claude/skills/experiment-execution/SKILL.md` | Experiment directories, status tracking, coder-reviewer protocol |
 | `.claude/skills/vm-interaction/SKILL.md` | SSH commands, file transfer, VM environment rules |
+| `.claude/skills/audience-synthesis/SKILL.md` | Audience-oriented content selection, formalism budget, analogy rules, slide text rules |
+| `.claude/skills/talk-design/SKILL.md` | Act structure, timing tables, climax rule, audience-specific adaptations |
+
+---
+
+# PART C: Oral Presentation Branch
+
+## Overview
+
+The presentation branch produces a knowledge base and Beamer LaTeX for a 
+live academic talk. It runs Phases P3–P8 after the shared Phases 1–2.
+Phases 1 and 2 artifacts are fully reusable — if the user later wants the 
+research pipeline on the same topic, start at Phase 3 of the research branch.
+
+## Orchestration
+
+### Phase P3 — Audience-Oriented Literature Comprehension
+Spawn agent: `audience-literature` (in `.claude/agents/presentation/`)
+Input: sources/manifest.yaml, sources/*/content.md, pipeline-state.yaml (talk_spec)
+Output: analysis/audience-map.md
+Verify: current_phase incremented to P4 in pipeline-state.yaml
+
+### Phase P4 — Key Findings Extraction
+Spawn agent: `key-findings` (in `.claude/agents/presentation/`)
+Input: analysis/audience-map.md, sources/manifest.yaml, pipeline-state.yaml
+Output: analysis/key-findings.md
+Verify: current_phase incremented to P5
+
+### Phase P5 — Open Questions Distillation
+Spawn agent: `open-questions` (in `.claude/agents/presentation/`)
+Input: analysis/audience-map.md, analysis/key-findings.md, pipeline-state.yaml
+Output: analysis/open-questions.md
+Verify: current_phase incremented to P6
+
+### Phase P6 — Talk Architecture Design ← USER APPROVAL GATE
+Spawn agent: `talk-architecture` (in `.claude/agents/presentation/`)
+Input: analysis/audience-map.md, analysis/key-findings.md,
+       analysis/open-questions.md, pipeline-state.yaml
+Output: synthesis/talk-architecture.md
+
+After Phase P6 completes, STOP and surface to user:
+
+```
+=== TALK ARCHITECTURE READY — YOUR REVIEW REQUIRED ===
+
+The proposed slide-by-slide structure is in synthesis/talk-architecture.md.
+
+Please review it and respond with one of:
+  "Approve talk architecture" — to proceed to the knowledge base
+  Any specific changes — e.g. "Move the CRONOS slide earlier"
+    or "Cut Act 2 to 4 slides" or "Add a slide on batch normalisation"
+
+The knowledge base will not be written until you approve.
+===
+```
+
+Wait for user response.
+If changes requested: re-run Phase P6 (talk-architecture agent reads the
+  user's feedback as additional input) and surface revised architecture.
+If approved: continue.
+
+### Phase P7 — Knowledge Base Assembly
+Spawn agent: `knowledge-base` (in `.claude/agents/presentation/`)
+Input: synthesis/talk-architecture.md, analysis/audience-map.md,
+       analysis/key-findings.md, analysis/open-questions.md,
+       sources/manifest.yaml, pipeline-state.yaml
+Output: synthesis/knowledge-base.md
+Verify: current_phase incremented to P8
+
+### Phase P8 — Beamer Script Generation
+Spawn agent: `beamer-script` (in `.claude/agents/presentation/`)
+Input: synthesis/knowledge-base.md, synthesis/talk-architecture.md,
+       sources/manifest.yaml, pipeline-state.yaml
+Output: synthesis/beamer-script.tex, synthesis/references.bib
+Verify: file compiles with pdflatex (agent self-checks)
+
+### Final Output
+
+Present to user:
+  - synthesis/talk-architecture.md
+  - synthesis/knowledge-base.md
+  - synthesis/beamer-script.tex
+
+Print:
+```
+=== ORAL PRESENTATION BRANCH COMPLETE ===
+
+Three files are ready:
+
+  synthesis/talk-architecture.md  — your approved slide outline
+  synthesis/knowledge-base.md     — content bank, speaking notes, Q&A bank,
+                                    notation glossary, further reading
+  synthesis/beamer-script.tex     — compilable LaTeX Beamer skeleton
+
+The .tex file compiles with: pdflatex beamer-script.tex
+Speaking notes are LaTeX comments immediately above each \begin{frame}.
+Figure placeholders are described in comments — replace with your actual figures.
+===
+```
+
+## Phase Map
+
+```
+Phase 1:  Source Acquisition        → sources/manifest.yaml           [SHARED]
+Phase 2:  Source Extraction         → sources/*/content.md            [SHARED]
+                    ↓ branch: presentation
+Phase P3: Audience-Oriented         → analysis/audience-map.md
+          Literature Comprehension
+Phase P4: Key Findings Extraction   → analysis/key-findings.md
+Phase P5: Open Questions            → analysis/open-questions.md
+          Distillation
+Phase P6: Talk Architecture         → synthesis/talk-architecture.md
+          Design                    ← USER APPROVAL GATE
+Phase P7: Knowledge Base Assembly   → synthesis/knowledge-base.md
+Phase P8: Beamer Script Generation  → synthesis/beamer-script.tex
+```
+
+## Resume Rules (Presentation Branch)
+
+Uses the same `pipeline-state.yaml` phases dict with P-prefixed keys.
+Resume logic is identical to the research branch:
+- status `complete` → spawn next P-phase
+- status `in_progress` → re-run from scratch
+- status `awaiting_user_approval` → surface architecture to user and wait
+- absent → spawn the phase
