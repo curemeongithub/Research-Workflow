@@ -1,12 +1,18 @@
 hypothesis: H6
-status: roadmap_complete
+status: skipped
+current_step: 6
 steps_total: 6
 steps_completed: 0
-iteration: 0
+iteration: 1
 base_case_met: false
 base_case_metric: normalized_gap_at_ratio_1
 base_case_value: null
 base_case_threshold: 0.10
 colab_gates_pending: 0
-last_error: null
-last_updated: "2026-04-07T21:45:00Z"
+last_error: "ABLATION FAILED iteration 1: convex L2 (P=200) and non-convex L2 (width=100) disagree by ~89% in objective in overparameterized regime. Root cause: random 200-pattern sample does not cover the activation patterns the non-convex solver trains in the overparameterized regime."
+last_updated: "2026-04-07T23:30:00Z"
+reviewer_verdict: fix_code
+fix_summary: "Reviewer recommended underparameterized regime (width 10), pattern count 500, 200 restarts, 8000 epochs, same-objective evaluation via rescaling-lemma reconstruction. Fix not executed this run."
+skip_reason: "User decision: skip H6 for this run to preserve compute time on H5 and H3. The iteration-1 failure reveals a genuine methodological subtlety (random activation-pattern sampling does not approximate the full convex cone in overparameterized regimes), which is itself a documentable finding for the final paper. Revisit in a future reiteration with the reviewer's proposed fix."
+skipped_at: "2026-04-07T23:30:00Z"
+main_experiment_unlocked: false

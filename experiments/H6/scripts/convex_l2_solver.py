@@ -62,7 +62,7 @@ def solve_convex_l2(X, y, beta, max_patterns=200, solver_eps=1e-6, seed=None):
         seed: random seed for activation pattern sampling
     Returns:
         f_convex: optimal objective value (training loss + regularization)
-        weights: dict with optimal u, v arrays and convex predictions
+        weights: dict with optimal u, v arrays, D_list, and convex predictions
     """
     n, d = X.shape
 
@@ -107,44 +107,9 @@ def solve_convex_l2(X, y, beta, max_patterns=200, solver_eps=1e-6, seed=None):
     weights = {
         'u': [u_j.value for u_j in u],
         'v': [v_j.value for v_j in v],
+        'D_list': D_list,   # stored so secondary gap can be computed without re-enumeration
         'n_patterns': P,
         'status': prob.status,
     }
 
     return f_convex, weights
-
-
-def evaluate_convex_weights_under_elastic_net(X, y, weights, lambda_1, lambda_2,
-                                               beta_convex):
-    """
-    Evaluate the convex solution's weights under the elastic net objective.
-
-    The convex solution has weights (u_j, v_j). We reconstruct the effective
-    first-layer weights w1_j = u_j - v_j and compute the elastic net loss.
-
-    Note: this is an approximation since the convex solution lives in a
-    different parameterization than the non-convex network.
-    We evaluate the total elastic net loss on the convex prediction.
-
-    Returns:
-        f_convex_elastic: elastic net objective value at convex solution
-    """
-    n, d = X.shape
-    u_list = weights['u']
-    v_list = weights['v']
-
-    # Compute predictions using the pattern-based weights
-    # We need to re-enumerate patterns consistently -- use the stored ones
-    # But since we don't store D_list, we compute prediction from y and f_convex
-    # Instead, compute L2 norm of all weights for penalty terms
-    all_params = []
-    for u_j, v_j in zip(u_list, v_list):
-        if u_j is not None and v_j is not None:
-            all_params.extend(u_j.tolist())
-            all_params.extend(v_j.tolist())
-    all_params = np.array(all_params)
-
-    l1_penalty = lambda_1 * np.sum(np.abs(all_params))
-    l2_penalty = lambda_2 * np.sum(all_params ** 2)
-
-    return None  # Placeholder -- actual implementation in run_experiment.py

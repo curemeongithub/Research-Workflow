@@ -122,3 +122,25 @@
 - phase: 12
   started: "2026-04-06T23:11:48Z"
   status: in_progress
+- phase: 12
+  started: "2026-04-06T23:46:57Z"
+  status: in_progress
+- phase: 12
+  started: "2026-04-06T23:57:20Z"
+  status: in_progress
+  stopped: "2026-04-07T00:18:38Z"
+  status: stopped
+- phase: 12
+  started: "2026-04-07T00:18:54Z"
+  status: in_progress
+  stopped: "2026-04-07T00:21:24Z"
+  status: stopped
+- phase: 12
+  started: "2026-04-07T00:21:39Z"
+  status: in_progress
+- phase: 12
+  started: "2026-04-07T01:38:28Z"
+  status: in_progress
+- phase: 12
+  started: "2026-04-07T01:56:36Z"
+  status: in_progress

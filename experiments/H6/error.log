@@ -1,0 +1,79 @@
+ABLATION FAILED — Pipeline correctness check failed (2026-04-07)
+
+STEP: Step 6 (Ablation: Non-Convex L2 vs Convex L2 Validation)
+STATUS: FAILED (all 5 seeds failed)
+SCRIPT: experiments/H6/scripts/ablation_l2_nonconvex.py
+
+=== SUMMARY ===
+The convex L2 reformulation solver gives objective values ~10x LARGER than
+the non-convex gradient-descent solver at the same regularization strength
+(lambda_2=0.01, lambda_1=0, i.e. pure L2 control condition).
+
+Per-seed results:
+  Seed 0: f_convex=1.2653, f_nonconvex=0.1225, rel_diff=90.3%
+  Seed 1: f_convex=1.0212, f_nonconvex=0.1035, rel_diff=89.9%
+  Seed 2: f_convex=0.8308, f_nonconvex=0.0939, rel_diff=88.7%
+  Seed 3: f_convex=1.0391, f_nonconvex=0.1195, rel_diff=88.5%
+  Seed 4: f_convex=1.2064, f_nonconvex=0.1184, rel_diff=90.2%
+
+Tolerance: 5% (any relative difference above 5% is a FAIL).
+Actual relative differences: ~89-90% across all seeds.
+
+=== ROOT CAUSE ANALYSIS ===
+
+The two objectives are:
+  Non-convex: (1/2n)||y - W2*ReLU(W1*X)||^2 + lambda_2*(||W1||^2 + ||W2||^2)
+  Convex:     (1/2n)||y - sum_j D_j*X*(u_j - v_j)||^2 + beta*sum_j(||u_j|| + ||v_j||)
+
+where beta = 2*sqrt(lambda_2) = 0.2 (the roadmap's formula).
+
+Decomposition for seed 0:
+  Non-convex optimal:  data_loss=0.0042, L2_reg=0.1183, total=0.1225
+  Convex optimal:      data_loss=0.1678, group_L1_reg=1.0975, total=1.2653
+  Convex at conv weights under L2: data_loss=0.1678, L2_reg=0.0122, total=0.1800
+
+Key observations:
+1. The non-convex solver achieves data_loss=0.004 (near-perfect fit for n=200, d=10,
+   width=100 — overparameterized regime). The convex solver achieves data_loss=0.168.
+
+2. The convex solver with P=200 randomly-sampled activation patterns is severely
+   limited. The non-convex optimizer with width=100 neurons TRAINS ITS OWN activation
+   patterns to minimze loss. These trained patterns are not among the 200 random
+   patterns sampled by the convex solver.
+
+3. The rescaling lemma guarantees that if ALL relevant activation patterns are
+   included, the convex program achieves the same minimum as the non-convex program.
+   With only P=200 random patterns, the convex program is a RESTRICTION of the full
+   convex program that cannot express the optimal function.
+
+4. For n=200, d=10, the number of distinct activation patterns induced by the data
+   can be up to O(n^d) in theory. The 200-pattern sample is grossly insufficient for
+   a network width=100 that operates in an overparameterized regime.
+
+5. This is NOT a beta mapping issue — the formula beta=2*sqrt(lambda_2) is used
+   correctly. The issue is that the finite-pattern approximation of the convex program
+   is not a good approximation of the full infinite-width convex program.
+
+=== WHAT WOULD FIX IT (for reviewer) ===
+
+Option A: Increase P dramatically (e.g., P=10000 or more), which increases CVXPY
+problem size but may allow the convex program to better approximate the full optimum.
+This would make each solve take much longer (scales as O(P*n*d) variables).
+
+Option B: Change the experimental setting to use UNDERDETERMINED/OVERDETERMINED regime
+where overparameterization does not apply: use n > width (n=200, width=20 instead of
+width=100), so the non-convex optimizer cannot achieve near-zero training loss.
+
+Option C: Use a different measure of equivalence: instead of comparing objective
+values directly, compare the TRAINING PREDICTIONS (y_hat) at optimal solutions.
+The rescaling lemma guarantees the same predictions, not the same objective values.
+
+Option D: Abandon the control check and use a different experimental design that
+measures the duality gap more directly (e.g., via the SDP/SOC reformulation).
+
+Option E: Use the "SCNN" library (Mishkin et al. 2022) which provides a proper
+implementation of the convex neural network solver with full activation pattern
+enumeration for small problems.
+
+=== FILES PRODUCED ===
+experiments/H6/results/ablation_l2_nonconvex.json — full per-seed results
