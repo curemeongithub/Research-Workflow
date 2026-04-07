@@ -1,0 +1,30 @@
+branch: presentation
+current_phase: P5
+phases:
+  1:
+    status: complete
+  2:
+    status: complete
+  P3:
+    output: analysis/audience-map.md
+    started: '2026-04-08T00:00:00Z'
+    status: complete
+    timestamp: '2026-04-08T00:15:00Z'
+  P4:
+    output: analysis/key-findings.md
+    started: '2026-04-07T21:35:37.148292Z'
+    status: complete
+    timestamp: '2026-04-07T22:01:58.557839Z'
+reiteration: 0
+started: '2026-04-08T00:00:00Z'
+talk_spec:
+  audience: mixed_academic
+  deemphasise: []
+  duration_minutes: 8
+  emphasise:
+  - Pilanci, Mert
+  - Ergen, Tolga
+  goal: survey
+  qa_format: after_only
+  venue: conference_talk
+topic: Duality Gap in Dual Convex Optimization in ReLU Neural Networks

@@ -1,0 +1,8 @@
+- phase: P3
+  started: "2026-04-07T21:24:06Z"
+  status: in_progress
+  stopped: "2026-04-07T21:34:34Z"
+  status: stopped
+- phase: P4
+  started: "2026-04-07T21:34:46Z"
+  status: in_progress

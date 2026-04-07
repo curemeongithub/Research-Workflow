@@ -1,0 +1,5 @@
+[phase-P4] 2026-04-08T00:20:00Z | query: 'Theorem 1 / strong duality / polynomial' | file: 'sources/arxiv-2002.10553/content.md' | line: 162 | result: FOUND
+[phase-P4] 2026-04-08T00:20:30Z | query: 'strong duality / P > D / parallel' | file: 'sources/arxiv-2110.06482/content.md' | line: 120 | result: FOUND
+[phase-P4] 2026-04-08T00:20:45Z | query: 'whitening / batch normalization / Theorem 2.2' | file: 'sources/arxiv-2103.01499/content.md' | line: 150 | result: FOUND
+[phase-P4] 2026-04-08T00:21:00Z | query: 'ImageNet / ADMM / CRONOS' | file: 'sources/user-8652-CRONOS/content.md' | line: 40 | result: FOUND
+[phase-P4] 2026-04-08T00:21:15Z | query: 'sqrt log n / approximation' | file: 'sources/arxiv-2402.03625/content.md' | line: 42 | result: FOUND
