@@ -1,0 +1,24 @@
+{
+  "pass": false,
+  "verdict": "FAIL",
+  "metric_name": "spearman_rho_rank_vs_gap",
+  "metric_value": -0.21899533304522623,
+  "threshold": 0.8,
+  "comparison": "greater_than",
+  "spearman_p_value": 0.02859205966662678,
+  "rank1_max_abs_gap": 0.814510367270829,
+  "rank1_mean_abs_gap": 0.7409174328226593,
+  "positive_control_ok": false,
+  "monotone_in_means": false,
+  "magnitude_ratio_r5_over_r2": 0.9745333536823573,
+  "primal_valid_fraction": 1.0,
+  "per_rank_mean_gap": {
+    "1": 0.7409174328226593,
+    "2": 0.7482647277689345,
+    "3": 0.7439370881205449,
+    "4": 0.7278047172952894,
+    "5": 0.7292089345948758
+  },
+  "n_cells": 100,
+  "details": "Spearman rho=-0.2190 (p=2.8592e-02). r=1 max|gap|=8.15e-01. Means by rank: [0.7409, 0.7483, 0.7439, 0.7278, 0.7292]. Monotone: False. r5/r2=0.97. Primal valid: 100.0%."
+}

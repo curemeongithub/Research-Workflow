@@ -26,3 +26,4 @@
 [phase-7] 2026-04-06T19:32:05Z | query: 'MNIST CIFAR dataset benchmark synthetic Gaussian' | file: 'multiple sources' | line: various | result: FOUND
 [phase-7] 2026-04-06T19:32:05Z | query: 'SCNN CRONOS baseline SGD comparison proximal gradient' | file: 'multiple sources' | line: various | result: FOUND
 [phase-7] 2026-04-06T19:32:11Z | query: 'CRONOS-AM ADMM alternating minimization DAdapted-Adam solver tolerance' | file: 'sources/user-8652-CRONOS/content.md' | line: various | result: FOUND
+[phase-16] 2026-04-07T12:17:23Z | query: 'Table 1, standard ReLU duality gap, bi-dual parallel' | file: 'sources/arxiv-2110.06482/content.md' | line: 58,334 | result: FOUND
