@@ -182,3 +182,11 @@
 [phase-P8] Wed Apr  8 00:02:04 UTC 2026 | compilation: SUCCESS | pages: 13 | tool: tectonic 0.15.0
 [2026-04-08T00:02:04Z] PostToolUse | ToolUse
 [2026-04-08T00:02:13Z] PostToolUse | ToolUse
+[2026-04-08T00:02:16Z] PostToolUse | ToolUse
+[2026-04-08T00:02:28Z] PostToolUse | ToolUse
+[2026-04-08T00:02:42Z] SubagentStop | SubagentStop phase=presentation_complete
+[2026-04-08T00:02:42Z] PostToolUse | ToolUse
+[2026-04-08T00:02:46Z] PostToolUse | ToolUse
+[2026-04-08T00:03:13Z] PostToolUse | ToolUse
+[2026-04-08T00:03:19Z] PostToolUse | ToolUse
+[2026-04-08T00:03:26Z] PostToolUse | ToolUse

@@ -11,3 +11,20 @@
 - phase: P5
   started: "2026-04-07T22:02:38Z"
   status: in_progress
+  stopped: "2026-04-07T22:08:30Z"
+  status: stopped
+- phase: P6
+  started: "2026-04-07T22:08:43Z"
+  status: in_progress
+  stopped: "2026-04-07T22:18:24Z"
+  status: stopped
+- phase: awaiting_P6_approval
+  started: "2026-04-07T22:38:54Z"
+  status: in_progress
+  stopped: "2026-04-07T23:41:31Z"
+  status: stopped
+- phase: P8
+  started: "2026-04-07T23:41:47Z"
+  status: in_progress
+  stopped: "2026-04-08T00:02:42Z"
+  status: stopped
