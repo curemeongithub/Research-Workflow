@@ -1,5 +1,5 @@
 branch: presentation
-current_phase: P6
+current_phase: presentation_complete
 phases:
   1:
     status: complete
@@ -20,6 +20,27 @@ phases:
     started: '2026-04-07T22:03:02.897230Z'
     status: complete
     timestamp: '2026-04-07T22:08:16.566354Z'
+  P6:
+    output: synthesis/talk-architecture.md
+    started: '2026-04-08T00:20:00Z'
+    status: complete
+    timestamp: '2026-04-08T00:35:00Z'
+    user_revisions: 0
+  P7:
+    output: synthesis/knowledge-base.md
+    started: '2026-04-07T23:25:08.649398Z'
+    status: complete
+    timestamp: '2026-04-07T23:41:08.030632Z'
+  P8:
+    compilation: success
+    compiler: tectonic 0.15.0
+    output:
+    - synthesis/beamer-script.tex
+    - synthesis/references.bib
+    pages: 13
+    started: '2026-04-07T23:41:59.765013Z'
+    status: complete
+    timestamp: '2026-04-08T00:02:13.197271+00:00'
 reiteration: 0
 started: '2026-04-08T00:00:00Z'
 talk_spec:
