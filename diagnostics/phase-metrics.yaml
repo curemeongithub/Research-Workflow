@@ -28,3 +28,13 @@
   status: in_progress
   stopped: "2026-04-08T00:02:42Z"
   status: stopped
+- phase: presentation_complete
+  started: "2026-04-09T03:18:12Z"
+  status: in_progress
+  stopped: "2026-04-09T03:18:20Z"
+  status: stopped
+- phase: presentation_complete
+  started: "2026-04-09T03:19:40Z"
+  status: in_progress
+  stopped: "2026-04-09T03:19:47Z"
+  status: stopped

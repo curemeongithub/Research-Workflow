@@ -6,7 +6,7 @@
 % Emphasis: Pilanci & Ergen (Stanford)
 %
 % HOW TO USE THIS FILE:
-%   1. Replace [YOUR NAME] and [YOUR INSTITUTION] in the title block.
+%   1. Replace [Abhinav Mallick] and [Sri Venkateswara College] in the title block.
 %   2. Replace PLACEHOLDER figure environments with actual TikZ drawings
 %      or external PDF/PNG files (descriptions are in the % comments).
 %   3. Speaking notes appear as % SPEAKING NOTES: comments immediately
@@ -42,6 +42,7 @@
 % --- Theme (speaker may change) ---
 \usetheme{Madrid}
 \usecolortheme{default}
+\setbeamertemplate{navigation symbols}{}
 
 % Reduce bibliography font size to fit on a slide
 \renewcommand*{\bibfont}{\tiny}
@@ -89,13 +90,14 @@
 % TITLE INFORMATION — FILL IN BEFORE PRESENTING
 % ============================================================
 \title[Convex ReLU Networks]{%
-  Duality Gap in Dual Convex Optimization of ReLU Networks\\[4pt]
-  \normalsize The Non-Convex Mystery, Solved?%
+  Duality Gap in Dual Convex Optimization of ReLU Networks\\[4pt]%
 }
-\subtitle{A survey, 2020--2025 \quad (Emphasis: Pilanci \& Ergen)}
-\author[YOUR NAME]{[YOUR NAME]}
-\institute[YOUR INSTITUTION]{[YOUR INSTITUTION]}
-\date{\today}
+% \subtitle{A survey, 2020--2025 \quad (Emphasis: Pilanci \& Ergen)}
+\author[Abhinav Mallick]{Abhinav Mallick\\[2pt]\normalsize (1722043)\\[8pt]
+\small Department of Mathematics, Sri Venkateswara College, University of Delhi\\[6pt]
+Supervisor: Ms.\ Pratibha Gaur}
+\institute[]{}
+\date{April 9, 2026\\[4pt]{\normalsize Presented at}\\[2pt]{\normalsize SVC-SPARK Multidisciplinary International Conference 2026}}
 
 % ============================================================
 \begin{document}
@@ -151,44 +153,20 @@
 %
 % IF RUNNING LONG: Drop bullet 4 (folk answer); speak it instead of showing it.
 %
-\begin{frame}{The Mystery}
+\begin{frame}{Motivation: Why Does SGD Work?}
   \begin{columns}[c]
     \begin{column}{0.5\textwidth}
       \begin{itemize}
         \item SGD was designed for convex problems
         \item We run it on provably non-convex losses
         \item It works anyway --- why?
-        \item The folk answer: \textit{``overparameterization, good init, luck''}
-        \item \textbf{A better answer exists.\ It starts in 2020.}
+        \item Common explanation: overparameterization and favourable initialisation
+        \item \textbf{A more precise answer emerged in 2020}
       \end{itemize}
     \end{column}
     \begin{column}{0.48\textwidth}
-      % FIGURE DESCRIPTION: Split image. Left half: cartoon non-convex loss
-      % landscape (wavy 2D surface, several local minima as dots), caption
-      % "non-convex by construction." Right half: smooth convex bowl with a
-      % single global minimum, caption "convex at the global optimum."
-      % Double-headed arrow between them labelled "?".
-      % Draw as TikZ or replace with an external figure.
-      % TO REPLACE: Save your figure as figures/slide2_mystery.pdf and use:
-      %   \includegraphics[width=\textwidth]{figures/slide2_mystery.pdf}
       \begin{center}
-        \begin{tikzpicture}[scale=0.55]
-          % Non-convex surface (left)
-          \draw[thick, red!60!black, domain=0:3.2, samples=60]
-            plot (\x, {0.7*sin(3*\x r) + 0.4*sin(5*\x r) + 1.5});
-          \node[red!60!black, font=\tiny] at (1.6, 0.2) {non-convex};
-          \fill[red!60!black] (0.55,1.47) circle (2pt)
-                               (1.55,1.05) circle (2pt)
-                               (2.55,1.63) circle (2pt);
-          % Convex bowl (right)
-          \draw[thick, blue!70!black, domain=3.8:7.0, samples=60]
-            plot (\x, {0.6*(\x-5.4)^2 + 0.5});
-          \fill[blue!70!black] (5.4,0.5) circle (2pt);
-          \node[blue!70!black, font=\tiny] at (5.4, 0.1) {convex};
-          % Arrow
-          \draw[<->, thick, gray] (3.3, 1.5) -- (3.7, 1.5)
-            node[midway, above, font=\scriptsize] {?};
-        \end{tikzpicture}
+        \includegraphics[width=\textwidth,height=0.48\textheight,keepaspectratio]{loss-landscape.png}
       \end{center}
     \end{column}
   \end{columns}
@@ -226,7 +204,7 @@
 % IF RUNNING LONG: Collapse into Slide 4 -- spend 15 sec defining P* >= D*
 % inline at the top of Slide 4. Saves 30 seconds. Cost: cognitive load during climax.
 %
-\begin{frame}{Duality Gap in 45 Seconds}
+\begin{frame}{Duality Gap: Key Definitions}
   \begin{center}
     \vspace{0.4em}
     {\large Every optimization problem has a companion \textbf{dual}.}\\[1.2em]
@@ -243,7 +221,7 @@
   \end{center}
   \begin{block}{}
     \centering
-    For non-convex problems this almost never holds\ldots\ \textbf{almost.}
+    For ReLU networks with weight decay, the gap turns out to be zero.
   \end{block}
 \end{frame}
 
@@ -284,7 +262,7 @@
 % IF RUNNING LONG: Cut the complexity objection sentence; it can be absorbed
 % into Slide 6 without loss.
 %
-\begin{frame}{The Bridge Is Built: \citeauthor{arxiv2002.10553} (\citeyear{arxiv2002.10553})}
+\begin{frame}{Convex Reformulation: Pilanci \& Ergen (2020)}
 
   \textbf{Non-convex primal:}
   \vspace{-0.5em}
@@ -311,14 +289,81 @@
   \end{itemize}
 
   \vspace{0.3em}
-  \begin{alertblock}{Theorem 1 \normalfont\small[\citeauthor{arxiv2002.10553}, \citeyear{arxiv2002.10553}]}
-    Two-layer ReLU $+$ weight decay is \textbf{secretly convex.}
+  \begin{alertblock}{Theorem 1 \normalfont\small[Pilanci \& Ergen, 2020]}
+    Two-layer ReLU $+$ weight decay admits an exact convex reformulation.
     Strong duality holds for $\mm \geq \mstar$.
   \end{alertblock}
 
   % SOURCE: Pilanci & Ergen 2020, arxiv-2002.10553, Theorem 1 (lines 155-162)
   % and Remark 3.2 (line 172) for the complexity bound.
   % Equation labels match paper eqns (2) and (8).
+\end{frame}
+
+
+% ---- SLIDE 4b: ARCHITECTURE VARIABLES --- VISUAL COMPANION ----
+% SPEAKING NOTES:
+% "Let me make those variables concrete. The network has d-dimensional input,
+%  m hidden neurons, and one output. Weight vectors u_j feed the input into
+%  neuron j; after ReLU we scale by alpha_j to get the output. The diagonal
+%  matrix D_i encodes which neurons fire for training sample i -- the
+%  hyperplane arrangement pattern. These D_i are what drive both the exact
+%  convex reformulation and the complexity count (n/r)^r."
+%
+\begin{frame}{Architecture of the Primal Two-Layer ReLU Network}
+  \begin{center}
+  \begin{tikzpicture}[
+      neuron/.style={circle, draw, minimum size=0.62cm, font=\scriptsize},
+      >=latex
+  ]
+    % --- Input layer (3 visible nodes representing d inputs) ---
+    \node[neuron, fill=gray!15] (in1) at (0, 2.2)  {$x_1$};
+    \node[neuron, fill=gray!15] (in2) at (0, 1.1)  {$x_2$};
+    \node[font=\small, gray]    (dots1) at (0, 0.3)  {$\vdots$};
+    \node[neuron, fill=gray!15] (in3) at (0, -0.4) {$x_d$};
+    \node[font=\tiny, gray, below=0.1cm of in3] {$\mathbf{X}\in\mathbb{R}^{n\times d}$};
+    \node[font=\tiny, gray, above=0.1cm of in1] {Input ($d$)};
+
+    % --- Hidden layer (4 visible nodes representing m neurons) ---
+    \node[neuron, fill=blue!15] (h1) at (3.5, 2.8)  {$h_1$};
+    \node[neuron, fill=blue!15] (h2) at (3.5, 1.7)  {$h_2$};
+    \node[neuron, fill=blue!15] (h3) at (3.5, 0.6)  {$h_3$};
+    \node[font=\small, gray]    (dots2) at (3.5, -0.1) {$\vdots$};
+    \node[neuron, fill=blue!15] (h4) at (3.5, -0.8) {$h_m$};
+    \node[font=\tiny, blue!70!black, above=0.05cm of h1]
+      {$(\cdot)_+$ ReLU, $\mathbf{u}_j\in\mathbb{R}^d$};
+    \node[font=\tiny, gray, align=center, below=0.15cm of h4]
+      {$D_i\in\{0,1\}^{m\times m}$\\activation pattern,\\ sample $i$};
+
+    % --- Output layer ---
+    \node[neuron, fill=green!20, minimum size=0.75cm] (out) at (7, 1.0) {$\hat{y}$};
+    \node[font=\tiny, gray, above=0.1cm of out] {Output};
+    \node[font=\tiny, align=left, right=0.25cm of out]
+      {$\frac{\beta}{2}\sum_j\!\left(\|\mathbf{u}_j\|^2+\alpha_j^2\right)$\\weight decay $\beta$};
+
+    % --- Edges input -> hidden (u_j label on one representative edge) ---
+    \foreach \src in {in1,in2,in3} {
+      \foreach \dst in {h1,h2,h3,h4} {
+        \draw[->, gray!40, thin] (\src) -- (\dst);
+      }
+    }
+    \draw[->, blue!50, thick] (in1) -- (h1)
+      node[midway, above, font=\tiny, sloped] {$\mathbf{u}_j$};
+
+    % --- Edges hidden -> output (alpha_j label on one representative edge) ---
+    \foreach \src in {h1,h2,h3,h4} {
+      \draw[->, gray!40, thin] (\src) -- (out);
+    }
+    \draw[->, green!60!black, thick] (h1) -- (out)
+      node[midway, above, font=\tiny, sloped] {$\alpha_j$};
+
+  \end{tikzpicture}
+  \end{center}
+
+  \vspace{-0.3em}
+  \begin{center}
+    \tiny Two-layer ReLU network: $m$ hidden neurons, $n$ training samples,
+    $P = O((n/r)^r)$ distinct activation patterns $D_i$.
+  \end{center}
 \end{frame}
 
 
@@ -367,7 +412,7 @@
 % IF RUNNING LONG: Cut the "modern architectures" connection; state it in one
 % sentence during the bridge to Slide 6.
 %
-\begin{frame}{The Climax: Depth Breaks, Parallelism Restores}
+\begin{frame}{Depth vs.\ Architecture: Effect on the Duality Gap}
 
   \begin{columns}[c]
     \begin{column}{0.44\textwidth}
@@ -439,7 +484,7 @@
 
   \vspace{0.4em}
   \begin{center}
-    \large\textbf{Architecture, not depth, is the villain.}\\
+    \large\textbf{Architecture, not depth, determines the duality gap.}\\
     \small ResNets, Inception, ResNeXt already have this structure.\\[-2pt]
     \tiny\citeauthor{arxiv2110.06482}, \citeyear{arxiv2110.06482} (ICLR 2023)
   \end{center}
@@ -487,148 +532,111 @@
 %   Theory-weighted room: keep Kim-Pilanci, drop CRONOS.
 %   Engineering-weighted room: keep CRONOS, drop Kim-Pilanci.
 %
-\begin{frame}{The Theory Shipped}
+% ---- SLIDE 6a: RELAXATION --- KIM & PILANCI 2024 ----
+\begin{frame}{Polynomial-Time Relaxation: Kim \& Pilanci (2024)}
 
-  \begin{center}
-    \textbf{\large The theory shipped.}
-  \end{center}
-  \vspace{-0.3em}
-
+  % --- TOP HALF: bars (left) | random-sampling diagram (right) ---
   \begin{columns}[T]
-    \begin{column}{0.48\textwidth}
-      \textbf{Theory:} \citeauthor{arxiv2402.03625} (\citeyear{arxiv2402.03625})
-      \vspace{0.3em}
+    \begin{column}{0.46\textwidth}
+      \textbf{Complexity comparison:}
+      \vspace{0.4em}
 
-      % FIGURE DESCRIPTION: Two progress bars. Grey bar (wider): "Exact reformulation
-      % O((n/r)^r) variables". Blue bar (shorter): "Random subsample O(log n) patterns".
-      % TO REPLACE: use figures/slide6_theory_bars.pdf
       \begin{tikzpicture}[scale=0.9]
-        % Exact bar (grey, wide)
         \fill[gray!40] (0,0.5) rectangle (3.8,0.9);
         \node[right, font=\tiny] at (3.85,0.7) {exact: $O\!\left((\nn/\rrank)^{\rrank}\right)$};
-        % Approx bar (blue, short)
         \fill[blue!60] (0,0) rectangle (1.4,0.4);
         \node[right, font=\tiny] at (1.45,0.2) {random: $O(\log\nn)$ patterns};
       \end{tikzpicture}
-
-      \vspace{0.6em}
-      \textbf{Approximation guarantee (Theorem 2.1):}
-      \[
-        \Pstar \;\leq\; \ptildestar \;\leq\; \CC\sqrt{\log 2\nn}\;\Pstar
-      \]
-      \hspace*{0.5em}\textit{\tiny First poly-time approx.\ guarantee for regularized ReLU NNs.}
     \end{column}
     \hfill
-    \begin{column}{0.48\textwidth}
-      \textbf{Practice:} \citeauthor{user8652CRONOS} (\citeyear{user8652CRONOS})
+    \begin{column}{0.50\textwidth}
+      \textbf{Random sampling idea:}
+      \vspace{0.2em}
+      \begin{center}
+      \begin{tikzpicture}[scale=1.0, >=latex]
+        % Large cloud of gray dots (P exponentially many patterns)
+        \foreach \px/\py in {
+            0.00/0.10, 0.12/0.55, 0.25/0.05, 0.08/0.82, 0.20/0.92,
+            0.38/0.70, 0.50/0.15, 0.45/0.45, 0.60/0.80, 0.30/0.30,
+            0.65/0.35, 0.72/0.60, 0.80/0.10, 0.85/0.88, 0.55/0.95,
+            0.10/0.40, 0.40/0.20, 0.70/0.50, 0.18/0.70, 0.78/0.75,
+            0.35/0.85, 0.62/0.22, 0.92/0.50, 0.50/0.60, 0.28/0.48} {
+          \fill[gray!55] (\px*2.1, \py*1.5) circle (2.5pt);
+        }
+        \node[font=\tiny, gray, align=center] at (1.05, -0.25)
+          {$P = O\!\left((\nn/\rrank)^{\rrank}\right)$ patterns};
+        % Arrow
+        \draw[->, thick, blue!70] (2.25, 0.75) -- (3.05, 0.75)
+          node[midway, above, font=\tiny, align=center]
+            {sample\\$O(\log n)$};
+        % Selected subset (5 highlighted blue dots)
+        \foreach \px/\py in {0.0/0.05, 0.18/0.55, 0.38/0.25, 0.55/0.70, 0.72/0.40} {
+          \fill[blue!70] (3.15 + \px*0.75, 0.1 + \py*1.3) circle (3.5pt);
+        }
+        \node[font=\tiny, blue!70!black, align=center] at (3.55, -0.25)
+          {small convex\\program};
+      \end{tikzpicture}
+      \end{center}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.5em}
+
+  % --- BOTTOM HALF: approximation guarantee centred ---
+  \begin{center}
+    \textbf{Approximation guarantee (Thm.\ 2.1):}\quad
+    $\Pstar \;\leq\; \ptildestar \;\leq\; \CC\sqrt{\log 2\nn}\;\Pstar$\\[4pt]
+    \textit{\footnotesize First poly-time approximation guarantee for regularized ReLU networks.}
+  \end{center}
+
+  % SOURCE: Kim & Pilanci 2024, Theorem 2.1 (arxiv-2402.03625, line 128).
+\end{frame}
+
+
+% ---- SLIDE 6b: CRONOS --- FENG, FRANGELLA & PILANCI 2023 ----
+\begin{frame}{CRONOS: Scalable GPU Solver --- Feng, Frangella \& Pilanci (2023)}
+
+  \begin{columns}[T]
+    \begin{column}{0.50\textwidth}
+      \textbf{Adam vs.\ CRONOS-AM on ImageNet:}
       \vspace{0.3em}
 
-      % FIGURE DESCRIPTION: Bar chart with two bars: "Adam (tuned)" vs "CRONOS-AM"
-      % on ImageNet, CRONOS matching or slightly taller. Tags: JAX, RTX-4090, ADMM, ImageNet.
-      % TO REPLACE: use figures/slide6_cronos_bars.pdf
       \begin{tikzpicture}[scale=0.9]
-        \fill[gray!50]  (0,0) rectangle (0.6,2.2);
-        \fill[blue!60]  (0.9,0) rectangle (1.5,2.3);
-        \node[below, font=\tiny] at (0.3,0)  {Adam};
-        \node[below, font=\tiny] at (1.2,0)  {CRONOS-AM};
-        \node[above, font=\tiny] at (0.3,2.2) {\small$\approx$};
-        \node[above, font=\tiny] at (1.2,2.3) {\small$\approx$};
+        \fill[gray!50]  (0,0) rectangle (0.7,2.2);
+        \fill[blue!60]  (1.3,0) rectangle (2.0,2.3);
+        \node[below, font=\tiny] at (0.35,-0.05)  {Adam};
+        \node[below, font=\tiny] at (1.65,-0.05)  {CRONOS-AM};
+        \node[above, font=\tiny] at (0.35,2.2) {\small$\approx$};
+        \node[above, font=\tiny] at (1.65,2.3) {\small$\approx$};
         \draw[->] (0,0) -- (0,2.7) node[above, font=\tiny] {acc.};
-        \node[font=\tiny, align=left] at (2.5,1.2) {JAX\\ RTX-4090\\ ADMM\\ ImageNet};
+        \node[font=\tiny, align=left] at (3.1,1.2) {JAX\\ RTX-4090\\ ADMM\\ ImageNet};
       \end{tikzpicture}
 
-      \vspace{0.3em}
+      \vspace{0.4em}
       \begin{itemize}\small
         \item Matches/beats tuned Adam
         \item Essentially no hyperparameters
         \item Global opt.\ guarantee (2-layer)
       \end{itemize}
     \end{column}
-  \end{columns}
-
-  % SOURCE: Kim & Pilanci 2024, Theorem 2.1 (arxiv-2402.03625, line 128),
-  % Theorem 2.3 (line 142), Remark 2.2 (line 133).
-  % CRONOS: Feng, Frangella & Pilanci 2023 (user-8652-CRONOS, lines 26, 40).
-\end{frame}
-
-
-% ============================================================
-% ACT 4: OPEN QUESTIONS AND CLOSE (target: 1:00, Slides 7-8)
-% ============================================================
-
-% ---- SLIDE 7: OPEN QUESTION --- WHAT IS A "CONVEX ReLU NETWORK"? (7:00-7:40, 40 sec) ----
-% SPEAKING TIME: ~40 seconds (one open question, one external group, one sentence)
-% TIMING CHECK: Begin close at 7:00. Slide 7 ends at 7:40.
-%
-% SPEAKING NOTES:
-% Distinguish the two questions:
-% "I have been talking about convexifying the training problem. There is a
-%  different question -- which ReLU networks *represent* a convex function as
-%  a map from input to output? This matters when you need the network itself
-%  to be convex, as in optimal transport or energy models."
-%
-% Deliver the open question:
-% "The standard answer has been Input-Convex Neural Networks. In 2025 Gagneux
-%  and colleagues showed that from two hidden layers onward, there exist convex
-%  functions a ReLU network can express that no ICNN of the same architecture
-%  can. The right convex class is still unknown."
-%
-% Acknowledge the external provenance:
-% "This is from a group outside Stanford, which I think is worth noting for a
-%  survey talk."
-%
-% BRIDGE TO SLIDE 8: "So to summarise where the field stands..."
-%
-% IF RUNNING SHORT (need to cut): Fold Slide 7 into a single sentence at the
-% start of Slide 8: "One last thing -- Gagneux et al. 2025 (non-Stanford group)
-% show the right convex architectural class for ReLU networks is still open."
-%
-\begin{frame}{Open Question: What Is a ``Convex ReLU Network''?}
-
-  \begin{columns}[c]
-    \begin{column}{0.52\textwidth}
-      \begin{itemize}
-        \item Training is convex. But which \textit{networks} represent convex functions?
-        \item Standard answer: \textbf{ICNNs} (Amos et al.\ 2017)
-        \item \citeauthor{arxiv2501.03017} (\citeyear{arxiv2501.03017}):\\
-              at depth $\geq 2$,\quad ICNN $\subsetneq$ ReLU-convex
-        \item The right convex class is \textbf{still open}
-        \item Matters for: optimal transport, energy-based models
-      \end{itemize}
-      \vspace{0.5em}
-      \textit{\scriptsize Non-Stanford group: INRIA / Univ.\ de Lyon.}
-    \end{column}
-    \begin{column}{0.44\textwidth}
-      % FIGURE DESCRIPTION: Venn diagram. Large outer ellipse: "Convex functions
-      % a 2-layer ReLU network can represent." Smaller inner ellipse: "Convex
-      % functions an ICNN of the same architecture can represent." Shaded crescent
-      % with "?" label: "unknown since depth >= 2."
-      % TO REPLACE: use figures/slide7_venn.pdf
+    \hfill
+    \begin{column}{0.47\textwidth}
       \begin{center}
-        \begin{tikzpicture}
-          % Outer ellipse
-          \draw[thick, blue!70] (0,0) ellipse (1.8cm and 1.1cm);
-          \node[font=\tiny, blue!70, align=center] at (0, 1.3)
-            {Convex fns.\ a ReLU net\\ can represent};
-          % Inner ellipse
-          \fill[green!20, opacity=0.7] (-0.4,0) ellipse (0.9cm and 0.65cm);
-          \draw[thick, green!60!black] (-0.4,0) ellipse (0.9cm and 0.65cm);
-          \node[font=\tiny, green!60!black, align=center] at (-0.4, 0)
-            {ICNNs};
-          % Crescent question mark
-          \node[font=\Large, red!70!black] at (1.1, 0) {\textbf{?}};
-          \node[font=\tiny, red!70!black] at (1.1, -0.35) {unknown};
-        \end{tikzpicture}
+        \includegraphics[width=\textwidth,height=0.52\textheight,keepaspectratio]{imagenet-grid.jpg}\\[2pt]
+        \tiny ImageNet: 1000 classes, 1.2M training images
       \end{center}
     \end{column}
   \end{columns}
 
-  % SOURCE: Gagneux, Massias, Soubies & Gribonval 2025 (arxiv-2501.03017, line 1261)
-  % explicitly leaves deep-ReLU convex-class characterisation as future work.
+  % SOURCE: Feng, Frangella & Pilanci 2023 (user-8652-CRONOS, lines 26, 40).
 \end{frame}
 
 
-% ---- SLIDE 8: TAKEAWAY (7:40-8:00, 20 seconds) ----
+% ============================================================
+% ACT 4: CLOSE (target: 0:20, Slide 7)
+% ============================================================
+
+% ---- SLIDE 7: TAKEAWAY (7:00-7:20, 20 seconds) ----
 % SPEAKING TIME: ~20 seconds (the landing --- must not be cut)
 % TIMING CHECK: Talk ends at 8:00. Hand over to Q&A.
 %
@@ -657,7 +665,7 @@
       and whether the hidden convex program is exact, tractable,\\
       and practically solvable depends on three things:
     }\\[0.8em]
-    \Large\textbf{width \quad|\quad architecture \quad|\quad $\log n$}
+    \Large\textbf{width \quad|\quad architecture \quad|\quad} {\Large$\bm{\log n}$}
   \end{center}
 
   \vspace{0.8em}
@@ -676,7 +684,7 @@
     \end{column}
     \begin{column}{0.3\textwidth}
       \centering
-      \textbf{$\log n$}\\
+      \textbf{$\bm{\log n}$}\\
       \small Kim-Pilanci 2024\\
       $\sqrt{\log n}$ approximation
     \end{column}
